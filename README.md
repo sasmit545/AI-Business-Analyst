@@ -15,6 +15,55 @@ The application uses FastAPI, Pydantic v2, LangGraph, SQLGlot, Psycopg 3, Stream
 
 Results show the selected dataset, denominator, comparison windows, filters and material caveats. **Show chart data as tables** exposes plotted values; **SQL, quality and provenance** exposes queries and bound parameters. Daily trend lines fit the observed values by default, while bar and area charts start at zero.
 
+## Backend and agent architecture
+
+The application uses one bounded LangGraph agent. The model chooses supported analyses and presentation options; application code controls database access, calculations and publication. Its strongest guarantees concern the integrity and recovery of executed results. Its ability to interpret a question still depends on choosing the right metric, objective, dates and filters.
+
+```mermaid
+flowchart TD
+    Q[Business question] --> M[Model interprets scope and selects a tool]
+    M --> C[Clarify consequential ambiguity]
+    C --> R[User reply]
+    R --> M
+    M --> T[Registered analysis: quality checks and restricted SQL]
+    T --> E[Saved and verified evidence]
+    E --> P[Model selects supported presentation]
+    P --> V[Backend validates views and renders the answer]
+```
+
+Blocking data defects produce diagnostic evidence without certified metrics. Structured filter/date actions and recognized contextual explanations or action requests can use the typed execution path without another model planning call. See the [investigation graph](app/agent/graph.py) and [tool dispatcher](app/agent/tools.py).
+
+### What the model decides
+
+- Selects a registered attempt or lifecycle analysis, or asks for clarification.
+- Proposes the metric, periods, filters and business objective. The objective distinguishes counts, trends, failure volume, deterioration and contribution to overall change.
+- Selects evidence-backed views and measures from the options available for the result.
+
+The model has no arbitrary-SQL execution tool. [Registered query code](app/query/compiler.py) supplies SQL for supported analyses. The host resolves dimension labels, validates request contracts and checks recognized explicit date ranges before execution. Factual prose is rendered from verified evidence rather than accepted from unrestricted model text.
+
+### What the backend guarantees within the supported flow
+
+| Mechanism | Behavior |
+|---|---|
+| Query boundaries | [SQL validation](app/query/policy.py) allows registered SELECT shapes over the selected schema. The restricted database role provides a separate privilege boundary. |
+| Consistent measurement | The [executor](app/query/executor.py) runs a bundle in one read-only, repeatable-read transaction, with statement timeouts and result-size limits. |
+| Quality gating | Metric-appropriate checks precede certification. Blocking defects prevent business metrics from being published; the application does not repair source records. |
+| Evidence verification | The [verifier](app/evidence/verify.py) checks evidence integrity and recomputes derived results from recorded query rows. Publication checks the evidence scope and validates the selected views. |
+| Durable recovery | PostgreSQL stores conversations, evidence, budgets and checkpoints. [SQL receipts](app/evidence/bundle_receipts.py) allow completed results to replay from their original snapshot; an interrupted receipt retains charges and returns a limited result. |
+| Bounded execution | Investigations have a 120-second deadline, up to 10 tool calls, two structured-output repairs and a 12-statement analytical SQL budget. Token and artifact limits also apply. Restarts preserve recorded spending and deadlines. |
+
+After an analytical bundle completes, the advertised model tools are limited to evidence inspection and publication. The dispatcher also rejects a second analysis in the same investigation. If model presentation fails after evidence is available, the host can publish verified text within the remaining budget. [Execution and budget details](docs/analyst-usage.md#what-answers-mean)
+
+### Autonomy, memory and current limits
+
+The agent normally performs one analytical bundle per investigation. A supported follow-up can start a child investigation; an attempt-success hypothesis test can perform a bounded additional check using the parent's remaining budget. An explanation or recommendation about already measured evidence can reuse the saved snapshot. Changed scope or unavailable detail may require fresh SQL.
+
+Memory consists of saved conversation, scope, evidence and execution state. This supports contextual follow-ups and recovery after a restart; it does not train the model or provide learning across sessions. The runtime uses a single agent rather than a team of independently planning agents.
+
+Open-ended investigation is limited: the agent does not generally decompose a broad question into several competing hypotheses, select successive new measurements and continue until it resolves them. New analytical capabilities require registered tools, metric definitions and verification. Some objective inference and follow-up routing use [wording patterns](app/agent/objective.py), so unfamiliar phrasing remains an evaluation concern. A verified calculation establishes consistency with its accepted request, not that the request necessarily captured the user's intent.
+
+The API currently runs investigations through a [two-worker thread pool](app/api/session.py) for a local operator. Multi-user production operation and performance under load are not established. The [verification status](#verification-status) below separates earlier real-model acceptance from the newest controlled recommendation checks. A possible future extension is a bounded loop that assesses evidence and chooses further registered measurements; that broader investigation loop is not implemented.
+
 ## Start the application
 
 Use PowerShell from the repository root. For an existing installation, check the dedicated database and start it only if stopped:

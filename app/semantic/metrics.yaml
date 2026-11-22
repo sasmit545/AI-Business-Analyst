@@ -1,0 +1,153 @@
+version: 1.1.0
+implemented:
+  attempt_success:
+    numerator: Completed attempts with status SUCCESS
+    denominator: All completed attempts in the requested window and filters
+    time_field: attempted_at
+    grain: attempt
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+    change: comparison rate minus baseline rate; multiply by 100 for percentage points
+    decomposition: symmetric midpoint-weight mix and within-segment rate effects on
+      an exhaustive disjoint partition
+  order_conversion:
+    label: 24-hour order conversion
+    numerator: orders paid within 24 hours
+    denominator: orders observed for at least 24 hours
+    grain: order
+    time_field: created_at
+    observation: completed and ingested by cutoff; order cohort must have 24 hours
+      observation
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+  first_attempt_success:
+    label: First-attempt success
+    numerator: mature orders whose first attempt succeeded
+    denominator: orders observed for at least 24 hours
+    grain: order
+    time_field: created_at
+    observation: completed and ingested by cutoff; order cohort must have 24 hours
+      observation
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+  retry_uptake:
+    label: Retry uptake
+    numerator: initially failed mature orders with a retry
+    denominator: initially failed mature orders
+    grain: order
+    time_field: created_at
+    observation: completed and ingested by cutoff; order cohort must have 24 hours
+      observation
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+  retry_recovery_all:
+    label: Recovery among initial failures
+    numerator: initially failed mature orders recovered by cutoff
+    denominator: initially failed mature orders
+    grain: order
+    time_field: created_at
+    observation: completed and ingested by cutoff; order cohort must have 24 hours
+      observation
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+  retry_recovery_retried:
+    label: Recovery among retried orders
+    numerator: initially failed mature orders recovered by cutoff
+    denominator: retried initially failed mature orders
+    grain: order
+    time_field: created_at
+    observation: completed and ingested by cutoff; order cohort must have 24 hours
+      observation
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+  settlement_count:
+    label: Due settlement count completion
+    numerator: due obligations settled by cutoff
+    denominator: obligations due by cutoff
+    grain: attempt
+    time_field: attempted_at
+    observation: Successful attempts completed and ingested by cutoff; denominator
+      includes only obligations due by cutoff; numerator includes settlement completed
+      by cutoff. No order maturity rule.
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+  settlement_amount:
+    label: Due settlement amount completion
+    numerator: due gross paise settled by cutoff
+    denominator: gross paise due by cutoff
+    grain: attempt
+    time_field: attempted_at
+    observation: Successful attempts completed and ingested by cutoff; denominator
+      includes only obligations due by cutoff; numerator includes settlement completed
+      by cutoff. No order maturity rule.
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+  bank_health:
+    label: Attempt success with aligned bank health
+    numerator: successful observed attempts
+    denominator: observed completed attempts
+    grain: attempt
+    time_field: attempted_at
+    observation: Attempts completed and ingested by cutoff; use only unique valid
+      containing five-minute bank/method observations. Missing telemetry does not
+      block attempt success.
+    unit: fraction
+    dimensions:
+    - payer_bank_id
+    - payment_method
+    filters:
+    - payer_bank_id
+    - payment_method
+    - merchant_id
+deferred:
+  refunds: Unavailable
+  chargebacks: Unavailable

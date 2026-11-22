@@ -1,0 +1,165 @@
+{
+  "run_id": "20261121T175122Z",
+  "status": "failed",
+  "mode": "live_model_api_sql",
+  "scenarios": [
+    {
+      "schema": "scenario_a",
+      "status": "passed",
+      "evidence_id": "a50662757acf4f16b059e9558e5d405e",
+      "checksum": "65b7a41cafce18b4024d4041b526ae5e40beba80618fafd005f47837c66cadc2",
+      "statement_count": 8,
+      "denial_probes": 13,
+      "elapsed_seconds": 17.78572740000527,
+      "question": "Compare attempt success for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Explain bank/method contributions and observed failure labels.",
+      "narrative": {
+        "answer": "Attempt success fell: -1.8000 percentage points.",
+        "facts": [
+          "Baseline: 9,800 successful attempts / 10,000 completed attempts = 98.0000%.",
+          "Comparison: 9,620 successful attempts / 10,000 completed attempts = 96.2000%.",
+          "Method partition: mix contribution +0.0000 pp; within-segment contribution -1.8000 pp.",
+          "Joint partition: mix contribution +0.0000 pp; within-segment contribution -1.8000 pp.",
+          "Largest negative within-segment contribution: BANK_B / UPI, -1.8000 pp.",
+          "Largest recorded failure-label count increase: BANK_B / UPI / BANK_TIMEOUT, 5 to 185 (+180). Counts also depend on traffic volume."
+        ],
+        "hypotheses": [
+          "Failure labels identify observations to investigate; they do not establish an infrastructure root cause."
+        ],
+        "recommendations": [
+          "Inspect corresponding operational logs before making a causal or routing decision."
+        ],
+        "caveats": [
+          "Denominator: all completed attempts in each explicit window and selected filters.",
+          "Attempt success does not measure order conversion or settlement completion.",
+          "Mix and within effects use symmetric midpoint weights; do not sum overlapping partitions."
+        ]
+      }
+    },
+    {
+      "schema": "scenario_b",
+      "status": "passed",
+      "evidence_id": "fca80a807e0249988324065b5aa0ad21",
+      "checksum": "55472d39a3e87311a5c9034f4fbb7620bca19752eab279c882a9dbd1e3b79ace",
+      "statement_count": 8,
+      "denial_probes": 13,
+      "elapsed_seconds": 17.098143400005938,
+      "question": "Compare attempt success for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Explain bank/method contributions and observed failure labels.",
+      "narrative": {
+        "answer": "Attempt success fell: -4.8000 percentage points.",
+        "facts": [
+          "Baseline: 9,640 successful attempts / 10,000 completed attempts = 96.4000%.",
+          "Comparison: 9,160 successful attempts / 10,000 completed attempts = 91.6000%.",
+          "Method partition: mix contribution -4.8000 pp; within-segment contribution +0.0000 pp.",
+          "Joint partition: mix contribution -4.8000 pp; within-segment contribution +0.0000 pp.",
+          "Largest recorded failure-label count increase: BANK_A / UPI / AUTHENTICATION_FAILED, 10 to 40 (+30). Counts also depend on traffic volume."
+        ],
+        "hypotheses": [
+          "Failure labels identify observations to investigate; they do not establish an infrastructure root cause."
+        ],
+        "recommendations": [
+          "Inspect corresponding operational logs before making a causal or routing decision."
+        ],
+        "caveats": [
+          "Denominator: all completed attempts in each explicit window and selected filters.",
+          "Attempt success does not measure order conversion or settlement completion.",
+          "Mix and within effects use symmetric midpoint weights; do not sum overlapping partitions."
+        ]
+      }
+    },
+    {
+      "schema": "scenario_a_dirty",
+      "status": "passed",
+      "evidence_id": "aa91d706273e4e57b7b6dafc16aad00a",
+      "checksum": "e134282f35465885c538376bc4379986cc5e9b0fa5732fae9f79cc361efd3a98",
+      "statement_count": 4,
+      "denial_probes": 13,
+      "elapsed_seconds": 9.205970399998478,
+      "question": "Compare attempt success for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Explain bank/method contributions and observed failure labels.",
+      "narrative": {
+        "answer": "Certified metrics blocked by data quality.",
+        "facts": [
+          "duplicate_occurrences: 20, missing_timestamps: 10, orphan_merchants: 10"
+        ],
+        "hypotheses": [],
+        "recommendations": [
+          "Review the diagnostic evidence. No records were repaired or excluded."
+        ],
+        "caveats": [
+          "The quality check covers the entire selected population, before filtering."
+        ]
+      }
+    },
+    {
+      "schema": "phase2_baseline",
+      "status": "passed",
+      "evidence_id": "11e50eb8775941889fa290a6d4b54936",
+      "checksum": "ffc6e1d581951488d87cdfe1dbc4b0a6346fa6e81dec48efa811a8073f040282",
+      "statement_count": 8,
+      "denial_probes": 13,
+      "elapsed_seconds": 17.55314680000447,
+      "question": "Compare attempt success for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Explain bank/method contributions and observed failure labels.",
+      "narrative": {
+        "answer": "Attempt success fell: -0.1771 percentage points.",
+        "facts": [
+          "Baseline: 49,726 successful attempts / 51,184 completed attempts = 97.1515%.",
+          "Comparison: 47,339 successful attempts / 48,816 completed attempts = 96.9744%.",
+          "Method partition: mix contribution -0.0027 pp; within-segment contribution -0.1744 pp.",
+          "Joint partition: mix contribution +0.0149 pp; within-segment contribution -0.1921 pp.",
+          "Largest negative within-segment contribution: BANK_A / UPI, -0.0651 pp.",
+          "Largest recorded failure-label count increase: BANK_A / UPI / AUTHENTICATION_FAILED, 34 to 57 (+23). Counts also depend on traffic volume."
+        ],
+        "hypotheses": [
+          "Failure labels identify observations to investigate; they do not establish an infrastructure root cause."
+        ],
+        "recommendations": [
+          "Inspect corresponding operational logs before making a causal or routing decision."
+        ],
+        "caveats": [
+          "Denominator: all completed attempts in each explicit window and selected filters.",
+          "Attempt success does not measure order conversion or settlement completion.",
+          "Mix and within effects use symmetric midpoint weights; do not sum overlapping partitions."
+        ]
+      }
+    }
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "gates": {
+    "foundation": "passed",
+    "complete_demo": "pending",
+    "first_analyst_breadth": "pending",
+    "target_v1": "pending"
+  },
+  "missing_evidence": [
+    "real model/API/UI journey",
+    "live model adversarial and safe-failure benchmarks",
+    "browser rendering proof"
+  ],
+  "protected_sources_before": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "last_investigation": {
+    "schema": "phase2_incident",
+    "investigation_id": "ada3b50080ad45b2acbc77917b4f9f5a",
+    "status": "verified",
+    "error": null,
+    "budget": {
+      "sql_statements": 8,
+      "tool_calls": 2,
+      "repairs": 0,
+      "tokens_reserved": 8545
+    }
+  },
+  "failure_type": "AssertionError",
+  "restored_selection": {
+    "schema": "lifecycle_v1",
+    "visible_tables": 8
+  },
+  "protected_sources_after": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  }
+}

@@ -1,0 +1,126 @@
+* Getting build dependencies for wheel...
+running egg_info
+writing payments_ai_analyst.egg-info\PKG-INFO
+writing dependency_links to payments_ai_analyst.egg-info\dependency_links.txt
+writing requirements to payments_ai_analyst.egg-info\requires.txt
+writing top-level names to payments_ai_analyst.egg-info\top_level.txt
+reading manifest file 'payments_ai_analyst.egg-info\SOURCES.txt'
+writing manifest file 'payments_ai_analyst.egg-info\SOURCES.txt'
+* Building wheel...
+running bdist_wheel
+running build
+running build_py
+running egg_info
+writing payments_ai_analyst.egg-info\PKG-INFO
+writing dependency_links to payments_ai_analyst.egg-info\dependency_links.txt
+writing requirements to payments_ai_analyst.egg-info\requires.txt
+writing top-level names to payments_ai_analyst.egg-info\top_level.txt
+reading manifest file 'payments_ai_analyst.egg-info\SOURCES.txt'
+writing manifest file 'payments_ai_analyst.egg-info\SOURCES.txt'
+installing to build\bdist.win-amd64\wheel
+running install
+running install_lib
+creating build\bdist.win-amd64\wheel
+creating build\bdist.win-amd64\wheel\app
+creating build\bdist.win-amd64\wheel\app\agent
+copying build\lib\app\agent\graph.py -> build\bdist.win-amd64\wheel\.\app\agent
+copying build\lib\app\agent\model.py -> build\bdist.win-amd64\wheel\.\app\agent
+copying build\lib\app\agent\prompts.py -> build\bdist.win-amd64\wheel\.\app\agent
+copying build\lib\app\agent\tools.py -> build\bdist.win-amd64\wheel\.\app\agent
+copying build\lib\app\agent\windows.py -> build\bdist.win-amd64\wheel\.\app\agent
+copying build\lib\app\agent\__init__.py -> build\bdist.win-amd64\wheel\.\app\agent
+creating build\bdist.win-amd64\wheel\app\analytics
+copying build\lib\app\analytics\attempts.py -> build\bdist.win-amd64\wheel\.\app\analytics
+copying build\lib\app\analytics\contributions.py -> build\bdist.win-amd64\wheel\.\app\analytics
+copying build\lib\app\analytics\__init__.py -> build\bdist.win-amd64\wheel\.\app\analytics
+creating build\bdist.win-amd64\wheel\app\api
+copying build\lib\app\api\main.py -> build\bdist.win-amd64\wheel\.\app\api
+copying build\lib\app\api\session.py -> build\bdist.win-amd64\wheel\.\app\api
+copying build\lib\app\api\__init__.py -> build\bdist.win-amd64\wheel\.\app\api
+copying build\lib\app\config.py -> build\bdist.win-amd64\wheel\.\app
+creating build\bdist.win-amd64\wheel\app\context
+copying build\lib\app\context\catalog.py -> build\bdist.win-amd64\wheel\.\app\context
+copying build\lib\app\context\__init__.py -> build\bdist.win-amd64\wheel\.\app\context
+copying build\lib\app\contracts.py -> build\bdist.win-amd64\wheel\.\app
+creating build\bdist.win-amd64\wheel\app\evidence
+copying build\lib\app\evidence\render_claims.py -> build\bdist.win-amd64\wheel\.\app\evidence
+copying build\lib\app\evidence\store.py -> build\bdist.win-amd64\wheel\.\app\evidence
+copying build\lib\app\evidence\verify.py -> build\bdist.win-amd64\wheel\.\app\evidence
+copying build\lib\app\evidence\__init__.py -> build\bdist.win-amd64\wheel\.\app\evidence
+creating build\bdist.win-amd64\wheel\app\frontend
+copying build\lib\app\frontend\api_client.py -> build\bdist.win-amd64\wheel\.\app\frontend
+copying build\lib\app\frontend\main.py -> build\bdist.win-amd64\wheel\.\app\frontend
+copying build\lib\app\frontend\renderers.py -> build\bdist.win-amd64\wheel\.\app\frontend
+copying build\lib\app\frontend\__init__.py -> build\bdist.win-amd64\wheel\.\app\frontend
+creating build\bdist.win-amd64\wheel\app\observability
+copying build\lib\app\observability\events.py -> build\bdist.win-amd64\wheel\.\app\observability
+copying build\lib\app\observability\__init__.py -> build\bdist.win-amd64\wheel\.\app\observability
+creating build\bdist.win-amd64\wheel\app\quality
+copying build\lib\app\quality\checks.py -> build\bdist.win-amd64\wheel\.\app\quality
+copying build\lib\app\quality\policy.py -> build\bdist.win-amd64\wheel\.\app\quality
+copying build\lib\app\quality\__init__.py -> build\bdist.win-amd64\wheel\.\app\quality
+creating build\bdist.win-amd64\wheel\app\query
+copying build\lib\app\query\compiler.py -> build\bdist.win-amd64\wheel\.\app\query
+copying build\lib\app\query\executor.py -> build\bdist.win-amd64\wheel\.\app\query
+copying build\lib\app\query\policy.py -> build\bdist.win-amd64\wheel\.\app\query
+copying build\lib\app\query\__init__.py -> build\bdist.win-amd64\wheel\.\app\query
+creating build\bdist.win-amd64\wheel\app\semantic
+copying build\lib\app\semantic\joins.yaml -> build\bdist.win-amd64\wheel\.\app\semantic
+copying build\lib\app\semantic\metrics.yaml -> build\bdist.win-amd64\wheel\.\app\semantic
+copying build\lib\app\semantic\scenarios.yaml -> build\bdist.win-amd64\wheel\.\app\semantic
+creating build\bdist.win-amd64\wheel\app\ui_specs
+copying build\lib\app\ui_specs\models.py -> build\bdist.win-amd64\wheel\.\app\ui_specs
+copying build\lib\app\ui_specs\validate.py -> build\bdist.win-amd64\wheel\.\app\ui_specs
+copying build\lib\app\ui_specs\__init__.py -> build\bdist.win-amd64\wheel\.\app\ui_specs
+copying build\lib\app\__init__.py -> build\bdist.win-amd64\wheel\.\app
+running install_egg_info
+Copying payments_ai_analyst.egg-info to build\bdist.win-amd64\wheel\.\payments_ai_analyst-0.1.0-py3.14.egg-info
+running install_scripts
+creating build\bdist.win-amd64\wheel\payments_ai_analyst-0.1.0.dist-info\WHEEL
+creating 'E:\\pinelabs\\.local\\analyst\\dist\\verified-2f47edfc\\.tmp-sbkxm9cs\\payments_ai_analyst-0.1.0-py3-none-any.whl' and adding 'build\\bdist.win-amd64\\wheel' to it
+adding 'app/__init__.py'
+adding 'app/config.py'
+adding 'app/contracts.py'
+adding 'app/agent/__init__.py'
+adding 'app/agent/graph.py'
+adding 'app/agent/model.py'
+adding 'app/agent/prompts.py'
+adding 'app/agent/tools.py'
+adding 'app/agent/windows.py'
+adding 'app/analytics/__init__.py'
+adding 'app/analytics/attempts.py'
+adding 'app/analytics/contributions.py'
+adding 'app/api/__init__.py'
+adding 'app/api/main.py'
+adding 'app/api/session.py'
+adding 'app/context/__init__.py'
+adding 'app/context/catalog.py'
+adding 'app/evidence/__init__.py'
+adding 'app/evidence/render_claims.py'
+adding 'app/evidence/store.py'
+adding 'app/evidence/verify.py'
+adding 'app/frontend/__init__.py'
+adding 'app/frontend/api_client.py'
+adding 'app/frontend/main.py'
+adding 'app/frontend/renderers.py'
+adding 'app/observability/__init__.py'
+adding 'app/observability/events.py'
+adding 'app/quality/__init__.py'
+adding 'app/quality/checks.py'
+adding 'app/quality/policy.py'
+adding 'app/query/__init__.py'
+adding 'app/query/compiler.py'
+adding 'app/query/executor.py'
+adding 'app/query/policy.py'
+adding 'app/semantic/joins.yaml'
+adding 'app/semantic/metrics.yaml'
+adding 'app/semantic/scenarios.yaml'
+adding 'app/ui_specs/__init__.py'
+adding 'app/ui_specs/models.py'
+adding 'app/ui_specs/validate.py'
+adding 'payments_ai_analyst-0.1.0.dist-info/METADATA'
+adding 'payments_ai_analyst-0.1.0.dist-info/WHEEL'
+adding 'payments_ai_analyst-0.1.0.dist-info/top_level.txt'
+adding 'payments_ai_analyst-0.1.0.dist-info/RECORD'
+removing build\bdist.win-amd64\wheel
+Successfully built payments_ai_analyst-0.1.0-py3-none-any.whl

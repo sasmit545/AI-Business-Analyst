@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-11-21T21:52:51.580607+00:00",
+  "status": "passed",
+  "native_schema": "analyst_meta",
+  "saver_tables": [
+    "budgets",
+    "checkpoint_blobs",
+    "checkpoint_migrations",
+    "checkpoint_writes",
+    "checkpoints",
+    "control",
+    "evidence",
+    "investigations",
+    "sessions"
+  ],
+  "reciprocal_role_permissions": "reports/analyst/metadata_permissions.xml",
+  "admin_repeat_setup_preserves_authorization_generation": true,
+  "import_fence_rolled_back_without_fixture_ingestion": true,
+  "control": {
+    "scenario": "lifecycle_v1",
+    "generation": 1,
+    "import_epoch": 1,
+    "ready": true
+  }
+}

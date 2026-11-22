@@ -1,0 +1,150 @@
+{
+  "status": "passed",
+  "recorded_at": "2026-11-21T23:57:21.337471+00:00",
+  "schema_version": "1",
+  "dataset": "lifecycle_v1",
+  "tests": {
+    "application": {
+      "file": "generative_ui_final_suite.xml",
+      "passed": 130,
+      "skipped": 8,
+      "failed": 0
+    },
+    "provider": {
+      "file": "generative_ui_acceptance_live.xml",
+      "passed": 6,
+      "skipped": 0,
+      "failed": 0
+    },
+    "final_focused_followups": {
+      "file": "generative_ui_followups.xml",
+      "passed": 28,
+      "skipped": 6,
+      "failed": 0
+    }
+  },
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "actual_model_layouts": {
+    "trend": {
+      "blocks": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "drilldown": false
+        },
+        {
+          "kind": "line",
+          "source": "daily",
+          "measure": "rate",
+          "drilldown": false
+        }
+      ],
+      "evidence_id": "c45701fb3e524d629728adbce0eb7445",
+      "sql_statements": 8
+    },
+    "banks": {
+      "blocks": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "failed_attempts",
+          "drilldown": false
+        },
+        {
+          "kind": "bar",
+          "source": "banks",
+          "measure": "failed_attempts",
+          "drilldown": true
+        }
+      ],
+      "evidence_id": "040df8ecb4694809ba8a26ab0ecefae7",
+      "sql_statements": 8
+    },
+    "category": {
+      "blocks": [
+        {
+          "kind": "table",
+          "source": "merchant_categories",
+          "section": "Breakdown",
+          "drilldown": false
+        }
+      ],
+      "evidence_id": "67fb5822fe794a0f928f40ea2ee5dd48",
+      "sql_statements": 9
+    },
+    "cause": {
+      "blocks": [
+        {
+          "kind": "insight",
+          "source": "overall",
+          "drilldown": false
+        },
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "drilldown": false
+        },
+        {
+          "kind": "table",
+          "source": "contributions",
+          "section": "Investigation detail",
+          "drilldown": false
+        },
+        {
+          "kind": "insight",
+          "source": "contributions",
+          "section": "Investigation detail",
+          "drilldown": false
+        }
+      ],
+      "evidence_id": "37f3117e9f4649a0a0406bc203dbbb0a",
+      "sql_statements": 8
+    },
+    "detail": {
+      "blocks": [
+        {
+          "kind": "table",
+          "source": "transactions",
+          "drilldown": false
+        }
+      ],
+      "evidence_id": "423ecfc7a1964e77ae61f99dfbf56cd4",
+      "sql_statements": 9
+    },
+    "fact": {
+      "blocks": [],
+      "evidence_id": "3209a0c24add49148153ee3a5657f8b7",
+      "sql_statements": 8
+    }
+  },
+  "browser": "generative_ui_browser.json",
+  "protected_sources": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "coverage_notes": [
+    "The scoped suite included the real Chromium desktop chart click and mobile session recovery after replacing the API process.",
+    "The six live planning cases used real NVIDIA and restricted fixture SQL. They ran separately from browser and renderer checks.",
+    "Final focused tests checked the restricted schema endpoint, clicked measure and filter inheritance, changed windows, merchant breakdowns, snapshot reuse, durable replay, empty periods and failure fallback. Test totals overlap.",
+    "Historical evidence checksums and legacy dashboard conversion were checked for attempt success and eight lifecycle metrics.",
+    "The legacy opt-in six-fixture model evaluator and the fixed-port browser suite were not repeated for this feature. The administrative selection was preserved."
+  ],
+  "limits": {
+    "blocks": 6,
+    "chart_points": 400,
+    "pie_slices": 8,
+    "table_rows": 2000,
+    "latest_attempt_rows": 50
+  },
+  "earlier_runs": [
+    "generative_ui_live.xml",
+    "generative_ui_live_compact.xml",
+    "generative_ui_live_views.xml",
+    "generative_ui_live_final.xml",
+    "generative_ui_browser_run.xml",
+    "generative_ui_browser_views.xml"
+  ]
+}

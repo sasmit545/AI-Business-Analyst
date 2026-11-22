@@ -1,0 +1,166 @@
+{
+  "recorded_at": "2026-11-21T18:04:59.892323+00:00",
+  "status": "passed",
+  "scope": "U1-U7 / G1 complete demo only",
+  "plan": "plans/2026-11-21-2019-feat-enterprise-ai-analyst-plan.md",
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "live_run_id": "20261121T175621Z",
+  "gates": {
+    "foundation": "passed",
+    "complete_demo": "passed",
+    "first_analyst_breadth": "pending",
+    "target_v1": "pending"
+  },
+  "runtime_snapshot": "reports/analyst/acceptance_runtime_snapshot.json",
+  "runtime_unchanged_since_live_run": true,
+  "environment": "reports/analyst/schema_audit.json",
+  "dependency_lock": "requirements-analyst.lock",
+  "test_suites": {
+    "test_results.xml": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "2",
+      "tests": "75",
+      "time": "39.433",
+      "timestamp": "2026-11-21T23:25:27.728527+05:30",
+      "hostname": "DESKTOP-GLHUDMO"
+    },
+    "browser_live_tests.xml": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "1",
+      "time": "54.370",
+      "timestamp": "2026-11-21T23:29:02.704171+05:30",
+      "hostname": "DESKTOP-GLHUDMO"
+    },
+    "browser_dirty_live_tests.xml": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "1",
+      "time": "20.795",
+      "timestamp": "2026-11-21T23:30:32.239181+05:30",
+      "hostname": "DESKTOP-GLHUDMO"
+    }
+  },
+  "evidence": [
+    {
+      "schema": "scenario_a",
+      "id": "b9be9da3ee6b4ec898c3f18443788db6",
+      "checksum": "118f69efdcd1bf1e3fed1ea048a48057cffe9b4e017bd86a4664fd97c7b54064",
+      "artifact": ".local/analyst/evidence/b9be9da3ee6b4ec898c3f18443788db6.json",
+      "verified": true
+    },
+    {
+      "schema": "scenario_b",
+      "id": "a38d10b6ddc84be99721a098861d4c9a",
+      "checksum": "ee33f180337fe5ba9c1ee9e2824df9a903444c5c56447c76ad571ed7a9e4cfb1",
+      "artifact": ".local/analyst/evidence/a38d10b6ddc84be99721a098861d4c9a.json",
+      "verified": true
+    },
+    {
+      "schema": "scenario_a_dirty",
+      "id": "7bc213afb0464733ae65cc31eb12d7f0",
+      "checksum": "60cf1a5376aadf314347b84f6cc26812a479534963b8722c9d716a68a3c3cd65",
+      "artifact": ".local/analyst/evidence/7bc213afb0464733ae65cc31eb12d7f0.json",
+      "verified": true
+    },
+    {
+      "schema": "phase2_baseline",
+      "id": "d786c6fefa314af6963a9361fda7b1ef",
+      "checksum": "97932fc23a3b2e90214e399d514aa50e8260742de84bb32b46a67433c9ac9602",
+      "artifact": ".local/analyst/evidence/d786c6fefa314af6963a9361fda7b1ef.json",
+      "verified": true
+    },
+    {
+      "schema": "phase2_incident",
+      "id": "977e5a09b60d403980c5fa0f4619c9bf",
+      "checksum": "43121ab13a6de2cccdfe70ab3d6ac4319c2e1181fd1fb4760f65df60c22aa879",
+      "artifact": ".local/analyst/evidence/977e5a09b60d403980c5fa0f4619c9bf.json",
+      "verified": true
+    },
+    {
+      "schema": "lifecycle_v1",
+      "id": "ca1532169d924fdc839f66590e849fb8",
+      "checksum": "83bf164aba5b71cadb1c000fa80dac310b4df85bb78a7e54e9643a1adaf71c83",
+      "artifact": ".local/analyst/evidence/ca1532169d924fdc839f66590e849fb8.json",
+      "verified": true
+    },
+    {
+      "schema": "lifecycle_v1",
+      "id": "478447e25f504354b3a4167d172dce4c",
+      "checksum": "7a6b61fb92b78966cf9999766d664e873293e74278c8249b7dc276a424ce4d78",
+      "artifact": ".local/analyst/evidence/478447e25f504354b3a4167d172dce4c.json",
+      "verified": true
+    },
+    {
+      "schema": "scenario_a_dirty",
+      "id": "def4279f87054f3193318914d7a83bfe",
+      "checksum": "d82bab62fa44a21dd8789f7c937067f9a693aa69c13c6960b9ef45dc4b6540f5",
+      "artifact": ".local/analyst/evidence/def4279f87054f3193318914d7a83bfe.json",
+      "verified": true
+    }
+  ],
+  "live_evaluation": "reports/analyst/live_acceptance.json",
+  "browser_evaluation": [
+    "reports/analyst/browser_live_validation.json",
+    "reports/analyst/browser_dirty_live_validation.json"
+  ],
+  "mandatory_demo_checks": {
+    "two_related_actual_tables": "Live lifecycle browser evidence executes payments JOIN banks.",
+    "natural_language_answer": "Real NVIDIA question-to-tool-to-publication runs in all six scenarios and browser.",
+    "validated_executed_sql": "Restricted real PostgreSQL queries saved in checksummed evidence.",
+    "inspectable_provenance": "UI displays metric, denominator, selection, windows, filters and expandable executed SQL.",
+    "overall_and_segmented_comparison": "Overall and bank/method results independently matched against original truths.",
+    "real_chart_results": "Browser chart values equal verified lifecycle evidence rates.",
+    "facts_hypotheses_recommendations_caveats": "Separate deterministic narrative sections visible in live UI.",
+    "visible_safe_failure": "Live dirty browser shows 20 duplicates, 10 missing timestamps, 10 orphan merchants and no certified metrics; ambiguous follow-up clears previous results.",
+    "independent_expected_answers": "Five clean scenario outputs match saved independent counts/rates; dirty counts match seeded defects.",
+    "full_ui_journey": "Real browser/NVIDIA/API/database journey; desktop/mobile rendering, evidence visibility and clarification verified."
+  },
+  "protected_sources": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "restored_selection": {
+    "schema": "lifecycle_v1",
+    "visible_tables": 8
+  },
+  "permissions": {
+    "denial_probes_per_schema": 13,
+    "schemas": 6,
+    "A_B_A_continuity": "passed"
+  },
+  "build": {
+    "returncode": 0,
+    "output_directory": ".local\\analyst\\dist\\verified-2f47edfc",
+    "note": "Fresh output directory because the prior session wheel could not be replaced under current filesystem permissions.",
+    "wheel": ".local\\analyst\\dist\\verified-2f47edfc\\payments_ai_analyst-0.1.0-py3-none-any.whl",
+    "source_contents_match": true,
+    "runtime_inclusion_boundary": "passed"
+  },
+  "review": "Code review: skipped (ce-code-review unavailable); no Git base. Manual inspection documented in reports/analyst/review_status.json.",
+  "fix_validation": {
+    "issue": "Model expanded an explicit end date to 00:24 despite prompt-only correction.",
+    "preserved_failed_runs": [
+      "reports/analyst/window_drift_before_fix.json",
+      "reports/analyst/window_drift_prompt_only.json"
+    ],
+    "fix": "Bind recognized explicit ISO date ranges in tool schema and reject mismatches before SQL, with bounded correction feedback.",
+    "proof": "Regression demonstrated failure before fix; 73 tests and final full live run pass."
+  },
+  "limitations": [
+    "Single-operator local application; no enterprise authentication or OS-account sandbox.",
+    "State is in memory; evidence files do not restore authorization after restart.",
+    "Explicit window binding recognizes two ISO inclusive-to/through-exclusive ranges and a named timezone; other wording remains model-interpreted with visible bounds.",
+    "SQL budget excludes metadata authorization round trips and rollback cleanup.",
+    "Lifecycle/order/retry/settlement/health metrics, durable checkpoints and adaptive multi-bundle investigations remain deferred."
+  ],
+  "historical_reports": "Earlier socket, occupied-port, window-drift and temporary-directory failures are preserved; they are superseded by the linked final runs."
+}

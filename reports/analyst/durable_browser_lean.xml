@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="181.166" timestamp="2026-11-22T03:45:19.552136+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="179.212"><failure message="ZeroDivisionError: division by zero">tmp_path = WindowsPath('E:/pinelabs/.local/analyst/test-temp/8d8e1e10c33141259ed5065b278cda8c/test_chart_selection_and_resta0')
+
+    @pytest.mark.live
+    @pytest.mark.skipif(os.environ.get('ANALYST_DURABLE_BROWSER') != '1', reason='Opt-in real model and browser')
+    def test_chart_selection_and_restart(tmp_path):
+        from playwright.sync_api import expect, sync_playwright
+    
+        root = Path.cwd()
+        ctx = multiprocessing.get_context('spawn')
+        api_port = _port()
+        token = tmp_path/'.local/analyst/api_token'
+        base = f'http://127.0.0.1:{api_port}'
+        api = ctx.Process(target=_serve_api, args=(root, tmp_path, api_port))
+        api.start()
+        ui = None
+        try:
+            _wait_ready(api, base+'/health', token)
+            saved = _saved_attempt_comparison(base, token)
+            print('Real saved attempt comparison available.', flush=True)
+            ui_port = _port()
+            ui = ctx.Process(target=_serve_ui, args=(root, tmp_path, api_port, ui_port))
+            ui.start()
+            url = f'http://127.0.0.1:{ui_port}'
+            _wait_ready(ui, url+'/_stcore/health')
+            counts = _attempt_counts(root)
+            with sync_playwright() as browser_api:
+                browser = browser_api.chromium.launch(
+                    executable_path='C:/Program Files/Google/Chrome/Application/chrome.exe', headless=True,
+                    args=['--disable-gpu','--disable-extensions','--renderer-process-limit=1','--disable-background-networking'])
+                page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                page.goto(url, wait_until='commit', timeout=90000)
+    
+                def button(name):
+                    control = page.get_by_role('button', name=name, exact=True)
+                    control.wait_for(state='visible', timeout=90000)
+                    control.press('Enter')
+    
+                def expander(name):
+                    control = page.locator('summary').filter(has_text=name)
+                    control.wait_for(state='visible', timeout=90000)
+                    control.press('Enter')
+    
+                def read_id():
+                    provenance = page.get_by_text('Evidence ID:', exact=False)
+                    provenance.wait_for(state='attached', timeout=90000)
+                    return provenance.text_content().removeprefix('Evidence ID: ')
+    
+                def resume():
+                    expander('Resume saved work')
+                    page.get_by_label('Saved session ID', exact=True).fill(saved['resume_id'])
+                    page.get_by_label('Session key', exact=True).fill(saved['resume_key'])
+                    button('Resume session')
+                    page.get_by_text('Status: verified', exact=True).wait_for(state='attached',timeout=90000)
+    
+                resume()
+                # A retry may reopen a previously completed child.
+                if page.get_by_role('button', name='View investigation').count():
+                    selector = page.get_by_role('combobox', name='Saved investigation')
+                    selector.fill(saved['parent_id'])
+                    selector.press('Enter')
+                    button('View investigation')
+                original_id = read_id()
+                assert original_id == saved['evidence_id']
+                for period in (0, 1):
+                    n, d = counts[period, None]
+                    expect(page.get_by_text(f"{100*n/d:.4f}%", exact=True).first).to_be_visible()
+                print('Source attempt comparison verified.', flush=True)
+    
+                plot = page.locator('.js-plotly-plot').filter(has=page.locator('.barlayer')).last
+                bars = plot.locator('.barlayer .trace').first.locator('.point path')
+                first_bank = plot.evaluate('(element) =&gt; element.data[0].x[0]')
+                bars.first.scroll_into_view_if_needed()
+                box = bars.first.bounding_box()
+                assert box is not None
+                page.mouse.click(box['x']+box['width']/2, box['y']+box['height']/2)
+                # A fresh filtered result omits the cross-bank selection chart.
+                expect(page.get_by_text('Select a bank bar to run this comparison for that bank.')).to_have_count(0, timeout=135000)
+                expect(page.get_by_text('Status: verified', exact=True)).to_be_visible(timeout=135000)
+                child_id = read_id()
+                assert child_id != original_id
+                expected_rates = []
+                for period in range(2):
+                    n, d = counts[period, first_bank]
+&gt;                   expected_rates.append(n/d)
+                                          ^^^
+E                   ZeroDivisionError: division by zero
+
+tests\analyst\test_durable_browser.py:205: ZeroDivisionError</failure></testcase></testsuite></testsuites>

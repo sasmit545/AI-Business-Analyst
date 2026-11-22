@@ -1,0 +1,118 @@
+{
+  "started": "2026-11-21T22:13:01.829537+00:00",
+  "status": "passed",
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "adaptive": {
+    "parent": "a88c3680dd144fe6b6b6e3faeb1a9739",
+    "child": "1974871ce65a4e6f8f5f99b0c258e229",
+    "filters": {
+      "payer_bank_id": "BANK_E",
+      "payment_method": "CARD",
+      "merchant_id": null
+    },
+    "counts": [
+      [
+        1866,
+        1954
+      ],
+      [
+        1814,
+        1926
+      ]
+    ],
+    "budget": {
+      "sql_statements": 12,
+      "tool_calls": 4,
+      "repairs": 0,
+      "tokens_reserved": 10359
+    },
+    "hypothesis": "supported",
+    "stale_version_rejected": true
+  },
+  "definition_comparison": {
+    "status": "different_definitions",
+    "explanation": "The measurements use different metric, numerator, denominator, grain, time field.",
+    "left": {
+      "evidence_id": "cb38494fd116405094cf0d0d941a6b1f",
+      "snapshot": "1551:1551:",
+      "import_epoch": 1,
+      "semantic_version": "1.1.0",
+      "metric": "order_conversion",
+      "numerator": "orders paid within 24 hours",
+      "denominator": "orders observed for at least 24 hours",
+      "grain": "order",
+      "time_field": "created_at",
+      "filters": {},
+      "baseline": {
+        "start": "2026-10-01T00:00:00+05:30",
+        "end": "2026-10-15T00:00:00+05:30"
+      },
+      "comparison": {
+        "start": "2026-10-15T00:00:00+05:30",
+        "end": "2026-10-29T00:00:00+05:30"
+      },
+      "observation_cutoff": "2026-11-01T00:00:00+05:30",
+      "periods": [
+        {
+          "rate": 0.9793111070918993,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 97463,
+          "denominator": 99522
+        },
+        {
+          "rate": 0.979761977294421,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 96485,
+          "denominator": 98478
+        }
+      ]
+    },
+    "right": {
+      "evidence_id": "a88c3680dd144fe6b6b6e3faeb1a9739",
+      "snapshot": "1477:1477:",
+      "import_epoch": 1,
+      "semantic_version": "1.0.0",
+      "metric": "attempt_success",
+      "numerator": "Completed attempts with status SUCCESS",
+      "denominator": "All completed attempts in the requested window and filters",
+      "grain": "attempt",
+      "time_field": "attempted_at",
+      "filters": {},
+      "baseline": {
+        "start": "2026-10-01T00:00:00+05:30",
+        "end": "2026-10-15T00:00:00+05:30"
+      },
+      "comparison": {
+        "start": "2026-10-15T00:00:00+05:30",
+        "end": "2026-10-29T00:00:00+05:30"
+      },
+      "observation_cutoff": "2026-11-01T00:00:00+05:30",
+      "periods": [
+        {
+          "period": 0,
+          "numerator": 97462,
+          "denominator": 100402,
+          "rate": 0.970717714786558
+        },
+        {
+          "period": 1,
+          "numerator": 96485,
+          "denominator": 99331,
+          "rate": 0.9713483202625565
+        }
+      ]
+    }
+  },
+  "recovery": {
+    "checksummed_evidence_restored": true,
+    "old_handle_rejected": true,
+    "hypothesis_restored": true
+  },
+  "protected_sources": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  }
+}

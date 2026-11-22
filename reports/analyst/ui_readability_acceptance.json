@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-22",
+  "status": "passed",
+  "scope": "Question, answer, chart labels and follow-up navigation in the local Streamlit app",
+  "verification": {
+    "application_suite": {"file": "ui_readability_suite.xml", "passed": 137, "opt_in_skipped": 9},
+    "renderer_followup_checks_after_chart_table_changes": {"file": "ui_readability_renderer.xml", "passed": 34, "opt_in_skipped": 6},
+    "history_and_screen_checks_after_shared_metric_labels": {"passed": 8},
+    "protected_files_matching_original_baseline": 43
+  },
+  "browser": {
+    "stack": "Headless Chromium, private Streamlit/FastAPI ports, native PostgreSQL with a deterministic presentation model",
+    "scenario": "lifecycle_v1",
+    "question": "Compare failed payments by bank for October 1–14 and October 15–28, 2026, in Asia/Kolkata.",
+    "failed_attempt_counts": [2940, 2846],
+    "checks": [
+      "Saved question and verified headline visible, independent question composer absent",
+      "Two period cards and a two-series bank chart, visible natural-language follow-up",
+      "Chat history includes the same question and headline and reopens the chart",
+      "390 px mobile viewport fits the page and switches the chart to a table"
+    ],
+    "screenshots": ["ui_readability_desktop.png", "ui_readability_mobile.png"]
+  },
+  "live_provider": "This presentation check used a model double. The six earlier live model layout checks are recorded in generative_ui_acceptance.json."
+}

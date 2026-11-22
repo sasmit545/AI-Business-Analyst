@@ -1,0 +1,14 @@
+.local/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+build/
+*.egg-info/
+.pytest_cache/
+
+# User's Codex CLI installation, not part of this project (codex.exe exceeds GitHub's 100 MB limit)
+node_modules/
+package.json
+package-lock.json

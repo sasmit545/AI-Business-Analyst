@@ -1,0 +1,61 @@
+{
+  "profile_id": "realistic_v1",
+  "schema_version": "1.0.0",
+  "seed": 42,
+  "attempts": 100000,
+  "start_date": "2026-10-01",
+  "end_date": "2026-10-28",
+  "timezone": "+05:30",
+  "currency": "INR",
+  "merchant_weights": {
+    "M01": 20, "M02": 20, "M03": 20, "M04": 20,
+    "M05": 5, "M06": 5, "M07": 5, "M08": 5, "M09": 5, "M10": 5,
+    "M11": 1, "M12": 1, "M13": 1, "M14": 1, "M15": 1,
+    "M16": 1, "M17": 1, "M18": 1, "M19": 1, "M20": 1
+  },
+  "bank_weights": {"BANK_A": 35, "BANK_B": 25, "BANK_C": 20, "BANK_D": 15, "BANK_E": 5},
+  "upi_share_by_category": {"retail": 0.50, "grocery": 0.75, "dining": 0.80, "services": 0.40},
+  "amounts": {
+    "median_inr": {"retail": 1500, "grocery": 600, "dining": 350, "services": 2500},
+    "sigma": 0.6,
+    "min_inr": 10,
+    "max_inr": 100000,
+    "paise_rounding": "nearest integer; Python round ties to even"
+  },
+  "traffic": {
+    "default_hour_weight": 1,
+    "night_hours": [0, 1, 2, 3, 4, 5],
+    "night_hour_weight": 0.25,
+    "dining_peak_hours": [12, 13, 14, 19, 20, 21],
+    "dining_peak_weight": 3,
+    "weekend_weights": {"retail": 1.3, "grocery": 1, "dining": 1.3, "services": 1},
+    "allocation": "largest remainder using exact rational weights; ascending IDs break ties",
+    "hierarchy": "global merchants; global bank pool; per-merchant method pool; per-merchant joint date/hour cells",
+    "assignment": "independent seeded bank and method shuffles; seeded minute/second within each allocated hour"
+  },
+  "success_probability": {
+    "UPI": {"BANK_A": 0.98, "BANK_B": 0.97, "BANK_C": 0.96, "BANK_D": 0.95, "BANK_E": 0.94},
+    "CARD": {"BANK_A": 0.99, "BANK_B": 0.98, "BANK_C": 0.97, "BANK_D": 0.96, "BANK_E": 0.95}
+  },
+  "failure_weights": {
+    "UPI": {"BANK_TIMEOUT": 40, "INSUFFICIENT_FUNDS": 30, "AUTHENTICATION_FAILED": 20, "LIMIT_EXCEEDED": 10},
+    "CARD": {"BANK_TIMEOUT": 15, "INSUFFICIENT_FUNDS": 35, "AUTHENTICATION_FAILED": 40, "LIMIT_EXCEEDED": 10}
+  },
+  "streams": {
+    "algorithm": "random.Random seeded with SHA-256 of phase2:streams:v1:<seed>:<stream_name>",
+    "names": ["traffic.banks", "traffic.time", "traffic.methods.<merchant_id>", "amounts.<category>", "outcomes.status", "outcomes.reasons"]
+  },
+  "incident": {
+    "payer_bank_id": "BANK_B",
+    "payment_method": "UPI",
+    "start_date": "2026-10-15",
+    "end_date": "2026-10-21",
+    "eligible_status": "SUCCESS",
+    "fraction": 0.10,
+    "count_rounding": "nearest integer, ties up",
+    "selection": "ascending SHA-256 of phase2:incident:v1:<seed>:<attempt_id>, then attempt_id",
+    "replacement_status": "FAILED",
+    "replacement_failure_reason": "BANK_TIMEOUT"
+  },
+  "diagnostics": {"standard_errors": 4, "action": "flag, never resample", "rate_rounding_decimal_places": 6}
+}

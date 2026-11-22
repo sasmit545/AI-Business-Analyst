@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="53.278" timestamp="2026-11-22T03:36:54.902871+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="52.458"><failure message="RuntimeError: Saved conversion failed: Analysis failed safely; no unverified result was published">tmp_path = WindowsPath('E:/pinelabs/.local/analyst/test-temp/14d898fa899c4e629dd03434df8e529d/test_chart_selection_and_resta0')
+
+    @pytest.mark.live
+    @pytest.mark.skipif(os.environ.get('ANALYST_DURABLE_BROWSER') != '1', reason='Opt-in real model and browser')
+    def test_chart_selection_and_restart(tmp_path):
+        from playwright.sync_api import expect, sync_playwright
+    
+        root = Path.cwd()
+        ctx = multiprocessing.get_context('spawn')
+        api_port = _port()
+        token = tmp_path/'.local/analyst/api_token'
+        base = f'http://127.0.0.1:{api_port}'
+        api = ctx.Process(target=_serve_api, args=(root, tmp_path, api_port))
+        api.start()
+        ui = None
+        try:
+            _wait_ready(api, base+'/health', token)
+&gt;           saved = _saved_conversion(base, token)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\analyst\test_durable_browser.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+base = 'http://127.0.0.1:63810'
+token = WindowsPath('E:/pinelabs/.local/analyst/test-temp/14d898fa899c4e629dd03434df8e529d/test_chart_selection_and_resta0/.local/analyst/api_token')
+
+    def _saved_conversion(base, token):
+        """Prepare a real saved result before running the browser and database together."""
+        def request(method, path, body=None):
+            headers = {'Authorization': 'Bearer '+token.read_text().strip(), 'Content-Type': 'application/json'}
+            data = json.dumps(body).encode() if body is not None else None
+            with urlopen(Request(base+path, method=method, data=data, headers=headers), timeout=30) as response:
+                return json.load(response)
+    
+        # An explicit private test receipt permits a browser-only retry of the same
+        # real investigation without another paid/provider-side operation.
+        receipt_name = os.environ.get('ANALYST_DURABLE_BROWSER_RECEIPT')
+        receipt = None
+        if receipt_name:
+            directory = Path('.local/analyst/test-temp').resolve()
+            receipt = Path(receipt_name).resolve()
+            if not receipt.is_relative_to(directory):
+                raise ValueError('Browser test receipt must be in the private test-temp directory.')
+            if receipt.exists():
+                return json.loads(receipt.read_text())
+        session = request('POST', '/sessions')
+        path = '/sessions/'+session['session_id']
+        try:
+            question = ('Compare 24-hour order conversion for 2026-10-01 inclusive to 2026-10-15 exclusive '
+                        'versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.')
+            job = request('POST', path+'/investigations', {'question': question})
+            deadline = time.monotonic()+140
+            while job['status'] in ('received', 'running'):
+                if time.monotonic() &gt;= deadline:
+                    raise TimeoutError('The saved investigation did not finish.')
+                time.sleep(.5)
+                job = request('GET', path+'/investigations/'+job['investigation_id'])
+            if job['status'] != 'verified':
+&gt;               raise RuntimeError('Saved conversion '+job['status']+': '+str(job.get('error')))
+E               RuntimeError: Saved conversion failed: Analysis failed safely; no unverified result was published
+
+tests\analyst\test_durable_browser.py:125: RuntimeError</failure></testcase></testsuite></testsuites>

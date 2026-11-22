@@ -1,0 +1,188 @@
+{
+  "recorded_at": "2026-11-21T20:43:42.645586+00:00",
+  "mode": "restricted_sql",
+  "status": "failed",
+  "metrics": [
+    {
+      "metric": "order_conversion",
+      "status": "passed",
+      "evidence_id": "c57058a85dd644db873e8818567934c2",
+      "checksum": "dc1879dfd1d515d43f30b6efa144a283ce21a979f7a0dede2c45830329fcd1d6",
+      "question": "Compare 24-hour order conversion (order_conversion) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 97463,
+          "denominator": 99522,
+          "excluded": 0,
+          "rate": 0.9793111070918993
+        },
+        {
+          "period": 1,
+          "numerator": 96485,
+          "denominator": 98478,
+          "excluded": 0,
+          "rate": 0.979761977294421
+        }
+      ],
+      "elapsed_seconds": 23.523954800002684
+    },
+    {
+      "metric": "first_attempt_success",
+      "status": "passed",
+      "evidence_id": "6b0ee569d7ca47ccbdcc5b9b78c4554d",
+      "checksum": "50a35e5514623657e9d6760b02a6e45c48d9a6e290cc4f368201301e0594de22",
+      "question": "Compare First-attempt success (first_attempt_success) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 96609,
+          "denominator": 99522,
+          "excluded": 0,
+          "rate": 0.9707300898293845
+        },
+        {
+          "period": 1,
+          "numerator": 95659,
+          "denominator": 98478,
+          "excluded": 0,
+          "rate": 0.9713743171063588
+        }
+      ],
+      "elapsed_seconds": 19.56528840000101
+    },
+    {
+      "metric": "retry_uptake",
+      "status": "passed",
+      "evidence_id": "21c013db36b849829f6d8419dc117a99",
+      "checksum": "625e54c61c66552b5ef07f60dd73b1ef55e7d98ea0a7b8cdf386c2d2d8cdcc40",
+      "question": "Compare Retry uptake (retry_uptake) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 870,
+          "denominator": 2913,
+          "excluded": 0,
+          "rate": 0.29866117404737386
+        },
+        {
+          "period": 1,
+          "numerator": 849,
+          "denominator": 2819,
+          "excluded": 0,
+          "rate": 0.30117062788222776
+        }
+      ],
+      "elapsed_seconds": 15.58503650000057
+    },
+    {
+      "metric": "retry_recovery_all",
+      "status": "passed",
+      "evidence_id": "3899c9847690458eab52dfd31e4d3b53",
+      "checksum": "700a79d5442e3302a4f9a6bb2ea525e26d2f61fac0a70e2dd7da6a18018aa2e8",
+      "question": "Compare Recovery among initial failures (retry_recovery_all) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 854,
+          "denominator": 2913,
+          "excluded": 0,
+          "rate": 0.29316855475454856
+        },
+        {
+          "period": 1,
+          "numerator": 826,
+          "denominator": 2819,
+          "excluded": 0,
+          "rate": 0.2930117062788223
+        }
+      ],
+      "elapsed_seconds": 16.743611600002623
+    },
+    {
+      "metric": "retry_recovery_retried",
+      "status": "passed",
+      "evidence_id": "0cc26d19097a47488d4c2da2bf7959e9",
+      "checksum": "ad29d65f66d34bf24cfc04c2707ce926a7a08b48a395c084c8dbfb067e372502",
+      "question": "Compare Recovery among retried orders (retry_recovery_retried) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 854,
+          "denominator": 870,
+          "excluded": 0,
+          "rate": 0.9816091954022989
+        },
+        {
+          "period": 1,
+          "numerator": 826,
+          "denominator": 849,
+          "excluded": 0,
+          "rate": 0.9729093050647821
+        }
+      ],
+      "elapsed_seconds": 15.108736900001531
+    },
+    {
+      "metric": "settlement_count",
+      "status": "passed",
+      "evidence_id": "84f532e9467046ac9e0b4adacc20b370",
+      "checksum": "3ecb400a098c00dcadf9542f1da8c47796f18553a4eea4bcea214d0517eac1f5",
+      "question": "Compare Due settlement count completion (settlement_count) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 97462,
+          "denominator": 97462,
+          "excluded": 0,
+          "rate": 1.0
+        },
+        {
+          "period": 1,
+          "numerator": 96485,
+          "denominator": 96485,
+          "excluded": 0,
+          "rate": 1.0
+        }
+      ],
+      "elapsed_seconds": 17.664667500001087
+    },
+    {
+      "metric": "settlement_amount",
+      "status": "passed",
+      "evidence_id": "19cac6bb51444e47bdd09d2f2b4d0db8",
+      "checksum": "dddc0f8fc93524d3ea2a35ece9a5285706bae141a5990305f9fb8025e1809f96",
+      "question": "Compare Due settlement amount completion (settlement_amount) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 14297466999,
+          "denominator": 14297466999,
+          "excluded": 0,
+          "rate": 1.0
+        },
+        {
+          "period": 1,
+          "numerator": 14237303846,
+          "denominator": 14237303846,
+          "excluded": 0,
+          "rate": 1.0
+        }
+      ],
+      "elapsed_seconds": 17.787630899998476
+    }
+  ],
+  "protected_sources_before": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "current_metric": "bank_health",
+  "failure_type": "QueryCanceled",
+  "restored_selection": "lifecycle_v1",
+  "protected_sources_after": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  }
+}

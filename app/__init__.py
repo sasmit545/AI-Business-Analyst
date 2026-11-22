@@ -1,0 +1,1 @@
+"""Restricted payment analysis application."""

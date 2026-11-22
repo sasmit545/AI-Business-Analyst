@@ -1,0 +1,50 @@
+{
+  "formal_review": {
+    "skill": "ce-code-review",
+    "mode": "agent",
+    "status": "failed",
+    "reason": "Cannot establish a Git diff base: the authorized local workspace has no Git repository.",
+    "summary": "Code review: skipped (ce-code-review unavailable)"
+  },
+  "simplification": {
+    "mode": "single-pass",
+    "nonblank_foundation_code_lines": 589,
+    "cutoff": 10000,
+    "reviewer": "gpt-6.2-sol",
+    "applied": [
+      "Reuse the checksum already validated during evidence retrieval"
+    ],
+    "not_applied": [
+      "Shared Literal aliases: low-value change to the shared contract during integration",
+      "Catalog caching: would alter mutable asset/error behavior"
+    ],
+    "proof_tests_preserved": true
+  },
+  "manual_inspection": {
+    "scope": [
+      "app",
+      "scripts/audit_analyst_schema.py",
+      "scripts/evaluate_analyst.py",
+      "tests/analyst",
+      "pyproject.toml"
+    ],
+    "checked": [
+      "No administrative/evaluator runtime imports",
+      "Bound filter parameters and fixed identifiers",
+      "Original authorization connection continuity",
+      "Evidence ownership and checksums",
+      "Trusted numeric rendering and no provider prose publication",
+      "Secret redaction",
+      "Local capability and loopback API checks",
+      "Runtime package inclusion",
+      "Evaluator restores lifecycle_v1",
+      "No fixture regeneration",
+      "Explicit window schema binding, pre-SQL mismatch rejection and bounded repair feedback; regression and real same-version gates pass"
+    ],
+    "limitations": [
+      "Not a completed formal review receipt",
+      "No project lint or static-type checker is configured"
+    ]
+  },
+  "final_acceptance": "reports/analyst/final_acceptance.json"
+}

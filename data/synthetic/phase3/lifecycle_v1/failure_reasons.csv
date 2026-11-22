@@ -1,0 +1,5 @@
+failure_reason,label,category
+BANK_TIMEOUT,Bank timeout,technical
+AUTHENTICATION_FAILED,Authentication failed,authentication
+INSUFFICIENT_FUNDS,Insufficient funds,customer
+LIMIT_EXCEEDED,Limit exceeded,customer

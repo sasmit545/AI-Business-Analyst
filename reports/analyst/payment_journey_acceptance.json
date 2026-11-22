@@ -1,0 +1,152 @@
+{
+  "recorded_at": "2026-11-22T09:06:11.710590+00:00",
+  "status": "controlled_and_browser_passed_hosted_unverified",
+  "plan": "docs/plans/2026-11-22-1340-feat-payment-analyst-journey-plan.md",
+  "scoped_suite": {
+    "artifact": "journey_final.xml",
+    "passed": 185,
+    "errors": 0,
+    "failed": 0,
+    "skipped": 11
+  },
+  "focused_and_opt_in": [
+    {
+      "artifact": "journey_review_fixes.xml",
+      "passed": 44,
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "artifact": "journey_projection_final.xml",
+      "passed": 5,
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "artifact": "journey_followup_api.xml",
+      "passed": 1,
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "artifact": "journey_browser.xml",
+      "passed": 1,
+      "errors": 0,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "scope_note": "The scoped suite ran during final review. The focused runs also cover the final recommendation-reference, directional mix, interruption and browser behavior. Test sets overlap.",
+  "public_api": {
+    "report": "journey_final_api_evaluation.json",
+    "mode": "private FastAPI TestClient, native PostgreSQL, deterministic query planner",
+    "questions": 15,
+    "verified": 14,
+    "blocked": 1,
+    "contextual_followups": 14,
+    "extra_analytical_sql": 0,
+    "lifecycle_metrics": [
+      "order_conversion",
+      "first_attempt_success",
+      "retry_uptake",
+      "retry_recovery_all",
+      "retry_recovery_retried",
+      "settlement_count",
+      "settlement_amount",
+      "bank_health"
+    ]
+  },
+  "directional_mix": {
+    "report": "journey_mix_evaluation.json",
+    "status": "passed",
+    "cases": [
+      "scenario_b",
+      "three_bank_offsets"
+    ]
+  },
+  "chromium": {
+    "report": "journey_browser.xml",
+    "model": "deterministic query planner",
+    "evidence": "Restricted PostgreSQL, private FastAPI, Streamlit, desktop Chromium and a fresh mobile-sized browser after API restart.",
+    "checks": [
+      "CSV-verified chart values",
+      "verified volume priority and scoped action",
+      "zero new analytical statements for the action follow-up",
+      "same evidence and action after reopening"
+    ]
+  },
+  "hosted_model": {
+    "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+    "status": "failed",
+    "error": "Provider request failed or timed out",
+    "api_probe": "journey_final_api_evaluation_hosted.json",
+    "api_probe_sql": 0,
+    "api_probe_tool_calls": 0,
+    "retry": {
+      "artifact": "journey_hosted_retry.xml",
+      "passed": 0,
+      "errors": 0,
+      "failed": 1,
+      "skipped": 0
+    },
+    "connectivity": "A TCP connection to the configured provider endpoint on port 443 returned Windows socket error 10013 from this execution environment."
+  },
+  "source_integrity": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": [],
+    "expected_hashes": "protected_sources_before.json",
+    "selected_schema": "lifecycle_v1"
+  },
+  "runtime_example": {
+    "dataset": "lifecycle_v1",
+    "payer_bank_id": "BANK_D",
+    "payment_method": "UPI",
+    "baseline_inclusive": [
+      "2026-10-01",
+      "2026-10-14"
+    ],
+    "comparison_inclusive": [
+      "2026-10-15",
+      "2026-10-28"
+    ],
+    "timezone": "Asia/Kolkata",
+    "source": "Read-only aggregate on selected PostgreSQL payments.",
+    "counts_by_period": [
+      {
+        "AUTHENTICATION_FAILED": 107,
+        "BANK_TIMEOUT": 160,
+        "INSUFFICIENT_FUNDS": 149,
+        "LIMIT_EXCEEDED": 46,
+        "SUCCESS": 8594
+      },
+      {
+        "AUTHENTICATION_FAILED": 85,
+        "BANK_TIMEOUT": 181,
+        "INSUFFICIENT_FUNDS": 125,
+        "LIMIT_EXCEEDED": 41,
+        "SUCCESS": 8950
+      }
+    ],
+    "eligible_attempts": [
+      9056,
+      9382
+    ],
+    "most_comparison_failures": "BANK_TIMEOUT",
+    "largest_contributor_to_success_improvement": "INSUFFICIENT_FUNDS",
+    "success_contributions_pp": {
+      "AUTHENTICATION_FAILED": 0.2755,
+      "BANK_TIMEOUT": -0.1624,
+      "INSUFFICIENT_FUNDS": 0.313,
+      "LIMIT_EXCEEDED": 0.0709
+    }
+  },
+  "review": {
+    "workflow": "Code review: skipped (ce-code-review unavailable)",
+    "reason": "No Git repository or diff endpoints in this workspace.",
+    "independent_source_review": "Completed. Corrected signed mix attribution, saved finding references, typed filter parity, and overly broad wording fallbacks."
+  }
+}

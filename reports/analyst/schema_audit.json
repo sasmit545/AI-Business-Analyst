@@ -1,0 +1,475 @@
+{
+  "recorded_at": "2026-11-21T18:00:00.927866+00:00",
+  "selected_schema": "lifecycle_v1",
+  "source": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "database": "payments_analytics",
+    "role": "ai_analyst"
+  },
+  "columns": [
+    {
+      "table_name": "bank_health",
+      "column_name": "bank_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "bank_health",
+      "column_name": "payment_method",
+      "data_type": "text"
+    },
+    {
+      "table_name": "bank_health",
+      "column_name": "observed_at",
+      "data_type": "text"
+    },
+    {
+      "table_name": "bank_health",
+      "column_name": "availability_pct",
+      "data_type": "text"
+    },
+    {
+      "table_name": "bank_health",
+      "column_name": "p95_latency_ms",
+      "data_type": "text"
+    },
+    {
+      "table_name": "banks",
+      "column_name": "bank_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "banks",
+      "column_name": "bank_name",
+      "data_type": "text"
+    },
+    {
+      "table_name": "failure_reasons",
+      "column_name": "failure_reason",
+      "data_type": "text"
+    },
+    {
+      "table_name": "failure_reasons",
+      "column_name": "label",
+      "data_type": "text"
+    },
+    {
+      "table_name": "failure_reasons",
+      "column_name": "category",
+      "data_type": "text"
+    },
+    {
+      "table_name": "merchants",
+      "column_name": "merchant_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "merchants",
+      "column_name": "merchant_name",
+      "data_type": "text"
+    },
+    {
+      "table_name": "merchants",
+      "column_name": "category",
+      "data_type": "text"
+    },
+    {
+      "table_name": "merchants",
+      "column_name": "region",
+      "data_type": "text"
+    },
+    {
+      "table_name": "orders",
+      "column_name": "order_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "orders",
+      "column_name": "merchant_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "orders",
+      "column_name": "created_at",
+      "data_type": "text"
+    },
+    {
+      "table_name": "orders",
+      "column_name": "amount_paise",
+      "data_type": "text"
+    },
+    {
+      "table_name": "orders",
+      "column_name": "currency",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payment_methods",
+      "column_name": "payment_method",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payment_methods",
+      "column_name": "label",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payment_methods",
+      "column_name": "role",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "attempt_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "attempted_at",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "merchant_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "payer_bank_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "payment_method",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "amount_paise",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "currency",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "status",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "failure_reason",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "order_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "attempt_number",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "completed_at",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "processing_duration_ms",
+      "data_type": "text"
+    },
+    {
+      "table_name": "payments",
+      "column_name": "ingested_at",
+      "data_type": "text"
+    },
+    {
+      "table_name": "settlements",
+      "column_name": "settlement_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "settlements",
+      "column_name": "attempt_id",
+      "data_type": "text"
+    },
+    {
+      "table_name": "settlements",
+      "column_name": "due_at",
+      "data_type": "text"
+    },
+    {
+      "table_name": "settlements",
+      "column_name": "settled_at",
+      "data_type": "text"
+    },
+    {
+      "table_name": "settlements",
+      "column_name": "settlement_status",
+      "data_type": "text"
+    },
+    {
+      "table_name": "settlements",
+      "column_name": "gross_amount_paise",
+      "data_type": "text"
+    }
+  ],
+  "constraints_visible_to_restricted_role": [],
+  "indexes": [
+    {
+      "tablename": "bank_health",
+      "indexname": "bank_health_pkey",
+      "indexdef": "CREATE UNIQUE INDEX bank_health_pkey ON lifecycle_v1.bank_health USING btree (bank_id, payment_method, observed_at)"
+    },
+    {
+      "tablename": "banks",
+      "indexname": "banks_pkey",
+      "indexdef": "CREATE UNIQUE INDEX banks_pkey ON lifecycle_v1.banks USING btree (bank_id)"
+    },
+    {
+      "tablename": "failure_reasons",
+      "indexname": "failure_reasons_pkey",
+      "indexdef": "CREATE UNIQUE INDEX failure_reasons_pkey ON lifecycle_v1.failure_reasons USING btree (failure_reason)"
+    },
+    {
+      "tablename": "merchants",
+      "indexname": "merchants_pkey",
+      "indexdef": "CREATE UNIQUE INDEX merchants_pkey ON lifecycle_v1.merchants USING btree (merchant_id)"
+    },
+    {
+      "tablename": "orders",
+      "indexname": "orders_order_id_merchant_id_amount_paise_currency_key",
+      "indexdef": "CREATE UNIQUE INDEX orders_order_id_merchant_id_amount_paise_currency_key ON lifecycle_v1.orders USING btree (order_id, merchant_id, amount_paise, currency)"
+    },
+    {
+      "tablename": "orders",
+      "indexname": "orders_pkey",
+      "indexdef": "CREATE UNIQUE INDEX orders_pkey ON lifecycle_v1.orders USING btree (order_id)"
+    },
+    {
+      "tablename": "payment_methods",
+      "indexname": "payment_methods_pkey",
+      "indexdef": "CREATE UNIQUE INDEX payment_methods_pkey ON lifecycle_v1.payment_methods USING btree (payment_method)"
+    },
+    {
+      "tablename": "payments",
+      "indexname": "lifecycle_payment_bank_method",
+      "indexdef": "CREATE INDEX lifecycle_payment_bank_method ON lifecycle_v1.payments USING btree (payer_bank_id, payment_method)"
+    },
+    {
+      "tablename": "payments",
+      "indexname": "one_success_per_order",
+      "indexdef": "CREATE UNIQUE INDEX one_success_per_order ON lifecycle_v1.payments USING btree (order_id) WHERE (status = 'SUCCESS'::text)"
+    },
+    {
+      "tablename": "payments",
+      "indexname": "payments_attempt_id_amount_paise_key",
+      "indexdef": "CREATE UNIQUE INDEX payments_attempt_id_amount_paise_key ON lifecycle_v1.payments USING btree (attempt_id, amount_paise)"
+    },
+    {
+      "tablename": "payments",
+      "indexname": "payments_order_id_attempt_number_key",
+      "indexdef": "CREATE UNIQUE INDEX payments_order_id_attempt_number_key ON lifecycle_v1.payments USING btree (order_id, attempt_number)"
+    },
+    {
+      "tablename": "payments",
+      "indexname": "payments_pkey",
+      "indexdef": "CREATE UNIQUE INDEX payments_pkey ON lifecycle_v1.payments USING btree (attempt_id)"
+    },
+    {
+      "tablename": "settlements",
+      "indexname": "settlements_attempt_id_key",
+      "indexdef": "CREATE UNIQUE INDEX settlements_attempt_id_key ON lifecycle_v1.settlements USING btree (attempt_id)"
+    },
+    {
+      "tablename": "settlements",
+      "indexname": "settlements_pkey",
+      "indexdef": "CREATE UNIQUE INDEX settlements_pkey ON lifecycle_v1.settlements USING btree (settlement_id)"
+    }
+  ],
+  "counts": {
+    "payments": 199734,
+    "banks": 5,
+    "merchants": 20,
+    "orders": 198000,
+    "settlements": 193948,
+    "payment_methods": 2,
+    "failure_reasons": 4,
+    "bank_health": 89280
+  },
+  "quality": [
+    {
+      "rule": "duplicate_occurrences",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "missing_attempt_id",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "missing_timestamps",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "malformed_timestamps",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "invalid_status_reason",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "invalid_amount_currency",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "invalid_method",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "orphan_merchants",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "orphan_banks",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "duplicate_banks",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    },
+    {
+      "rule": "duplicate_merchants",
+      "count": 0,
+      "status": "PASS",
+      "metric": "attempt_success",
+      "scope": "entire selected payments population before window/filter selection"
+    }
+  ],
+  "dependency_smoke": "passed",
+  "versions": {
+    "payments-ai-analyst": "0.1.0",
+    "altair": "6.3.0",
+    "annotated-doc": "0.0.7",
+    "annotated-types": "0.8.0",
+    "anyio": "4.16.0",
+    "attrs": "26.1.0",
+    "build": "1.6.1",
+    "certifi": "2026.11.20",
+    "charset-normalizer": "3.5.2",
+    "click": "8.5.1",
+    "colorama": "0.4.6",
+    "distro": "1.9.0",
+    "fastapi": "0.165.0",
+    "greenlet": "3.5.6",
+    "h11": "0.16.0",
+    "httpcore": "1.0.9",
+    "httpcore2": "2.16.2",
+    "httpx": "0.28.1",
+    "httpx2": "2.16.2",
+    "idna": "3.20",
+    "iniconfig": "2.3.1",
+    "itsdangerous": "2.2.0",
+    "Jinja2": "3.1.6",
+    "jiter": "0.19.0",
+    "jsonpatch": "1.48",
+    "jsonpointer": "3.12",
+    "jsonschema": "4.26.0",
+    "jsonschema-specifications": "2025.9.1",
+    "langchain-core": "1.8.4",
+    "langchain-protocol": "0.0.22",
+    "langgraph": "1.2.24",
+    "langgraph-checkpoint": "4.3.2",
+    "langgraph-prebuilt": "1.1.3",
+    "langgraph-sdk": "0.4.14",
+    "langsmith": "0.16.0",
+    "MarkupSafe": "3.0.4",
+    "narwhals": "2.29.0",
+    "numpy": "2.5.5",
+    "openai": "3.57.0",
+    "opentelemetry-api": "1.45.2",
+    "orjson": "3.13.0",
+    "ormsgpack": "1.13.1",
+    "packaging": "26.3",
+    "pandas": "3.1.1",
+    "pillow": "13.0.0",
+    "pip": "26.2.2",
+    "playwright": "1.65.2",
+    "plotly": "7.1.0",
+    "pluggy": "1.7.0",
+    "protobuf": "7.36.2",
+    "psycopg": "3.3.9",
+    "psycopg-binary": "3.3.9",
+    "pyarrow": "26.0.1",
+    "pydantic": "2.14.4",
+    "pydantic_core": "2.50.5",
+    "pydeck": "0.9.3",
+    "Pygments": "2.21.0",
+    "pyproject_hooks": "1.3.3",
+    "pytest": "9.2.0",
+    "python-dateutil": "4.0.0",
+    "python-multipart": "0.0.34",
+    "PyYAML": "6.0.4",
+    "referencing": "0.37.0",
+    "requests": "2.34.2",
+    "requests-toolbelt": "1.0.0",
+    "rpds-py": "2026.9.1",
+    "setuptools": "84.2.1",
+    "sniffio": "1.3.1",
+    "sqlglot": "30.33.0",
+    "starlette": "1.10.0",
+    "streamlit": "1.67.0",
+    "tenacity": "9.2.1",
+    "truststore": "0.10.5",
+    "typing_extensions": "4.16.0",
+    "typing-inspection": "0.4.5",
+    "tzdata": "2026.6",
+    "urllib3": "2.8.0",
+    "uuid_utils": "0.19.0",
+    "uvicorn": "0.54.0",
+    "watchdog": "7.1.1",
+    "websockets": "17.4",
+    "xxhash": "4.1.0",
+    "zstandard": "0.25.0"
+  },
+  "saved_database_report_status": "passed",
+  "saved_payment_row_count_matches": true,
+  "saved_database_report_sha256": "990a74433cd8ea61073273001fda297bb96f9f42fa80ea55bf738a33f4fefc4f",
+  "catalog_mapping": "matches current database",
+  "scope_table_count": 8
+}

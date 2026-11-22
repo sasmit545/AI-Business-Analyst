@@ -1,0 +1,21 @@
+merchant_id,merchant_name,category,region
+M01,Fictional Merchant 01,retail,North
+M02,Fictional Merchant 02,grocery,North
+M03,Fictional Merchant 03,dining,North
+M04,Fictional Merchant 04,services,North
+M05,Fictional Merchant 05,retail,North
+M06,Fictional Merchant 06,grocery,South
+M07,Fictional Merchant 07,dining,South
+M08,Fictional Merchant 08,services,South
+M09,Fictional Merchant 09,retail,South
+M10,Fictional Merchant 10,grocery,South
+M11,Fictional Merchant 11,dining,East
+M12,Fictional Merchant 12,services,East
+M13,Fictional Merchant 13,retail,East
+M14,Fictional Merchant 14,grocery,East
+M15,Fictional Merchant 15,dining,East
+M16,Fictional Merchant 16,services,West
+M17,Fictional Merchant 17,retail,West
+M18,Fictional Merchant 18,grocery,West
+M19,Fictional Merchant 19,dining,West
+M20,Fictional Merchant 20,services,West

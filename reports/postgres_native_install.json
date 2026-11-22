@@ -1,0 +1,7 @@
+{
+  "archive_sha256": "ead0bbc27fb678fa24dcf86b738981323042abd073c744103bf7f3aed23f9a33",
+  "binary_directory": "E:\\pinelabs\\.local\\postgres\\runtime\\pgsql\\bin",
+  "installation": "project-local native Windows binaries",
+  "source_url": "https://get.enterprisedb.com/postgresql/postgresql-18.7-1-windows-x64-binaries.zip",
+  "version": "postgres (PostgreSQL) 18.7"
+}

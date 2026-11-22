@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="133.797" timestamp="2026-11-22T05:07:43.386325+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="133.224"><failure message="playwright._impl._errors.TimeoutError: Locator.wait_for: Timeout 90000ms exceeded.&#10;Call log:&#10;  - waiting for get_by_text(&quot;97.0718%&quot;, exact=True).first to be visible">tests\analyst\test_durable_browser.py:288: in test_chart_selection_and_restart
+    child_id = _select_bank(browser,url,saved,bank,counts)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\analyst\test_durable_browser.py:168: in _select_bank
+    page.get_by_text(f"{100*rate:.4f}%",exact=True).first.wait_for(timeout=90000)
+.local\analyst\venv\Lib\site-packages\playwright\sync_api\_generated.py:13663: in wait_for
+    self._sync(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\locator.py:943: in wait_for
+    await self._frame._channel.waitForSelector(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:398: in _mapped
+    return mapper(await awaitable)
+                  ^^^^^^^^^^^^^^^
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:387: in finish
+    raise e from None
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:352: in finish
+    result = await zone.run_async(lambda: awaitable)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.local\analyst\venv\Lib\site-packages\playwright\_impl\utils\zones.py:58: in run_async
+    return await func()
+           ^^^^^^^^^^^^
+E   playwright._impl._errors.TimeoutError: Locator.wait_for: Timeout 90000ms exceeded.
+E   Call log:
+E     - waiting for get_by_text("97.0718%", exact=True).first to be visible</failure></testcase></testsuite></testsuites>

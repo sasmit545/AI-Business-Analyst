@@ -1,0 +1,12 @@
+{
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "status": "failed",
+  "error": "Provider request failed or timed out",
+  "budget": {
+    "sql_statements": 0,
+    "tool_calls": 0,
+    "repairs": 0,
+    "tokens_reserved": 20636
+  }
+}

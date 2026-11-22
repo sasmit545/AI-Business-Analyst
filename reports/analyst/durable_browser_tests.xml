@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="170.956" timestamp="2026-11-22T03:27:20.077490+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="168.812"><failure message="playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.&#10;Call log:&#10;  - waiting for locator(&quot;summary&quot;).filter(has_text=&quot;Save session credentials&quot;)&#10;    - locator resolved to &lt;summary class=&quot;st-emotion-cache-ie2i7 e1u8u9eb10&quot;&gt;…&lt;/summary&gt;&#10;  - attempting click action&#10;    - waiting for element to be visible, enabled and stable">tmp_path = WindowsPath('E:/pinelabs/.local/analyst/test-temp/71f7a21a20f246c9b5a7ae5c12df3a84/test_chart_selection_and_resta0')
+
+    @pytest.mark.live
+    @pytest.mark.skipif(os.environ.get('ANALYST_DURABLE_BROWSER') != '1', reason='Opt-in real model and browser')
+    def test_chart_selection_and_restart(tmp_path):
+        from playwright.sync_api import expect, sync_playwright
+        from scripts.evaluate_lifecycle import independent_truth
+    
+        root = Path.cwd()
+        ctx = multiprocessing.get_context('spawn')
+        api_port = _port()
+        token = tmp_path/'.local/analyst/api_token'
+        base = f'http://127.0.0.1:{api_port}'
+        api = ctx.Process(target=_serve_api, args=(root, tmp_path, api_port))
+        api.start()
+        ui = None
+        try:
+            _wait_ready(api, base+'/health', token)
+            ui_port = _port()
+            ui = ctx.Process(target=_serve_ui, args=(root, tmp_path, api_port, ui_port))
+            ui.start()
+            url = f'http://127.0.0.1:{ui_port}'
+            _wait_ready(ui, url+'/_stcore/health')
+            truth, segments, _ = independent_truth()
+            with sync_playwright() as browser_api:
+                browser = browser_api.chromium.launch(
+                    executable_path='C:/Program Files/Google/Chrome/Application/chrome.exe', headless=True)
+                page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                page.goto(url)
+    
+                def button(name):
+                    control = page.get_by_role('button', name=name, exact=True)
+                    expect(control).to_be_enabled(timeout=15000)
+                    control.press('Enter')
+    
+                def expander(name):
+                    page.locator('summary').filter(has_text=name).click()
+    
+                def read_id():
+                    provenance = page.get_by_text('Evidence ID:', exact=False)
+                    if not provenance.is_visible():
+                        expander('SQL, quality and provenance')
+                    expect(provenance).to_be_visible()
+                    return provenance.inner_text().removeprefix('Evidence ID: ')
+    
+                button('Start new session')
+                expander('Save session credentials')
+                resume_id = page.get_by_label('Session ID to save', exact=True).input_value()
+                resume_key = page.get_by_label('Session key to save', exact=True).input_value()
+&gt;               expander('Save session credentials')
+
+tests\analyst\test_durable_browser.py:109: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\analyst\test_durable_browser.py:96: in expander
+    page.locator('summary').filter(has_text=name).click()
+.local\analyst\venv\Lib\site-packages\playwright\sync_api\_generated.py:11045: in click
+    self._sync(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\locator.py:222: in click
+    return await self._frame.click(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\frame.py:587: in click
+    return await self._channel.click(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:387: in finish
+    raise e from None
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:352: in finish
+    result = await zone.run_async(lambda: awaitable)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;playwright._impl.utils.zones.Zone object at 0x00000117BC0518B0&gt;
+func = &lt;function ChannelOwner._wrap_api_call.&lt;locals&gt;.finish.&lt;locals&gt;.&lt;lambda&gt; at 0x00000117BC0A7320&gt;
+
+    async def run_async(self, func: Callable[[], Awaitable[R]]) -&gt; R:
+        # Python: run() of an async function. The coroutine runs when it is awaited,
+        # so the zone must be current while it is awaited, not while it is created.
+        token = _async_local_storage.set(self)
+        try:
+&gt;           return await func()
+                   ^^^^^^^^^^^^
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for locator("summary").filter(has_text="Save session credentials")
+E               - locator resolved to &lt;summary class="st-emotion-cache-ie2i7 e1u8u9eb10"&gt;…&lt;/summary&gt;
+E             - attempting click action
+E               - waiting for element to be visible, enabled and stable
+
+.local\analyst\venv\Lib\site-packages\playwright\_impl\utils\zones.py:58: TimeoutError</failure></testcase></testsuite></testsuites>

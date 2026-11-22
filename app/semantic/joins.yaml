@@ -1,0 +1,8 @@
+version: 1.1.0
+lifecycle:
+  orders_payments: Reduce observed attempts to one row per order before joining orders
+    on order_id. Bank and method are taken from the first attempt.
+  payments_settlements: One successful attempt to one full-gross settlement obligation
+    on attempt_id.
+  payments_health: Bank ID and payment method plus containing half-open five-minute
+    bucket. Ambiguous or invalid observations are unavailable; no causal proof.

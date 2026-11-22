@@ -1,0 +1,8 @@
+{
+  "returncode": 0,
+  "output_directory": ".local\\analyst\\dist\\verified-2f47edfc",
+  "note": "Fresh output directory because the prior session wheel could not be replaced under current filesystem permissions.",
+  "wheel": ".local\\analyst\\dist\\verified-2f47edfc\\payments_ai_analyst-0.1.0-py3-none-any.whl",
+  "source_contents_match": true,
+  "runtime_inclusion_boundary": "passed"
+}

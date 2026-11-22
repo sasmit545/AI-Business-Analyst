@@ -1,0 +1,34 @@
+[server]
+address = "127.0.0.1"
+headless = true
+enableStaticServing = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+
+[theme]
+base = "light"
+primaryColor = "#17664f"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#edf4ee"
+textColor = "#192e27"
+borderColor = "#c4d4c9"
+dataframeHeaderBackgroundColor = "#e3ede6"
+dataframeHeaderTextColor = "#234a39"
+codeBackgroundColor = "#edf4ee"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "0.65rem"
+buttonRadius = "0.55rem"
+headingFontWeights = [600, 600, 600]
+chartCategoricalColors = ["#19765e", "#77639d", "#bd8040", "#487796", "#a15b6f", "#767849", "#547a71", "#805e4c", "#615c89", "#646d72"]
+
+[theme.sidebar]
+backgroundColor = "#123d31"
+secondaryBackgroundColor = "#214e40"
+textColor = "#edf5eb"
+primaryColor = "#d4efb9"
+borderColor = "#426455"

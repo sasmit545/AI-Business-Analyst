@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "live_model": true,
+  "recorded_at": "2026-11-21T18:00:52.951863+00:00",
+  "scenario": "scenario_a_dirty",
+  "evidence_id": "def4279f87054f3193318914d7a83bfe",
+  "visible_status": "blocked",
+  "defects": {
+    "duplicate_occurrences": 20,
+    "missing_timestamps": 10,
+    "orphan_merchants": 10
+  },
+  "certified_metrics_visible": false,
+  "screenshot": "browser-live-dirty.png",
+  "complete_demo": "passed",
+  "final_review_artifact": "reports/analyst/final_acceptance.json"
+}

@@ -1,0 +1,281 @@
+{
+  "hand_fixture": {
+    "attempts": [
+      {
+        "attempts": 4,
+        "failures": 2,
+        "success_rate_pct": 50.0,
+        "successes": 2
+      }
+    ],
+    "bank_method": [
+      {
+        "attempts": 4,
+        "mean_duration_ms": 1000.0,
+        "payer_bank_id": "BANK_A",
+        "payment_method": "UPI",
+        "success_rate_pct": 50.0,
+        "successes": 2
+      }
+    ],
+    "joins": [
+      {
+        "distinct_attempts": 4,
+        "joined_rows": 4
+      }
+    ],
+    "order_attempt_distribution": [
+      {
+        "attempts_per_order": 1,
+        "orders": 2
+      },
+      {
+        "attempts_per_order": 2,
+        "orders": 1
+      }
+    ],
+    "orders": [
+      {
+        "conversion_24h_pct": 50.0,
+        "eligible_orders": 2,
+        "immature_orders": 1,
+        "paid_orders_24h": 1,
+        "paid_orders_by_cutoff": 1,
+        "selected_orders": 3
+      }
+    ],
+    "periods": [
+      {
+        "attempts": 4,
+        "failures": 2,
+        "period": "comparison",
+        "success_rate_pct": 50.0,
+        "successes": 2
+      }
+    ],
+    "retries": [
+      {
+        "initially_failed_orders": 2,
+        "recovered_orders": 1,
+        "recovery_among_initial_failures_pct": 50.0,
+        "recovery_among_retried_pct": 100.0,
+        "retried_orders": 1,
+        "retry_attempts": 1
+      }
+    ],
+    "settlements": [
+      {
+        "backlog_amount_paise": 0,
+        "backlog_attempts": 0,
+        "completion_pct": 100.0,
+        "due_attempts": 1,
+        "not_yet_due_attempts": 1,
+        "settled_amount_paise": 10000,
+        "settled_due_attempts": 1,
+        "successful_attempts": 2
+      }
+    ],
+    "temporal_join": [
+      {
+        "distinct_attempts": 4,
+        "joined_rows": 4,
+        "unmatched_attempts": 0
+      }
+    ],
+    "totals": [
+      {
+        "attempts": 4,
+        "attempts_after_order_window": 0,
+        "bank_health_observations": 4,
+        "orders": 3,
+        "settlements": 2,
+        "successful_attempts": 2
+      }
+    ]
+  },
+  "hand_fixture_sha256": "ca4872862abe47dec39d5ee7b7e1a391a0d1724f5eb01aba8b64fc286f3d5255",
+  "metrics": {
+    "attempts": [
+      {
+        "attempts": 199733,
+        "failures": 5786,
+        "success_rate_pct": 97.103133,
+        "successes": 193947
+      }
+    ],
+    "bank_method": [
+      {
+        "attempts": 26899,
+        "mean_duration_ms": 746.023124,
+        "payer_bank_id": "BANK_A",
+        "payment_method": "CARD",
+        "success_rate_pct": 98.970222,
+        "successes": 26622
+      },
+      {
+        "attempts": 42736,
+        "mean_duration_ms": 478.633564,
+        "payer_bank_id": "BANK_A",
+        "payment_method": "UPI",
+        "success_rate_pct": 97.947866,
+        "successes": 41859
+      },
+      {
+        "attempts": 19280,
+        "mean_duration_ms": 746.790197,
+        "payer_bank_id": "BANK_B",
+        "payment_method": "CARD",
+        "success_rate_pct": 98.060166,
+        "successes": 18906
+      },
+      {
+        "attempts": 30602,
+        "mean_duration_ms": 476.943206,
+        "payer_bank_id": "BANK_B",
+        "payment_method": "UPI",
+        "success_rate_pct": 97.143978,
+        "successes": 29728
+      },
+      {
+        "attempts": 15336,
+        "mean_duration_ms": 744.955725,
+        "payer_bank_id": "BANK_C",
+        "payment_method": "CARD",
+        "success_rate_pct": 97.020083,
+        "successes": 14879
+      },
+      {
+        "attempts": 24701,
+        "mean_duration_ms": 478.098984,
+        "payer_bank_id": "BANK_C",
+        "payment_method": "UPI",
+        "success_rate_pct": 96.101372,
+        "successes": 23738
+      },
+      {
+        "attempts": 11678,
+        "mean_duration_ms": 745.575098,
+        "payer_bank_id": "BANK_D",
+        "payment_method": "CARD",
+        "success_rate_pct": 95.846892,
+        "successes": 11193
+      },
+      {
+        "attempts": 18438,
+        "mean_duration_ms": 478.305782,
+        "payer_bank_id": "BANK_D",
+        "payment_method": "UPI",
+        "success_rate_pct": 95.151318,
+        "successes": 17544
+      },
+      {
+        "attempts": 3880,
+        "mean_duration_ms": 740.37732,
+        "payer_bank_id": "BANK_E",
+        "payment_method": "CARD",
+        "success_rate_pct": 94.845361,
+        "successes": 3680
+      },
+      {
+        "attempts": 6183,
+        "mean_duration_ms": 479.896167,
+        "payer_bank_id": "BANK_E",
+        "payment_method": "UPI",
+        "success_rate_pct": 93.773249,
+        "successes": 5798
+      }
+    ],
+    "joins": [
+      {
+        "distinct_attempts": 199733,
+        "joined_rows": 199733
+      }
+    ],
+    "order_attempt_distribution": [
+      {
+        "attempts_per_order": 1,
+        "orders": 196281
+      },
+      {
+        "attempts_per_order": 2,
+        "orders": 1704
+      },
+      {
+        "attempts_per_order": 3,
+        "orders": 15
+      }
+    ],
+    "orders": [
+      {
+        "conversion_24h_pct": 97.953535,
+        "eligible_orders": 198000,
+        "immature_orders": 0,
+        "paid_orders_24h": 193948,
+        "paid_orders_by_cutoff": 193948,
+        "selected_orders": 198000
+      }
+    ],
+    "periods": [
+      {
+        "attempts": 100402,
+        "failures": 2940,
+        "period": "baseline",
+        "success_rate_pct": 97.071771,
+        "successes": 97462
+      },
+      {
+        "attempts": 99331,
+        "failures": 2846,
+        "period": "comparison",
+        "success_rate_pct": 97.134832,
+        "successes": 96485
+      }
+    ],
+    "retries": [
+      {
+        "initially_failed_orders": 5732,
+        "recovered_orders": 1680,
+        "recovery_among_initial_failures_pct": 29.309142,
+        "recovery_among_retried_pct": 97.731239,
+        "retried_orders": 1719,
+        "retry_attempts": 1734
+      }
+    ],
+    "settlements": [
+      {
+        "backlog_amount_paise": 0,
+        "backlog_attempts": 0,
+        "completion_pct": 100.0,
+        "due_attempts": 193947,
+        "not_yet_due_attempts": 0,
+        "settled_amount_paise": 28534770845,
+        "settled_due_attempts": 193947,
+        "successful_attempts": 193947
+      }
+    ],
+    "temporal_join": [
+      {
+        "distinct_attempts": 199733,
+        "joined_rows": 199733,
+        "unmatched_attempts": 0
+      }
+    ],
+    "totals": [
+      {
+        "attempts": 199734,
+        "attempts_after_order_window": 1,
+        "bank_health_observations": 89280,
+        "orders": 198000,
+        "settlements": 193948,
+        "successful_attempts": 193948
+      }
+    ]
+  },
+  "parameters": {
+    "cutoff": "2026-11-01T00:00:00.000+05:30",
+    "window_end": "2026-10-29T00:00:00.000+05:30",
+    "window_start": "2026-10-01T00:00:00.000+05:30"
+  },
+  "reference_sql_sha256": "18ffe4c45aaf77daedaaf6ffd2548f35d630e588ea97718b3be3436bf4c3e667",
+  "schema_version": "1.0.0"
+}

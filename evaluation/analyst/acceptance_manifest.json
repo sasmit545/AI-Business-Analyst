@@ -1,0 +1,7 @@
+{
+  "foundation": {"required": ["dependency smoke", "current schema audit", "clean runtime catalog", "unchanged protected sources"]},
+  "complete_demo": {"required": ["real model/API/SQL/browser journey", "phase1 A/B/dirty independent benchmarks", "phase2 separate-schema benchmarks", "lifecycle attempt/bank benchmark", "visible safe failure", "adversarial policy cases"]},
+  "first_analyst_breadth": {"required": ["complete_demo", "lifecycle order conversion/retries/settlement independent benchmarks"]},
+  "target_v1": {"required": ["first_analyst_breadth", "durable replay", "drill-down", "bounded adaptive investigations", "definition conflicts"]},
+  "rule": "Missing proof remains pending; deterministic tests or saved dataset reports cannot pass complete_demo."
+}

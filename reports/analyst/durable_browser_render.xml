@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="89.823" timestamp="2026-11-22T03:33:41.351593+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="87.176"><failure message="playwright._impl._errors.TimeoutError: Page.goto: Timeout 30000ms exceeded.&#10;Call log:&#10;  - navigating to &quot;http://127.0.0.1:52980/&quot;, waiting until &quot;load&quot;">tmp_path = WindowsPath('E:/pinelabs/.local/analyst/test-temp/f029f1de32484db9920a5b9ba69b521f/test_chart_selection_and_resta0')
+
+    @pytest.mark.live
+    @pytest.mark.skipif(os.environ.get('ANALYST_DURABLE_BROWSER') != '1', reason='Opt-in real model and browser')
+    def test_chart_selection_and_restart(tmp_path):
+        from playwright.sync_api import expect, sync_playwright
+    
+        root = Path.cwd()
+        ctx = multiprocessing.get_context('spawn')
+        api_port = _port()
+        token = tmp_path/'.local/analyst/api_token'
+        base = f'http://127.0.0.1:{api_port}'
+        api = ctx.Process(target=_serve_api, args=(root, tmp_path, api_port))
+        api.start()
+        ui = None
+        try:
+            _wait_ready(api, base+'/health', token)
+            ui_port = _port()
+            ui = ctx.Process(target=_serve_ui, args=(root, tmp_path, api_port, ui_port))
+            ui.start()
+            url = f'http://127.0.0.1:{ui_port}'
+            _wait_ready(ui, url+'/_stcore/health')
+            counts = _conversion_counts(root)
+            with sync_playwright() as browser_api:
+                browser = browser_api.chromium.launch(
+                    executable_path='C:/Program Files/Google/Chrome/Application/chrome.exe', headless=True)
+                page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+&gt;               page.goto(url)
+
+tests\analyst\test_durable_browser.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.local\analyst\venv\Lib\site-packages\playwright\sync_api\_generated.py:18561: in goto
+    self._sync(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\page.py:600: in goto
+    return await self._main_frame.goto(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\frame.py:217: in goto
+    await self._channel.goto(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:398: in _mapped
+    return mapper(await awaitable)
+                  ^^^^^^^^^^^^^^^
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:387: in finish
+    raise e from None
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:352: in finish
+    result = await zone.run_async(lambda: awaitable)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;playwright._impl.utils.zones.Zone object at 0x00000159DC839CD0&gt;
+func = &lt;function ChannelOwner._wrap_api_call.&lt;locals&gt;.finish.&lt;locals&gt;.&lt;lambda&gt; at 0x00000159E13D2DA0&gt;
+
+    async def run_async(self, func: Callable[[], Awaitable[R]]) -&gt; R:
+        # Python: run() of an async function. The coroutine runs when it is awaited,
+        # so the zone must be current while it is awaited, not while it is created.
+        token = _async_local_storage.set(self)
+        try:
+&gt;           return await func()
+                   ^^^^^^^^^^^^
+E           playwright._impl._errors.TimeoutError: Page.goto: Timeout 30000ms exceeded.
+E           Call log:
+E             - navigating to "http://127.0.0.1:52980/", waiting until "load"
+
+.local\analyst\venv\Lib\site-packages\playwright\_impl\utils\zones.py:58: TimeoutError</failure></testcase></testsuite></testsuites>

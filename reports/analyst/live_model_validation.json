@@ -1,0 +1,16 @@
+{
+  "status": "blocked",
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "attempted": true,
+  "test": "tests/analyst/test_live_model.py::test_real_nemotron_calls_tools_and_publishes_executed_evidence",
+  "result": "failed safely with Provider request failed or timed out; no fabricated answer published",
+  "connectivity_diagnostic": {
+    "credential_used": false,
+    "endpoint": "https://integrate.api.nvidia.com/v1/models",
+    "exception_chain": ["httpx.ConnectError", "httpcore.ConnectError", "PermissionError"],
+    "windows_error": 10013
+  },
+  "complete_demo": "pending",
+  "recovery": "Run the documented live model/API benchmarks and real-provider browser test from a PowerShell environment permitted to reach NVIDIA. Hosted tool-call compatibility remains unverified."
+}

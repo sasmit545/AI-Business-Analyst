@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="10" time="126.042" timestamp="2026-11-22T14:18:10.863777+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_journey_projection" name="test_publication_verifies_saved_finding_and_carries_scope" time="0.464" /><testcase classname="tests.analyst.test_journey_projection" name="test_scope_free_actions_inherit_priority_but_new_requests_still_require_planning" time="0.023" /><testcase classname="tests.analyst.test_journey_projection" name="test_missing_joint_breakdown_explicitly_names_the_needed_evidence" time="0.107" /><testcase classname="tests.analyst.test_chat_history" name="test_transcript_only_publishes_visible_turns_and_matches_displayed_headline" time="0.088" /><testcase classname="tests.analyst.test_chat_history" name="test_older_saved_question_with_no_recorded_exchanges_can_be_read" time="0.003" /><testcase classname="tests.analyst.test_chat_history" name="test_session_transcript_survives_restart_without_reexecuting" time="39.299" /><testcase classname="tests.analyst.test_checkpoint_replay" name="test_budget_persists_reservations_before_returning_to_caller" time="0.003" /><testcase classname="tests.analyst.test_checkpoint_replay" name="test_restart_either_side_of_evidence_commit[before_receipt]" time="21.765" /><testcase classname="tests.analyst.test_checkpoint_replay" name="test_restart_either_side_of_evidence_commit[before_evidence]" time="19.451"><failure message="AssertionError: assert {'investigati...results', ...} == {'investigati...results', ...}&#10;  &#10;  Omitting 14 identical items, use -vv to show&#10;  Differing items:&#10;  {'can_test_segment': False} != {'can_test_segment': True}&#10;  Use -v to get more diff">tests\analyst\test_checkpoint_replay.py:94: in test_restart_either_side_of_evidence_commit
+    assert replayed.snapshot() == job.snapshot()
+E   AssertionError: assert {'investigati...results', ...} == {'investigati...results', ...}
+E     
+E     Omitting 14 identical items, use -vv to show
+E     Differing items:
+E     {'can_test_segment': False} != {'can_test_segment': True}
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.analyst.test_checkpoint_replay" name="test_restart_either_side_of_evidence_commit[after_evidence]" time="24.508"><failure message="AssertionError: assert {'investigati...results', ...} == {'investigati...results', ...}&#10;  &#10;  Omitting 14 identical items, use -vv to show&#10;  Differing items:&#10;  {'can_test_segment': False} != {'can_test_segment': True}&#10;  Use -v to get more diff">tests\analyst\test_checkpoint_replay.py:94: in test_restart_either_side_of_evidence_commit
+    assert replayed.snapshot() == job.snapshot()
+E   AssertionError: assert {'investigati...results', ...} == {'investigati...results', ...}
+E     
+E     Omitting 14 identical items, use -vv to show
+E     Differing items:
+E     {'can_test_segment': False} != {'can_test_segment': True}
+E     Use -v to get more diff</failure></testcase></testsuite></testsuites>

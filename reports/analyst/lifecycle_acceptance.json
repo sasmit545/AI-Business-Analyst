@@ -1,0 +1,209 @@
+{
+  "recorded_at": "2026-11-21T21:23:15.414852+00:00",
+  "status": "first_analyst_breadth_passed",
+  "scope": "U8 / G2 lifecycle and scoped bank health",
+  "plan": "plans/2026-11-21-2019-feat-enterprise-ai-analyst-plan.md",
+  "gates": {
+    "foundation": "passed",
+    "complete_demo": "passed",
+    "first_analyst_breadth": "passed",
+    "target_v1": "pending"
+  },
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "runtime_snapshot": "reports/analyst/lifecycle_runtime_snapshot.json",
+  "runtime_files_verified": 43,
+  "application_suite": {
+    "passed": 92,
+    "skipped": 2,
+    "failed": 0,
+    "artifact": "reports/analyst/lifecycle_tests.xml",
+    "skip_reason": "Provider/browser tests are opt-in and were exercised separately"
+  },
+  "live_metrics": {
+    "passed": 8,
+    "artifact": "reports/analyst/lifecycle_live_acceptance.json",
+    "oracle": "Independent CSV calculations reconciled with original Phase 3 SQL answers; all periods and bank/method segments checked"
+  },
+  "regression": {
+    "scenarios_passed": 6,
+    "policy_cases_passed": 4,
+    "denial_probes_per_schema": 13,
+    "selection_continuity_A_B_A": "passed",
+    "artifact": "reports/analyst/lifecycle_attempt_regression.json"
+  },
+  "browser": {
+    "passed": 5,
+    "mode": "real NVIDIA/model/API/PostgreSQL",
+    "artifacts": [
+      "reports/analyst/browser_order_conversion_validation.json",
+      "reports/analyst/browser_retry_recovery_retried_validation.json",
+      "reports/analyst/browser_settlement_amount_validation.json",
+      "reports/analyst/browser_bank_health_validation.json",
+      "reports/analyst/browser_dirty_lifecycle_validation.json"
+    ],
+    "checks": [
+      "Conversion, retry recovery, settlement amount and health: exact chart values, numerator/denominator, cutoff, bank/method table, SQL provenance, desktop/mobile and clarification clearing prior results",
+      "Dirty: blocked certification, exactly 20 duplicate occurrences, 10 missing timestamps and 10 orphan merchants; no metrics/chart"
+    ]
+  },
+  "boundary_proof": [
+    "Transaction-local hand fixtures: maturity, conversion boundary, retry denominators, pending/due settlements and count/amount grains",
+    "Health: containing half-open bucket, method/bank identity, missing/invalid/duplicate telemetry preserves payment denominator, both windows empty",
+    "Metric-scoped quality gates and tampered evidence reject invalid publication"
+  ],
+  "evidence_verified": [
+    {
+      "id": "c24297a262774dc291aae270e3bdfc2f",
+      "checksum": "861d721c2d62c1bc68371b0341ff4c00306a8fd982d7010c8b49d8a5fae81a73",
+      "metric": "order_conversion",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "dcbffc5dab28421ea4adbdc0d04d337c",
+      "checksum": "13ceda88a939ae75f0307e54f4482861d8cce9bbddf04a452b7b2cd02414288f",
+      "metric": "first_attempt_success",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "ead7804a5fab474785e134512298674e",
+      "checksum": "84c91edb9225cce3f4ba8f3c1bb575824f9b74c85c62e7bcc34122e684092a9c",
+      "metric": "retry_uptake",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "c5bb08ee96224b4bbab59be8db73821d",
+      "checksum": "cda949d4179fc27ef71f64f4bf1b98a5dee29424d18b75cdcb273f7c0333ea8d",
+      "metric": "retry_recovery_all",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "3c2e11cd5c904fce97f618951651e0cc",
+      "checksum": "4f7585bde0969b76d569817b547dbad9f5ddc57b00a62135eca153af08c6f82b",
+      "metric": "retry_recovery_retried",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "7a7abcf15c08447cb7d4731d96e9d3e6",
+      "checksum": "51d7756e7c15328a222eae1816ade51678f51c1653388d73a2fd7432a999d91c",
+      "metric": "settlement_count",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "f3ae115201ca4e49ac031771b93086a2",
+      "checksum": "7a15140e0f4504444fa08628cb1c3cec6ebfe3400510e4be8aa2c24391711aba",
+      "metric": "settlement_amount",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "54324ee970904125bfddb3525a3b4386",
+      "checksum": "702e9c37c35110cc45abc65269495333767cb77173e8a7a8a9c57c23f6f9c492",
+      "metric": "bank_health",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "6d4bf8dde01a4302bbaee0170654cb30",
+      "checksum": "494872b8c0f4002b630199ae54949b06c4cf25ebab4af2f5e22c9e4810922363",
+      "metric": "attempt_success",
+      "scenario": "scenario_a"
+    },
+    {
+      "id": "4f2ac81e180e48059868935306c3c807",
+      "checksum": "8d472eaa2d9259d80e24274796d3d56d59f3bdcb5fef30e479990f37c03342b8",
+      "metric": "attempt_success",
+      "scenario": "scenario_b"
+    },
+    {
+      "id": "b45e4730ee4b47bba2dac82d13286b1c",
+      "checksum": "07cf1a22189ca3fcb3064f0ba28e492e809f6eadf407fd0ecde5e30380839b46",
+      "metric": "attempt_success",
+      "scenario": "scenario_a_dirty"
+    },
+    {
+      "id": "ca76a537ded744d8aa64e7e6c016c5dc",
+      "checksum": "c6640126e1aee09c77e80018a4812db8504f6e7cee3a9fa1082eb5fe2050b117",
+      "metric": "attempt_success",
+      "scenario": "phase2_baseline"
+    },
+    {
+      "id": "f4b3fa7bdce24e20b5a4ba6e38f8f221",
+      "checksum": "02a35b5d976f40b049b075fd52ce4c76ab7ff5d2de25940f38c0e6ae148d4f0f",
+      "metric": "attempt_success",
+      "scenario": "phase2_incident"
+    },
+    {
+      "id": "0b5b924fb7e2486abeddf8beba246da4",
+      "checksum": "fe432859a173385a26853f53a387b89682b06426322a6e93827c4185383371a4",
+      "metric": "attempt_success",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "f93f2df6cc094c73bcef4ba541b00d34",
+      "checksum": "bb0492b225d086ff169bc3d66a567508134980fe3682c071790a3be34a161df0",
+      "metric": "order_conversion",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "e050bfe8c2e14179adc62ec7f4dc6721",
+      "checksum": "3617179a71e21bb5cc18572bd0b7de8136fdc5670583ca87dfd153ad13a9c3ed",
+      "metric": "retry_recovery_retried",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "039b8e78fefc425b8feed7ac62dcab77",
+      "checksum": "bc58b2473794797cd6bf27190c4152888c69a30d1bc6e839bf807751e3b5cb2c",
+      "metric": "settlement_amount",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "bb8cda2d7de1426caf67fa72b4b6d75b",
+      "checksum": "158acc2948602395455e8591ab6de42cb7d35e0d1dd05b42f819f181ce356828",
+      "metric": "bank_health",
+      "scenario": "lifecycle_v1"
+    },
+    {
+      "id": "9bfa2d21d6344cb2afc677f6c83bb9fb",
+      "checksum": "041de09c2274b98e71c8f5140e310bd97af1e9bd2b0bca871d1aae8abe64f75e",
+      "metric": "attempt_success",
+      "scenario": "scenario_a_dirty"
+    }
+  ],
+  "protected_sources": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "restored_selection": {
+    "schema": "lifecycle_v1",
+    "visible_tables": 8
+  },
+  "database_changes": "Administrative selection changes and rolled-back TEMP hand fixtures only; no imports or permanent fixture changes",
+  "build": "reports/analyst/lifecycle_build_result.json",
+  "review": "reports/analyst/lifecycle_review.json",
+  "formal_review": "Code review: skipped (ce-code-review unavailable)",
+  "review_note": "No Git repository/diff base. Manual source inspection and separate simplification completed; no formal review receipt.",
+  "limits_retained": {
+    "investigation_seconds": 120,
+    "sql_statement_seconds": 10,
+    "sql_statements": 12,
+    "tool_calls": 10,
+    "repair_attempts": 2,
+    "investigation_tokens": 32768,
+    "output_tokens_per_call": 4096
+  },
+  "observed_limitations": [
+    "One settlement browser run hit the 10-second quality-query timeout and published no evidence; isolated rerun passed without runtime edits or increased limits. Preserved in browser_settlement_timeout.xml. Performance under load is not certified.",
+    "Health has no ingestion timestamp; telemetry arrival delays cannot be established. Correlation and average bucket p95 are not causal proof or a population p95.",
+    "Local capability sessions and file evidence are not enterprise identity, OS isolation or durable replay."
+  ],
+  "historical_failed_runs": [
+    "reports/analyst/lifecycle_sql_acceptance.json",
+    "reports/analyst/lifecycle_sql_before_health_optimization.json",
+    "reports/analyst/browser_resize_race.xml",
+    "reports/analyst/browser_settlement_timeout.xml"
+  ],
+  "deferred": [
+    "U9: durable checkpoints/evidence, bounded adaptive investigations, typed drill-down and definition-conflict handling",
+    "Guarded exploratory SQL, enterprise identity/connectors and later dataset phases"
+  ]
+}

@@ -1,0 +1,3 @@
+payment_method,label,role
+CARD,Card,Customer payment instrument
+UPI,UPI,Customer payment instrument

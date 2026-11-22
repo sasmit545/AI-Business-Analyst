@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "recorded_at": "2026-11-21T22:37:38.214214+00:00",
+  "plan": "plans/2026-11-21-2019-feat-enterprise-ai-analyst-plan.md",
+  "scope": "Local single-operator target v1, including durable investigations and reauthorized follow-ups",
+  "gates": {
+    "foundation": "passed",
+    "complete_demo": "passed",
+    "first_analyst_breadth": "passed",
+    "target_v1": "passed"
+  },
+  "previous_complete_demo": "reports/analyst/final_acceptance.json",
+  "previous_lifecycle_breadth": "reports/analyst/lifecycle_acceptance.json",
+  "application_suite": {
+    "passed": 105,
+    "skipped": 3,
+    "failed": 0,
+    "artifact": "reports/analyst/durable_application_tests.xml"
+  },
+  "final_ui_checks": {
+    "passed": 10,
+    "skipped": 0,
+    "failed": 0,
+    "artifact": "reports/analyst/durable_interactions_tests.xml"
+  },
+  "distinct_passing_application_tests": 107,
+  "live_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "live_api": "reports/analyst/durable_live_passed.json",
+  "browser": "reports/analyst/durable_browser_validation.json",
+  "administrative_invalidation": "reports/analyst/administrative_fences.json",
+  "role_isolation": {
+    "passed": 1,
+    "skipped": 0,
+    "failed": 0,
+    "artifact": "reports/analyst/metadata_permissions.xml"
+  },
+  "current_control": {
+    "scenario": "lifecycle_v1",
+    "generation": 1,
+    "import_epoch": 1,
+    "ready": true
+  },
+  "metadata_tables": [
+    "budgets",
+    "bundles",
+    "checkpoint_blobs",
+    "checkpoint_migrations",
+    "checkpoint_writes",
+    "checkpoints",
+    "control",
+    "evidence",
+    "investigations",
+    "sessions"
+  ],
+  "selection": {
+    "schema": "lifecycle_v1",
+    "visible_business_tables": 8
+  },
+  "protected_sources": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "build": "reports/analyst/durable_build_result.json",
+  "runtime_snapshot": "reports/analyst/durable_runtime_snapshot.json",
+  "live_api_runtime_snapshot": "reports/analyst/durable_api_run_snapshot.json",
+  "fault_checks": [
+    "Restarts before evidence insertion and after insertion publish one result from the completed SQL receipt with the original charges.",
+    "If the result receipt itself was interrupted, recovery preserves the charges and returns limited without opening a fresh fixture connection.",
+    "Concurrent ownership, stale replies, failed saves, session close and generation/import changes are covered by independent checks."
+  ],
+  "scope_of_verification": "Previous demo and lifecycle gates retain their original live reports. This increment reran the scoped app suite, used real PostgreSQL and Nemotron for saved investigations, and checked the browser and administrative boundaries. Administrative transitions used a disposable native cluster to preserve the operator session.",
+  "limitations": [
+    "Saved sessions require the private resume key. Sessions created by the older in-memory version cannot be resumed.",
+    "Adaptive segment tests apply to attempt success within the remaining shared budget. Operator-requested drill-down starts a new bounded investigation.",
+    "A 10-second statement timeout stopped one lifecycle browser setup under memory pressure. Host load can prevent a query from publishing.",
+    "Local operator access, registered metrics and the fixed chart registry define the delivery scope."
+  ],
+  "review": {
+    "formal": "Code review: skipped (ce-code-review unavailable)",
+    "reason": "No Git repository or diff base.",
+    "inspection": "Independent source inspection and manual review; addressed raw receipt replay, session-switch ownership, clarification concurrency/rollback, and adaptive preflight."
+  },
+  "browser_test_run": "reports/analyst/durable_browser_callback.xml",
+  "browser_checks": [
+    "Child inherits the exact parent request plus the selected bank",
+    "Both filtered period counts match independent source CSV calculations",
+    "Replacement API process and fresh mobile browser recovered the same evidence and chart values"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "checked_at": "2026-11-21T16:20:35.195344+00:00",
+  "log": ".local/analyst/events.jsonl",
+  "latest_success": {
+    "time": "2026-11-21T16:18:37.406289+00:00",
+    "investigation_id": "763acaf2af064b8abd972014c1b3a726",
+    "event": "investigation_state",
+    "status": "verified",
+    "tool": null,
+    "elapsed_ms": null,
+    "sql_statements": 8,
+    "tool_calls": 2,
+    "repairs": 0,
+    "tokens_reserved": 24431,
+    "evidence_id": "08fc575739324a298bfb5c58802426b3"
+  },
+  "schema": "lifecycle_v1",
+  "checksum_valid": true,
+  "independent_oracle_match": true,
+  "overall": [
+    {
+      "period": 0,
+      "attempts": 100402,
+      "successes": 97462,
+      "rate": 0.970717714786558
+    },
+    {
+      "period": 1,
+      "attempts": 99331,
+      "successes": 96485,
+      "rate": 0.9713483202625565
+    }
+  ],
+  "earlier_failure": {
+    "time": "2026-11-21T16:15:16.431043+00:00",
+    "tool_calls": 3,
+    "repairs": 2,
+    "sql_statements": 0,
+    "diagnosis": "Tool-argument validation failed; original arguments/errors were not retained, so the exact mismatch cannot be recovered."
+  },
+  "diagnostic_fix": {
+    "status": "verified",
+    "tests_passed": 14,
+    "fields_logged": "Registered tool, schema-owned field paths, validation codes, terminal error; no submitted values or unknown field names"
+  },
+  "acceptance": "One observed runtime lifecycle comparison matches its oracle; full six-scenario live acceptance remains pending."
+}

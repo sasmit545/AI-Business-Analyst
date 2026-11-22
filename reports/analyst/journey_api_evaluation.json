@@ -1,0 +1,16 @@
+{
+  "mode": "private FastAPI TestClient, native PostgreSQL, deterministic query planner",
+  "protected_before": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "cases": {},
+  "status": "failed",
+  "error_type": "AssertionError",
+  "protected_after": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  }
+}

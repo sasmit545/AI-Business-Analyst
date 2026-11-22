@@ -1,0 +1,71 @@
+{
+  "profile_id": "realistic_v1",
+  "visibility": "evaluator_only",
+  "answers_file": "expected_answers.json",
+  "answer_pointer_format": "RFC 6901 JSON Pointer",
+  "scoring": {
+    "counts": "exact integers",
+    "rates": "percentage units; absolute error <= 0.000001 for six-decimal SQL outputs",
+    "method": "Require the denominator, time window, selected variant, and evidence supporting each conclusion.",
+    "causality": "An analyst with one variant can identify a localized statistical deterioration, but cannot claim knowledge of the hidden intervention or an exact counterfactual effect."
+  },
+  "questions": [
+    {
+      "id": "p2_quality",
+      "schema": "phase2_incident",
+      "question": "How many attempts are present, and do both dimension joins preserve every attempt?",
+      "answer_pointers": ["/variants/incident/totals", "/variants/incident/joins"],
+      "required_reasoning": "Check unique attempts, foreign keys, valid amounts, outcomes and timestamps before business conclusions."
+    },
+    {
+      "id": "p2_period_change",
+      "schema": "phase2_incident",
+      "question": "Compare October 1-14 with October 15-28. Report attempts, successes, failures, rates and the percentage-point change.",
+      "answer_pointers": ["/variants/incident/periods"],
+      "required_reasoning": "Use actual period denominators; they are not equal and target probabilities are not observed rates. Subtract comparison minus baseline rates."
+    },
+    {
+      "id": "p2_localize",
+      "schema": "phase2_incident",
+      "question": "Which bank and method show deterioration in October 15-21? Compare with October 1-14 and October 22-28, including timeout counts.",
+      "answer_pointers": ["/variants/incident/window_bank_method", "/variants/incident/failure_reasons"],
+      "required_reasoning": "Localize Bank B/UPI in the incident window. Normalize different-length windows by attempt counts. An aggregate decline alone is insufficient."
+    },
+    {
+      "id": "p2_like_for_like",
+      "schema": "phase2_incident",
+      "question": "Within each bank/method, compare the two fortnights using common local hour and weekday strata weighted by pooled attempt counts. Report excluded attempts, standardized rates and percentage-point changes.",
+      "answer_pointers": ["/variants/incident/standardized_periods", "/variants/incident/matched_segments"],
+      "required_reasoning": "Use strata observed in both periods; do not treat absent strata as zero success. The comparison fortnight includes both incident and recovery days, so separately inspect the incident window."
+    },
+    {
+      "id": "p2_traffic",
+      "schema": "phase2_baseline",
+      "question": "Identify high-volume merchants, bank shares and category-specific method preferences from the data.",
+      "answer_pointers": ["/variants/baseline/merchants", "/variants/baseline/banks", "/variants/baseline/merchant_methods", "/variants/baseline/categories"],
+      "required_reasoning": "M01-M04 dominate. Use observed integer allocations and report the denominator for shares."
+    },
+    {
+      "id": "p2_seasonality",
+      "schema": "phase2_baseline",
+      "question": "Describe dining peak hours and retail/dining weekend traffic after normalizing by calendar-day exposure. Does high volume by itself establish an outage?",
+      "answer_pointers": ["/variants/baseline/hourly", "/variants/baseline/weekdays", "/variants/baseline/daily", "/variants/baseline/window_bank_method"],
+      "required_reasoning": "Dining peaks are local hours 12-14 and 19-21. Compare average attempts per calendar day; raw weekend and weekday totals have different exposure. No intervention was applied to baseline; sampled rate variation is not proof of an outage."
+    },
+    {
+      "id": "p2_amounts",
+      "schema": "phase2_baseline",
+      "question": "Compare category amount distributions using mean, median and bounds. State currency and units.",
+      "answer_pointers": ["/variants/baseline/amounts"],
+      "required_reasoning": "Amounts are integer INR paise; divide by 100 for rupees. Configured lognormal medians are parameters, not exact sample medians."
+    },
+    {
+      "id": "p2_counterfactual",
+      "schema": null,
+      "access": "evaluator_admin_only",
+      "question": "Compare the two paired variants by attempt ID. How many successes changed, in which segment, and were any non-outcome fields changed?",
+      "answer_pointers": ["/paired/summary", "/paired/segment_changes", "/paired/changed", "/paired/eligible"],
+      "required_reasoning": "Exactly 370 of 3699 eligible successes became BANK_TIMEOUT failures; all are Bank B/UPI on October 15-21. No non-outcome field changed. The total fixture rate changes by -0.37 percentage points. This is evaluator counterfactual evidence; never grant both schemas to the AI role."
+    }
+  ]
+}

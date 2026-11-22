@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-11-21T16:28:02.047696+00:00",
+  "offline_checks": {
+    "passed": 43,
+    "deselected": 7,
+    "excluded_file": "tests/analyst/test_claims.py (live database fixture)",
+    "artifact": "reports/analyst/offline_followup_tests.xml"
+  },
+  "browser_changes": [
+    "Assert ambiguous dates show clarification and clear previous metrics, charts and evidence",
+    "Reject occupied ports before opening a browser; recheck owned services before navigation"
+  ],
+  "browser_validation": {
+    "status": "blocked",
+    "reason": "Existing services occupy ports 8000/8501",
+    "preflight_rejection_verified": true,
+    "safe_failure_browser_assertions": "pending execution",
+    "earlier_pass_does_not_cover_new_assertions": true
+  },
+  "protected_sources": {
+    "files": 43,
+    "changed": []
+  },
+  "complete_demo": "pending"
+}

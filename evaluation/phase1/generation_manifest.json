@@ -1,0 +1,54 @@
+{
+  "amount_paise_range": [
+    100,
+    500000
+  ],
+  "daily_quota_scope": "period: 715 attempts on first four dates, then 714 on ten dates",
+  "defect_manifest_sha256": "cf59bfdc02cf27a6474a8e4143cbad388ca71d123134bc53f2a9f303daca339c",
+  "encoding": "UTF-8",
+  "files": {
+    "data/synthetic/phase1/scenario_a/banks.csv": {
+      "rows": 5,
+      "sha256": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+    },
+    "data/synthetic/phase1/scenario_a/merchants.csv": {
+      "rows": 20,
+      "sha256": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+    },
+    "data/synthetic/phase1/scenario_a/payments.csv": {
+      "rows": 20000,
+      "sha256": "cbdee633b3aa4a34949be4ea13caabe4a9f9b49bbb2b7498e3160e35aa737c60"
+    },
+    "data/synthetic/phase1/scenario_a_dirty/banks.csv": {
+      "rows": 5,
+      "sha256": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+    },
+    "data/synthetic/phase1/scenario_a_dirty/merchants.csv": {
+      "rows": 20,
+      "sha256": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+    },
+    "data/synthetic/phase1/scenario_a_dirty/payments.csv": {
+      "rows": 20020,
+      "sha256": "6887c46711e1e5b1cfb882d4e9397876fa16ba9b917927b613fd2f3c9d3b5044"
+    },
+    "data/synthetic/phase1/scenario_b/banks.csv": {
+      "rows": 5,
+      "sha256": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+    },
+    "data/synthetic/phase1/scenario_b/merchants.csv": {
+      "rows": 20,
+      "sha256": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+    },
+    "data/synthetic/phase1/scenario_b/payments.csv": {
+      "rows": 20000,
+      "sha256": "5784903093fc4e50ecf9120cb686d085bcc16e1ad1bf5ef012a6172db9030e79"
+    }
+  },
+  "generator": "scripts/generate_phase1.py",
+  "generator_version": "1.0.0",
+  "line_ending": "LF",
+  "profile_id": "synthetic-payments-phase1-v1",
+  "schema_version": "1.0.0",
+  "seed": 42,
+  "timestamp_timezone": "+05:30"
+}

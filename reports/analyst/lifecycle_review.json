@@ -1,0 +1,56 @@
+{
+  "formal_review": {
+    "status": "failed",
+    "skill": "ce-code-review",
+    "reason": "No Git repository or diff base is available.",
+    "summary": "Code review: skipped (ce-code-review unavailable)"
+  },
+  "simplification": {
+    "mode": "single-pass",
+    "size_cutoff": 10000,
+    "production_lines_under_cutoff": true,
+    "reviewer": "gpt-6.2-sol",
+    "read_only": true,
+    "applied": [
+      "One semantic registry for metric labels and denominators",
+      "One observation cutoff constant",
+      "Direct NULLIF settlement cast",
+      "Avoid API creation during SQL-only evaluation",
+      "Reuse evaluator request for cutoff/windows"
+    ],
+    "correctness_findings_addressed": [
+      "Keep malformed duplicate telemetry in bucket ambiguity checks",
+      "Distinguish order maturity from settlement/health observation contracts",
+      "Empty health periods preserve zero matched-count and unavailable telemetry fields, including both windows empty"
+    ],
+    "proof_tests_preserved": true
+  },
+  "manual_review": {
+    "status": "completed",
+    "checks": [
+      "Bound parameters and catalog-only relation identifiers",
+      "No administrator or evaluator imports in runtime",
+      "Quality before casts; one snapshot and shared budgets",
+      "All fixture data and original answers preserved",
+      "Lifecycle scopes advertised and dispatched only for lifecycle_v1",
+      "Numerators and denominators reconciled from query records before publication",
+      "Telemetry duplicate and empty-window fixes have red/green regression proof",
+      "Registered SQL uses no new privilege or administrator capability",
+      "Read-only diagnostic EXPLAIN used a separate administrator connection with a 60-second diagnostic ceiling; runtime 10-second timeout unchanged"
+    ]
+  },
+  "verification": {
+    "application_suite": {
+      "passed": 92,
+      "skipped": 2,
+      "artifact": "reports/analyst/lifecycle_tests.xml"
+    },
+    "red_proof": [
+      "Missing LifecycleRequest prevented collection before implementation",
+      "Malformed duplicate health retained a false match before timestamp/value validation separation",
+      "Empty health periods lacked metric-aware result shape before fix"
+    ],
+    "lint_typecheck": "Not configured; Python AST parsing and scoped tests passed",
+    "formal_review_complete": false
+  }
+}

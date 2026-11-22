@@ -1,0 +1,2021 @@
+{
+  "mode": "private FastAPI TestClient, native PostgreSQL, deterministic query planner",
+  "protected_before": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "cases": {
+    "scenario_a": {
+      "question": "Which bank and payment method contributed most to the change in attempt success? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "aad9d5e2536f4163bf4d96a817304916",
+      "plan": {
+        "objective": {
+          "kind": "contribution",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "attempt_success",
+        "dataset": "scenario_a",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "payments"
+        ],
+        "numerator": "Completed attempts with status SUCCESS",
+        "denominator": "All completed attempts in the requested window and filters",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": null
+      },
+      "answer": "The segment partition accounts for -1.8000 percentage points of success-rate change. Traffic mix contributed +0.0000 pp and within-group rates -1.8000 pp. BANK_B / UPI contributed -1.8000 pp through changes in group success.",
+      "guidance": {
+        "source": "decomposition",
+        "finding": "The segment partition accounts for -1.8000 percentage points of success-rate change. Traffic mix contributed +0.0000 pp and within-group rates -1.8000 pp. BANK_B / UPI contributed -1.8000 pp through changes in group success.",
+        "recommendations": [
+          "Start with BANK_TIMEOUT (5/1,000 to 185/1,000) in BANK_B / UPI. Their failure rates made the largest contribution in the direction of the observed change in group success. Ask payment operations to compare the processing stages attached to BANK_TIMEOUT in both windows. A concentration at one stage narrows trace review to that stage."
+        ],
+        "leaders": [
+          {
+            "payer_bank_id": "BANK_B",
+            "payment_method": "UPI"
+          }
+        ],
+        "evidence_id": "aad9d5e2536f4163bf4d96a817304916",
+        "reference": "e3a66d67b4ce0919a929cc0410d8540027dcb94f6ca24e548a07757a12b5b6c5"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_a.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_a.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_a.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_a.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_a.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "daily",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "failures",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.98,
+          "period": 0,
+          "attempts": 10000,
+          "successes": 9800
+        },
+        {
+          "rate": 0.962,
+          "period": 1,
+          "attempts": 10000,
+          "successes": 9620
+        }
+      ],
+      "budget": {
+        "sql_statements": 8,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Start with BANK_TIMEOUT (5/1,000 to 185/1,000) in BANK_B / UPI. Their failure rates made the largest contribution in the direction of the observed change in group success. Ask payment operations to compare the processing stages attached to BANK_TIMEOUT in both windows. A concentration at one stage narrows trace review to that stage.",
+        "evidence_id": "9d4b58185c194324bb79a798f48a957d",
+        "reused_from": "aad9d5e2536f4163bf4d96a817304916",
+        "analytical_statements": 0
+      }
+    },
+    "scenario_b": {
+      "question": "Why did overall success change by payment method? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "04fbe19f8f0c4ba0b9e869a3f6d4ee2a",
+      "plan": {
+        "objective": {
+          "kind": "contribution",
+          "dimension": "method",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "attempt_success",
+        "dataset": "scenario_b",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "payments"
+        ],
+        "numerator": "Completed attempts with status SUCCESS",
+        "denominator": "All completed attempts in the requested window and filters",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": null
+      },
+      "answer": "The method partition accounts for -4.8000 percentage points of success-rate change. Traffic mix contributed -4.8000 pp and within-group rates +0.0000 pp. Traffic share grew most for UPI (20.00% to 80.00% of attempts).",
+      "guidance": {
+        "source": "decomposition",
+        "finding": "The method partition accounts for -4.8000 percentage points of success-rate change. Traffic mix contributed -4.8000 pp and within-group rates +0.0000 pp. Traffic share grew most for UPI (20.00% to 80.00% of attempts).",
+        "recommendations": [
+          "Check the traffic allocation into UPI. Compare the verified group rates to see how the changed shares moved overall success. Use operational allocation records to establish why the traffic shifted."
+        ],
+        "leaders": [
+          {
+            "payment_method": "UPI"
+          }
+        ],
+        "evidence_id": "04fbe19f8f0c4ba0b9e869a3f6d4ee2a",
+        "reference": "c39c19bb64afed5eea7806087131b671e0a89cc45d58f2a3a9511ddd3fb807d1"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_b.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_b.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_b.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_b.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_b.payments p LEFT JOIN scenario_b.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_b.payments p LEFT JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_b.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_b.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "daily",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "failures",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.964,
+          "period": 0,
+          "attempts": 10000,
+          "successes": 9640
+        },
+        {
+          "rate": 0.916,
+          "period": 1,
+          "attempts": 10000,
+          "successes": 9160
+        }
+      ],
+      "budget": {
+        "sql_statements": 8,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Check the traffic allocation into UPI. Compare the verified group rates to see how the changed shares moved overall success. Use operational allocation records to establish why the traffic shifted.",
+        "evidence_id": "9a9db59143ae460d9226eaa8dda25e04",
+        "reused_from": "04fbe19f8f0c4ba0b9e869a3f6d4ee2a",
+        "analytical_statements": 0
+      }
+    },
+    "scenario_a_dirty": {
+      "question": "Compare payment attempt success. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "blocked",
+      "evidence_id": "1b49459f554a49aaacb6cc4d471ce329",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "overall",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "attempt_success",
+        "dataset": "scenario_a_dirty",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "payments"
+        ],
+        "numerator": "Completed attempts with status SUCCESS",
+        "denominator": "All completed attempts in the requested window and filters",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": null
+      },
+      "answer": "Certified metrics blocked by data quality.",
+      "guidance": {
+        "finding": "The measurement is blocked by duplicate_occurrences (20), missing_timestamps (10), orphan_merchants (10).",
+        "recommendations": [
+          "duplicate_occurrences (20). Compare repeated attempt_id values with the originating event records to establish which occurrence belongs to each attempt.",
+          "missing_timestamps (10). Find the attempted_at value in the source event before assigning the row to a payment window.",
+          "orphan_merchants (10). Compare each unmatched merchant_id with the merchant directory for the selected import.",
+          "Have the data owner verify the affected source records, then rerun the quality checks before using the metric."
+        ],
+        "source": "quality",
+        "leaders": [],
+        "evidence_id": "1b49459f554a49aaacb6cc4d471ce329",
+        "reference": "4583240e650f558baef6829a58573f5ba6515af03112c646bb46392871dfb084"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_a_dirty.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_a_dirty.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_a_dirty.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_a_dirty.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_a_dirty.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_a_dirty.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_a_dirty.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_a_dirty.payments p LEFT JOIN scenario_a_dirty.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_a_dirty.payments p LEFT JOIN scenario_a_dirty.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_a_dirty.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_a_dirty.merchants) AS duplicate_merchants",
+          "parameters": {}
+        }
+      ],
+      "chart_bindings": [],
+      "chart_overall": null,
+      "budget": {
+        "sql_statements": 4,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      }
+    },
+    "rankings_original": {
+      "volume": {
+        "question": "Which failure reason accounted for the most failures in the comparison period? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+        "status": "verified",
+        "evidence_id": "454fbc8a81ee42549532455ca8ae9226",
+        "plan": {
+          "objective": {
+            "kind": "volume",
+            "dimension": "reason",
+            "period": "comparison",
+            "measure": "failed_attempts"
+          },
+          "metric": "attempt_success",
+          "dataset": "scenario_a",
+          "grain": "attempt",
+          "time_field": "attempted_at",
+          "tables": [
+            "banks",
+            "merchants",
+            "payments"
+          ],
+          "numerator": "Completed attempts with status SUCCESS",
+          "denominator": "All completed attempts in the requested window and filters",
+          "baseline": {
+            "start": "2026-10-01T00:00:00+05:30",
+            "end": "2026-10-15T00:00:00+05:30"
+          },
+          "comparison": {
+            "start": "2026-10-15T00:00:00+05:30",
+            "end": "2026-10-29T00:00:00+05:30"
+          },
+          "filters": {},
+          "cutoff": null
+        },
+        "answer": "INSUFFICIENT_FUNDS accounted for the most failed attempts in the comparison, 14 of 19 (73.68%). In the baseline, INSUFFICIENT_FUNDS accounted for 20 of 22 (90.91%).",
+        "guidance": {
+          "source": "failures",
+          "finding": "INSUFFICIENT_FUNDS accounted for the most failed attempts in the comparison, 14 of 19 (73.68%). In the baseline, INSUFFICIENT_FUNDS accounted for 20 of 22 (90.91%).",
+          "recommendations": [
+            "Start with INSUFFICIENT_FUNDS in BANK_A / UPI, BANK_C / UPI (7 occurrences each). Match representative failed attempt IDs to the operational response traces for this period. If failures cluster at one processing step, inspect that step. If several responses share the label, split the cases by response before escalation."
+          ],
+          "leaders": [
+            {
+              "failure_reason": "INSUFFICIENT_FUNDS"
+            }
+          ],
+          "evidence_id": "454fbc8a81ee42549532455ca8ae9226",
+          "reference": "45e423e9bbd1a821aadf353f463045e8f0a8f58ca77769fb5f9bc7bb5f447782"
+        },
+        "sql": [
+          {
+            "name": "quality",
+            "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_a.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_a.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_a.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_a.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_a.merchants) AS duplicate_merchants",
+            "parameters": {}
+          },
+          {
+            "name": "overall",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "segments",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "daily",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "failures",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          }
+        ],
+        "chart_bindings": [
+          {
+            "kind": "comparison",
+            "source": "overall",
+            "measure": "rate",
+            "period": null,
+            "section": null,
+            "drilldown": false
+          }
+        ],
+        "chart_overall": [
+          {
+            "rate": 0.78,
+            "period": 0,
+            "attempts": 100,
+            "successes": 78
+          },
+          {
+            "rate": 0.81,
+            "period": 1,
+            "attempts": 100,
+            "successes": 81
+          }
+        ],
+        "budget": {
+          "sql_statements": 8,
+          "tool_calls": 2,
+          "repairs": 0,
+          "tokens_reserved": 0
+        },
+        "followup": {
+          "question": "What steps should I take to address this?",
+          "answer": "Start with INSUFFICIENT_FUNDS in BANK_A / UPI, BANK_C / UPI (7 occurrences each). Match representative failed attempt IDs to the operational response traces for this period. If failures cluster at one processing step, inspect that step. If several responses share the label, split the cases by response before escalation.",
+          "evidence_id": "2b2aaf51d19041c1b5c6a10e345ca799",
+          "reused_from": "454fbc8a81ee42549532455ca8ae9226",
+          "analytical_statements": 0
+        }
+      },
+      "deterioration": {
+        "question": "Which failure reason worsened most per completed attempt? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+        "status": "verified",
+        "evidence_id": "29acb3fd6ac2499cbe3591cca8790314",
+        "plan": {
+          "objective": {
+            "kind": "deterioration",
+            "dimension": "reason",
+            "period": "comparison",
+            "measure": "attempts"
+          },
+          "metric": "attempt_success",
+          "dataset": "scenario_a",
+          "grain": "attempt",
+          "time_field": "attempted_at",
+          "tables": [
+            "banks",
+            "merchants",
+            "payments"
+          ],
+          "numerator": "Completed attempts with status SUCCESS",
+          "denominator": "All completed attempts in the requested window and filters",
+          "baseline": {
+            "start": "2026-10-01T00:00:00+05:30",
+            "end": "2026-10-15T00:00:00+05:30"
+          },
+          "comparison": {
+            "start": "2026-10-15T00:00:00+05:30",
+            "end": "2026-10-29T00:00:00+05:30"
+          },
+          "filters": {},
+          "cutoff": null
+        },
+        "answer": "The largest increase in failures per completed attempt was 3.0000 percentage points for BANK_TIMEOUT (2/100, 2.00%, to 5/100, 5.00%). One comparison outcome represents 1 pp for this group.",
+        "guidance": {
+          "source": "failures",
+          "finding": "The largest increase in failures per completed attempt was 3.0000 percentage points for BANK_TIMEOUT (2/100, 2.00%, to 5/100, 5.00%). One comparison outcome represents 1 pp for this group.",
+          "recommendations": [
+            "Check whether the increase for BANK_TIMEOUT persists in a follow-up comparison over shorter windows with the same filters. If it is concentrated in one interval, inspect operational traces for that interval. If it persists, compare the affected processing stages across intervals."
+          ],
+          "leaders": [
+            {
+              "failure_reason": "BANK_TIMEOUT"
+            }
+          ],
+          "evidence_id": "29acb3fd6ac2499cbe3591cca8790314",
+          "reference": "00979e4488e6064acaf011d1bb3569216d8d93e8846291b4f60466c998093b3f"
+        },
+        "sql": [
+          {
+            "name": "quality",
+            "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_a.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_a.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_a.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_a.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_a.merchants) AS duplicate_merchants",
+            "parameters": {}
+          },
+          {
+            "name": "overall",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "segments",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "daily",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "failures",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          }
+        ],
+        "chart_bindings": [
+          {
+            "kind": "comparison",
+            "source": "overall",
+            "measure": "rate",
+            "period": null,
+            "section": null,
+            "drilldown": false
+          }
+        ],
+        "chart_overall": [
+          {
+            "rate": 0.78,
+            "period": 0,
+            "attempts": 100,
+            "successes": 78
+          },
+          {
+            "rate": 0.81,
+            "period": 1,
+            "attempts": 100,
+            "successes": 81
+          }
+        ],
+        "budget": {
+          "sql_statements": 8,
+          "tool_calls": 2,
+          "repairs": 0,
+          "tokens_reserved": 0
+        },
+        "followup": {
+          "question": "What steps should I take to address this?",
+          "answer": "Check whether the increase for BANK_TIMEOUT persists in a follow-up comparison over shorter windows with the same filters. If it is concentrated in one interval, inspect operational traces for that interval. If it persists, compare the affected processing stages across intervals.",
+          "evidence_id": "89e6cb7bdb454c999b7f7ad07ebca614",
+          "reused_from": "29acb3fd6ac2499cbe3591cca8790314",
+          "analytical_statements": 0
+        }
+      }
+    },
+    "rankings_swapped": {
+      "volume": {
+        "question": "Which failure reason accounted for the most failures in the comparison period? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+        "status": "verified",
+        "evidence_id": "3055489b1b654333bc50eafaff79117f",
+        "plan": {
+          "objective": {
+            "kind": "volume",
+            "dimension": "reason",
+            "period": "comparison",
+            "measure": "failed_attempts"
+          },
+          "metric": "attempt_success",
+          "dataset": "scenario_a",
+          "grain": "attempt",
+          "time_field": "attempted_at",
+          "tables": [
+            "banks",
+            "merchants",
+            "payments"
+          ],
+          "numerator": "Completed attempts with status SUCCESS",
+          "denominator": "All completed attempts in the requested window and filters",
+          "baseline": {
+            "start": "2026-10-01T00:00:00+05:30",
+            "end": "2026-10-15T00:00:00+05:30"
+          },
+          "comparison": {
+            "start": "2026-10-15T00:00:00+05:30",
+            "end": "2026-10-29T00:00:00+05:30"
+          },
+          "filters": {},
+          "cutoff": null
+        },
+        "answer": "BANK_TIMEOUT accounted for the most failed attempts in the comparison, 14 of 19 (73.68%). In the baseline, BANK_TIMEOUT accounted for 20 of 22 (90.91%).",
+        "guidance": {
+          "source": "failures",
+          "finding": "BANK_TIMEOUT accounted for the most failed attempts in the comparison, 14 of 19 (73.68%). In the baseline, BANK_TIMEOUT accounted for 20 of 22 (90.91%).",
+          "recommendations": [
+            "Start with BANK_TIMEOUT in BANK_A / UPI, BANK_C / UPI (7 occurrences each). Match representative failed attempt IDs to the operational response traces for this period. If failures cluster at one processing step, inspect that step. If several responses share the label, split the cases by response before escalation."
+          ],
+          "leaders": [
+            {
+              "failure_reason": "BANK_TIMEOUT"
+            }
+          ],
+          "evidence_id": "3055489b1b654333bc50eafaff79117f",
+          "reference": "db9856e55c8b8f75154531d31d8dc5489a1322bc6749df4449ff6b492a9b8257"
+        },
+        "sql": [
+          {
+            "name": "quality",
+            "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_a.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_a.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_a.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_a.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_a.merchants) AS duplicate_merchants",
+            "parameters": {}
+          },
+          {
+            "name": "overall",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "segments",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "daily",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "failures",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          }
+        ],
+        "chart_bindings": [
+          {
+            "kind": "comparison",
+            "source": "overall",
+            "measure": "rate",
+            "period": null,
+            "section": null,
+            "drilldown": false
+          }
+        ],
+        "chart_overall": [
+          {
+            "rate": 0.78,
+            "period": 0,
+            "attempts": 100,
+            "successes": 78
+          },
+          {
+            "rate": 0.81,
+            "period": 1,
+            "attempts": 100,
+            "successes": 81
+          }
+        ],
+        "budget": {
+          "sql_statements": 8,
+          "tool_calls": 2,
+          "repairs": 0,
+          "tokens_reserved": 0
+        },
+        "followup": {
+          "question": "What steps should I take to address this?",
+          "answer": "Start with BANK_TIMEOUT in BANK_A / UPI, BANK_C / UPI (7 occurrences each). Match representative failed attempt IDs to the operational response traces for this period. If failures cluster at one processing step, inspect that step. If several responses share the label, split the cases by response before escalation.",
+          "evidence_id": "73a4ca0366d145fb981faf3b163f51db",
+          "reused_from": "3055489b1b654333bc50eafaff79117f",
+          "analytical_statements": 0
+        }
+      },
+      "deterioration": {
+        "question": "Which failure reason worsened most per completed attempt? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+        "status": "verified",
+        "evidence_id": "38d211b4a6b64776bd6248cca9494687",
+        "plan": {
+          "objective": {
+            "kind": "deterioration",
+            "dimension": "reason",
+            "period": "comparison",
+            "measure": "attempts"
+          },
+          "metric": "attempt_success",
+          "dataset": "scenario_a",
+          "grain": "attempt",
+          "time_field": "attempted_at",
+          "tables": [
+            "banks",
+            "merchants",
+            "payments"
+          ],
+          "numerator": "Completed attempts with status SUCCESS",
+          "denominator": "All completed attempts in the requested window and filters",
+          "baseline": {
+            "start": "2026-10-01T00:00:00+05:30",
+            "end": "2026-10-15T00:00:00+05:30"
+          },
+          "comparison": {
+            "start": "2026-10-15T00:00:00+05:30",
+            "end": "2026-10-29T00:00:00+05:30"
+          },
+          "filters": {},
+          "cutoff": null
+        },
+        "answer": "The largest increase in failures per completed attempt was 3.0000 percentage points for INSUFFICIENT_FUNDS (2/100, 2.00%, to 5/100, 5.00%). One comparison outcome represents 1 pp for this group.",
+        "guidance": {
+          "source": "failures",
+          "finding": "The largest increase in failures per completed attempt was 3.0000 percentage points for INSUFFICIENT_FUNDS (2/100, 2.00%, to 5/100, 5.00%). One comparison outcome represents 1 pp for this group.",
+          "recommendations": [
+            "Check whether the increase for INSUFFICIENT_FUNDS persists in a follow-up comparison over shorter windows with the same filters. If it is concentrated in one interval, inspect operational traces for that interval. If it persists, compare the affected processing stages across intervals."
+          ],
+          "leaders": [
+            {
+              "failure_reason": "INSUFFICIENT_FUNDS"
+            }
+          ],
+          "evidence_id": "38d211b4a6b64776bd6248cca9494687",
+          "reference": "b59cd9f1a494112afbdd0b88d24bf60fb9332eb99174d1d27e94dd2a89e4175b"
+        },
+        "sql": [
+          {
+            "name": "quality",
+            "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_a.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_a.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_a.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_a.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_a.payments p LEFT JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_a.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_a.merchants) AS duplicate_merchants",
+            "parameters": {}
+          },
+          {
+            "name": "overall",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "segments",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "daily",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          },
+          {
+            "name": "failures",
+            "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_a.payments p JOIN scenario_a.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+            "parameters": {
+              "b_end": "2026-10-15T00:00:00+05:30",
+              "c_end": "2026-10-29T00:00:00+05:30",
+              "b_start": "2026-10-01T00:00:00+05:30",
+              "c_start": "2026-10-15T00:00:00+05:30"
+            }
+          }
+        ],
+        "chart_bindings": [
+          {
+            "kind": "comparison",
+            "source": "overall",
+            "measure": "rate",
+            "period": null,
+            "section": null,
+            "drilldown": false
+          }
+        ],
+        "chart_overall": [
+          {
+            "rate": 0.78,
+            "period": 0,
+            "attempts": 100,
+            "successes": 78
+          },
+          {
+            "rate": 0.81,
+            "period": 1,
+            "attempts": 100,
+            "successes": 81
+          }
+        ],
+        "budget": {
+          "sql_statements": 8,
+          "tool_calls": 2,
+          "repairs": 0,
+          "tokens_reserved": 0
+        },
+        "followup": {
+          "question": "What steps should I take to address this?",
+          "answer": "Check whether the increase for INSUFFICIENT_FUNDS persists in a follow-up comparison over shorter windows with the same filters. If it is concentrated in one interval, inspect operational traces for that interval. If it persists, compare the affected processing stages across intervals.",
+          "evidence_id": "27764eb2d16e4a22b18af98427c816da",
+          "reused_from": "38d211b4a6b64776bd6248cca9494687",
+          "analytical_statements": 0
+        }
+      }
+    },
+    "order_conversion": {
+      "question": "Compare order conversion by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "d7eda23a049f41d39fe50a1f87a00f5f",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "order_conversion",
+        "dataset": "lifecycle_v1",
+        "grain": "order",
+        "time_field": "created_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "orders",
+          "payments"
+        ],
+        "numerator": "orders paid within 24 hours",
+        "denominator": "orders observed for at least 24 hours",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "24-hour order conversion: +0.0451 percentage points.",
+      "guidance": {
+        "finding": "The comparison had 1,993 mature orders unpaid at 24 hours by 2026-11-01T00:00:00+05:30. The largest share came from BANK_C / UPI (329 of 1,993).",
+        "recommendations": [
+          "Begin with BANK_C / UPI, accounting for 329 of 1,993 mature orders unpaid at 24 hours. Ask the analyst to compare first-attempt success for this order cohort. If the loss begins on the first attempt, examine first-attempt failures. If first-attempt success holds steady, compare retry uptake and recovery among retried orders."
+        ],
+        "source": "segments",
+        "leaders": [
+          "BANK_C / UPI"
+        ],
+        "evidence_id": "d7eda23a049f41d39fe50a1f87a00f5f",
+        "reference": "581613595003c7ad0fbd3f21d37bbeb29cb7cca7bb3a3defe257997594e4b9e5"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_order_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE (created_at IS NULL OR created_at='' OR NOT pg_input_is_valid(created_at, 'timestamp with time zone') OR NOT created_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_order_time",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_raw_quality",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_number IS NULL OR attempt_number NOT IN ('1','2','3')) AS invalid_attempt_number, (SELECT COUNT(*)-COUNT(DISTINCT order_id) FROM lifecycle_v1.orders) AS duplicate_orders, (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE order_id IS NULL OR order_id='' OR amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency<>'INR') AS invalid_order_identity, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE o.order_id IS NULL) AS orphan_order_attempts, (SELECT COUNT(*) FROM lifecycle_v1.orders o LEFT JOIN lifecycle_v1.payments p ON o.order_id=p.order_id WHERE p.order_id IS NULL) AS orders_without_attempts, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.amount_paise<>o.amount_paise OR p.currency<>o.currency OR p.merchant_id<>o.merchant_id) AS order_attribute_mismatch",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order, (SELECT COUNT(*) FROM (SELECT order_id FROM lifecycle_v1.payments GROUP BY order_id\n                HAVING COUNT(*)<>COUNT(DISTINCT attempt_number) OR MIN(attempt_number::integer)<>1\n                OR MAX(attempt_number::integer)<>COUNT(*) OR COUNT(*) FILTER (WHERE status='SUCCESS')>1\n                OR COUNT(DISTINCT payer_bank_id)<>1 OR COUNT(DISTINCT payment_method)<>1) bad) AS invalid_attempt_chains, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.attempted_at::timestamptz<o.created_at::timestamptz) AS attempt_before_order, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.payments earlier ON p.order_id=earlier.order_id\n                AND p.attempt_number::integer=earlier.attempt_number::integer+1\n                WHERE earlier.status='SUCCESS' OR p.attempted_at::timestamptz<=earlier.completed_at::timestamptz) AS invalid_retry_sequence",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.converted*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.converted*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.9793111070918993,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 97463,
+          "denominator": 99522
+        },
+        {
+          "rate": 0.979761977294421,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 96485,
+          "denominator": 98478
+        }
+      ],
+      "budget": {
+        "sql_statements": 11,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Begin with BANK_C / UPI, accounting for 329 of 1,993 mature orders unpaid at 24 hours. Ask the analyst to compare first-attempt success for this order cohort. If the loss begins on the first attempt, examine first-attempt failures. If first-attempt success holds steady, compare retry uptake and recovery among retried orders.",
+        "evidence_id": "51d3b30174e34fe082a063adf5ec9ff6",
+        "reused_from": "d7eda23a049f41d39fe50a1f87a00f5f",
+        "analytical_statements": 0
+      }
+    },
+    "first_attempt_success": {
+      "question": "Compare first attempt success by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "47124a7e932f4fe5a849bc69b5321b8d",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "first_attempt_success",
+        "dataset": "lifecycle_v1",
+        "grain": "order",
+        "time_field": "created_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "orders",
+          "payments"
+        ],
+        "numerator": "mature orders whose first attempt succeeded",
+        "denominator": "orders observed for at least 24 hours",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "First-attempt success: +0.0644 percentage points.",
+      "guidance": {
+        "finding": "The comparison had 2,819 mature orders without a successful first attempt by 2026-11-01T00:00:00+05:30. The largest share came from BANK_C / UPI (475 of 2,819).",
+        "recommendations": [
+          "Begin with BANK_C / UPI, accounting for 475 of 2,819 mature orders without a successful first attempt. Ask the analyst to compare retry uptake among initially failed orders in this cohort. Low uptake points to the retry opportunity. If orders were retried, measure recovery on those retried orders."
+        ],
+        "source": "segments",
+        "leaders": [
+          "BANK_C / UPI"
+        ],
+        "evidence_id": "47124a7e932f4fe5a849bc69b5321b8d",
+        "reference": "054e9591ef140a435ebf7c021bfeae412137a7af10e2673daba24b7c9b91238d"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_order_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE (created_at IS NULL OR created_at='' OR NOT pg_input_is_valid(created_at, 'timestamp with time zone') OR NOT created_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_order_time",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_raw_quality",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_number IS NULL OR attempt_number NOT IN ('1','2','3')) AS invalid_attempt_number, (SELECT COUNT(*)-COUNT(DISTINCT order_id) FROM lifecycle_v1.orders) AS duplicate_orders, (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE order_id IS NULL OR order_id='' OR amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency<>'INR') AS invalid_order_identity, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE o.order_id IS NULL) AS orphan_order_attempts, (SELECT COUNT(*) FROM lifecycle_v1.orders o LEFT JOIN lifecycle_v1.payments p ON o.order_id=p.order_id WHERE p.order_id IS NULL) AS orders_without_attempts, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.amount_paise<>o.amount_paise OR p.currency<>o.currency OR p.merchant_id<>o.merchant_id) AS order_attribute_mismatch",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order, (SELECT COUNT(*) FROM (SELECT order_id FROM lifecycle_v1.payments GROUP BY order_id\n                HAVING COUNT(*)<>COUNT(DISTINCT attempt_number) OR MIN(attempt_number::integer)<>1\n                OR MAX(attempt_number::integer)<>COUNT(*) OR COUNT(*) FILTER (WHERE status='SUCCESS')>1\n                OR COUNT(DISTINCT payer_bank_id)<>1 OR COUNT(DISTINCT payment_method)<>1) bad) AS invalid_attempt_chains, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.attempted_at::timestamptz<o.created_at::timestamptz) AS attempt_before_order, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.payments earlier ON p.order_id=earlier.order_id\n                AND p.attempt_number::integer=earlier.attempt_number::integer+1\n                WHERE earlier.status='SUCCESS' OR p.attempted_at::timestamptz<=earlier.completed_at::timestamptz) AS invalid_retry_sequence",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.first_success*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.first_success*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.9707300898293845,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 96609,
+          "denominator": 99522
+        },
+        {
+          "rate": 0.9713743171063588,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 95659,
+          "denominator": 98478
+        }
+      ],
+      "budget": {
+        "sql_statements": 11,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Begin with BANK_C / UPI, accounting for 475 of 2,819 mature orders without a successful first attempt. Ask the analyst to compare retry uptake among initially failed orders in this cohort. Low uptake points to the retry opportunity. If orders were retried, measure recovery on those retried orders.",
+        "evidence_id": "d7b75bd601554ccca728074d9e987972",
+        "reused_from": "47124a7e932f4fe5a849bc69b5321b8d",
+        "analytical_statements": 0
+      }
+    },
+    "retry_uptake": {
+      "question": "Compare retry uptake by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "8827664072e0433d9c9e4ca72b9e69c3",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "retry_uptake",
+        "dataset": "lifecycle_v1",
+        "grain": "order",
+        "time_field": "created_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "orders",
+          "payments"
+        ],
+        "numerator": "initially failed mature orders with a retry",
+        "denominator": "initially failed mature orders",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "Retry uptake: +0.2509 percentage points.",
+      "guidance": {
+        "finding": "The comparison had 1,970 initially failed orders without an observed retry by 2026-11-01T00:00:00+05:30. The largest share came from BANK_C / UPI (324 of 1,970).",
+        "recommendations": [
+          "Begin with BANK_C / UPI, accounting for 324 of 1,970 initially failed orders without an observed retry. Ask payment operations for retry eligibility and offer records for initially failed orders. Compare eligible orders offered a retry with orders that started one to locate the loss."
+        ],
+        "source": "segments",
+        "leaders": [
+          "BANK_C / UPI"
+        ],
+        "evidence_id": "8827664072e0433d9c9e4ca72b9e69c3",
+        "reference": "3a21e0bd1a7fad8f3c66981afa4886cda204638647d036b1ce0696398a6b1b91"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_order_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE (created_at IS NULL OR created_at='' OR NOT pg_input_is_valid(created_at, 'timestamp with time zone') OR NOT created_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_order_time",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_raw_quality",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_number IS NULL OR attempt_number NOT IN ('1','2','3')) AS invalid_attempt_number, (SELECT COUNT(*)-COUNT(DISTINCT order_id) FROM lifecycle_v1.orders) AS duplicate_orders, (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE order_id IS NULL OR order_id='' OR amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency<>'INR') AS invalid_order_identity, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE o.order_id IS NULL) AS orphan_order_attempts, (SELECT COUNT(*) FROM lifecycle_v1.orders o LEFT JOIN lifecycle_v1.payments p ON o.order_id=p.order_id WHERE p.order_id IS NULL) AS orders_without_attempts, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.amount_paise<>o.amount_paise OR p.currency<>o.currency OR p.merchant_id<>o.merchant_id) AS order_attribute_mismatch",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order, (SELECT COUNT(*) FROM (SELECT order_id FROM lifecycle_v1.payments GROUP BY order_id\n                HAVING COUNT(*)<>COUNT(DISTINCT attempt_number) OR MIN(attempt_number::integer)<>1\n                OR MAX(attempt_number::integer)<>COUNT(*) OR COUNT(*) FILTER (WHERE status='SUCCESS')>1\n                OR COUNT(DISTINCT payer_bank_id)<>1 OR COUNT(DISTINCT payment_method)<>1) bad) AS invalid_attempt_chains, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.attempted_at::timestamptz<o.created_at::timestamptz) AS attempt_before_order, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.payments earlier ON p.order_id=earlier.order_id\n                AND p.attempt_number::integer=earlier.attempt_number::integer+1\n                WHERE earlier.status='SUCCESS' OR p.attempted_at::timestamptz<=earlier.completed_at::timestamptz) AS invalid_retry_sequence",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.retried*r.first_failed*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.first_failed*r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id WHERE a.status='FAILED' OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.retried*r.first_failed*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.first_failed*r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id WHERE a.status='FAILED' OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.29866117404737386,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 870,
+          "denominator": 2913
+        },
+        {
+          "rate": 0.30117062788222776,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 849,
+          "denominator": 2819
+        }
+      ],
+      "budget": {
+        "sql_statements": 11,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Begin with BANK_C / UPI, accounting for 324 of 1,970 initially failed orders without an observed retry. Ask payment operations for retry eligibility and offer records for initially failed orders. Compare eligible orders offered a retry with orders that started one to locate the loss.",
+        "evidence_id": "9a67c575a2c6440292bef1586b79f5de",
+        "reused_from": "8827664072e0433d9c9e4ca72b9e69c3",
+        "analytical_statements": 0
+      }
+    },
+    "retry_recovery_all": {
+      "question": "Compare retry recovery all by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "493cd5b4b893489583c6bcce818853e5",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "retry_recovery_all",
+        "dataset": "lifecycle_v1",
+        "grain": "order",
+        "time_field": "created_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "orders",
+          "payments"
+        ],
+        "numerator": "initially failed mature orders recovered by cutoff",
+        "denominator": "initially failed mature orders",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "Recovery among initial failures: -0.0157 percentage points.",
+      "guidance": {
+        "finding": "The comparison had 1,993 initially failed orders unrecovered by 2026-11-01T00:00:00+05:30. The largest share came from BANK_C / UPI (329 of 1,993).",
+        "recommendations": [
+          "Begin with BANK_C / UPI, accounting for 329 of 1,993 initially failed orders unrecovered. Ask the analyst to compare retry uptake and recovery among retried orders at the same cutoff. If uptake fell, check retry eligibility and offers. If recovery after a retry fell, review retry outcomes."
+        ],
+        "source": "segments",
+        "leaders": [
+          "BANK_C / UPI"
+        ],
+        "evidence_id": "493cd5b4b893489583c6bcce818853e5",
+        "reference": "b383c38aaf795aeda9492a71f59b351b6990868e4206c613d1bbcc439e064339"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_order_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE (created_at IS NULL OR created_at='' OR NOT pg_input_is_valid(created_at, 'timestamp with time zone') OR NOT created_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_order_time",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_raw_quality",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_number IS NULL OR attempt_number NOT IN ('1','2','3')) AS invalid_attempt_number, (SELECT COUNT(*)-COUNT(DISTINCT order_id) FROM lifecycle_v1.orders) AS duplicate_orders, (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE order_id IS NULL OR order_id='' OR amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency<>'INR') AS invalid_order_identity, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE o.order_id IS NULL) AS orphan_order_attempts, (SELECT COUNT(*) FROM lifecycle_v1.orders o LEFT JOIN lifecycle_v1.payments p ON o.order_id=p.order_id WHERE p.order_id IS NULL) AS orders_without_attempts, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.amount_paise<>o.amount_paise OR p.currency<>o.currency OR p.merchant_id<>o.merchant_id) AS order_attribute_mismatch",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order, (SELECT COUNT(*) FROM (SELECT order_id FROM lifecycle_v1.payments GROUP BY order_id\n                HAVING COUNT(*)<>COUNT(DISTINCT attempt_number) OR MIN(attempt_number::integer)<>1\n                OR MAX(attempt_number::integer)<>COUNT(*) OR COUNT(*) FILTER (WHERE status='SUCCESS')>1\n                OR COUNT(DISTINCT payer_bank_id)<>1 OR COUNT(DISTINCT payment_method)<>1) bad) AS invalid_attempt_chains, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.attempted_at::timestamptz<o.created_at::timestamptz) AS attempt_before_order, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.payments earlier ON p.order_id=earlier.order_id\n                AND p.attempt_number::integer=earlier.attempt_number::integer+1\n                WHERE earlier.status='SUCCESS' OR p.attempted_at::timestamptz<=earlier.completed_at::timestamptz) AS invalid_retry_sequence",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.recovered*r.first_failed*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.first_failed*r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id WHERE a.status='FAILED' OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.recovered*r.first_failed*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.first_failed*r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id WHERE a.status='FAILED' OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.29316855475454856,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 854,
+          "denominator": 2913
+        },
+        {
+          "rate": 0.2930117062788223,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 826,
+          "denominator": 2819
+        }
+      ],
+      "budget": {
+        "sql_statements": 11,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Begin with BANK_C / UPI, accounting for 329 of 1,993 initially failed orders unrecovered. Ask the analyst to compare retry uptake and recovery among retried orders at the same cutoff. If uptake fell, check retry eligibility and offers. If recovery after a retry fell, review retry outcomes.",
+        "evidence_id": "6dc1f7a9068844b8b195e754b08b3780",
+        "reused_from": "493cd5b4b893489583c6bcce818853e5",
+        "analytical_statements": 0
+      }
+    },
+    "retry_recovery_retried": {
+      "question": "Compare retry recovery retried by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "a63638556d4b461d8449e3b77488c833",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "retry_recovery_retried",
+        "dataset": "lifecycle_v1",
+        "grain": "order",
+        "time_field": "created_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "orders",
+          "payments"
+        ],
+        "numerator": "initially failed mature orders recovered by cutoff",
+        "denominator": "retried initially failed mature orders",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "Recovery among retried orders: -0.8700 percentage points.",
+      "guidance": {
+        "finding": "The comparison had 23 retried orders unrecovered by 2026-11-01T00:00:00+05:30. The largest share came from BANK_D / UPI (6 of 23).",
+        "recommendations": [
+          "Begin with BANK_D / UPI, accounting for 6 of 23 retried orders unrecovered. Ask payment operations for retry attempt traces on the unrecovered retried orders. Compare outcome codes and completion times with recovered retries to distinguish repeated failures from late completion."
+        ],
+        "source": "segments",
+        "leaders": [
+          "BANK_D / UPI"
+        ],
+        "evidence_id": "a63638556d4b461d8449e3b77488c833",
+        "reference": "ea0f11e81c62abaf18fecf11067e804acbdecf58772ab142a520eeadd7d321b4"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_order_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE (created_at IS NULL OR created_at='' OR NOT pg_input_is_valid(created_at, 'timestamp with time zone') OR NOT created_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_order_time",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_raw_quality",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_number IS NULL OR attempt_number NOT IN ('1','2','3')) AS invalid_attempt_number, (SELECT COUNT(*)-COUNT(DISTINCT order_id) FROM lifecycle_v1.orders) AS duplicate_orders, (SELECT COUNT(*) FROM lifecycle_v1.orders WHERE order_id IS NULL OR order_id='' OR amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency<>'INR') AS invalid_order_identity, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE o.order_id IS NULL) AS orphan_order_attempts, (SELECT COUNT(*) FROM lifecycle_v1.orders o LEFT JOIN lifecycle_v1.payments p ON o.order_id=p.order_id WHERE p.order_id IS NULL) AS orders_without_attempts, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.amount_paise<>o.amount_paise OR p.currency<>o.currency OR p.merchant_id<>o.merchant_id) AS order_attribute_mismatch",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order, (SELECT COUNT(*) FROM (SELECT order_id FROM lifecycle_v1.payments GROUP BY order_id\n                HAVING COUNT(*)<>COUNT(DISTINCT attempt_number) OR MIN(attempt_number::integer)<>1\n                OR MAX(attempt_number::integer)<>COUNT(*) OR COUNT(*) FILTER (WHERE status='SUCCESS')>1\n                OR COUNT(DISTINCT payer_bank_id)<>1 OR COUNT(DISTINCT payment_method)<>1) bad) AS invalid_attempt_chains, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.orders o ON p.order_id=o.order_id WHERE p.attempted_at::timestamptz<o.created_at::timestamptz) AS attempt_before_order, (SELECT COUNT(*) FROM lifecycle_v1.payments p JOIN lifecycle_v1.payments earlier ON p.order_id=earlier.order_id\n                AND p.attempt_number::integer=earlier.attempt_number::integer+1\n                WHERE earlier.status='SUCCESS' OR p.attempted_at::timestamptz<=earlier.completed_at::timestamptz) AS invalid_retry_sequence",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.recovered*r.first_failed*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.retried*r.first_failed*r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id WHERE a.status='FAILED' OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.recovered*r.first_failed*r.eligible),0)::bigint AS numerator,\n            COALESCE(SUM(r.retried*r.first_failed*r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT a.payer_bank_id, a.payment_method, o.merchant_id,\n            o.created_at AS event_time,\n            CASE WHEN o.created_at + INTERVAL '24 hours' <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN a.status='SUCCESS' THEN 1 ELSE 0 END AS first_success,\n            CASE WHEN a.status='FAILED' THEN 1 ELSE 0 END AS first_failed,\n            CASE WHEN retries.retries>0 THEN 1 ELSE 0 END AS retried,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) IS NOT NULL THEN 1 ELSE 0 END AS recovered,\n            CASE WHEN COALESCE(CASE WHEN a.status='SUCCESS' THEN a.completed_at::timestamptz END, retries.success_at) <= o.created_at + INTERVAL '24 hours' THEN 1 ELSE 0 END AS converted\n            FROM (SELECT order_id, merchant_id, created_at::timestamptz AS created_at FROM lifecycle_v1.orders OFFSET 0) o\n            LEFT JOIN lifecycle_v1.payments a ON o.order_id=a.order_id\n                AND a.attempt_number='1' AND a.completed_at::timestamptz<=%(cutoff)s::timestamptz AND a.ingested_at::timestamptz<=%(cutoff)s::timestamptz\n            LEFT JOIN (SELECT p.order_id, COUNT(*) AS retries,\n            MIN(CASE WHEN p.status='SUCCESS' THEN p.completed_at::timestamptz END) AS success_at\n            FROM lifecycle_v1.payments p WHERE p.attempt_number<>'1' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz GROUP BY p.order_id) retries ON o.order_id=retries.order_id WHERE a.status='FAILED' OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.9816091954022989,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 854,
+          "denominator": 870
+        },
+        {
+          "rate": 0.9729093050647821,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 826,
+          "denominator": 849
+        }
+      ],
+      "budget": {
+        "sql_statements": 11,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Begin with BANK_D / UPI, accounting for 6 of 23 retried orders unrecovered. Ask payment operations for retry attempt traces on the unrecovered retried orders. Compare outcome codes and completion times with recovered retries to distinguish repeated failures from late completion.",
+        "evidence_id": "d7a6bc0f6cc34d4fad2bace436a33bfe",
+        "reused_from": "a63638556d4b461d8449e3b77488c833",
+        "analytical_statements": 0
+      }
+    },
+    "settlement_count": {
+      "question": "Compare settlement count by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "b4f9b56233034520afa8d49f772c81f0",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "settlement_count",
+        "dataset": "lifecycle_v1",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "payments",
+          "settlements"
+        ],
+        "numerator": "due obligations settled by cutoff",
+        "denominator": "obligations due by cutoff",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "Due settlement count completion: +0.0000 percentage points.",
+      "guidance": {
+        "finding": "In the comparison, all 96,485 obligations due by cutoff met the measure by 2026-11-01T00:00:00+05:30.",
+        "recommendations": [
+          "Monitor Due settlement count completion for the next eligible cohort. Investigate if a gap appears at the same observation horizon."
+        ],
+        "source": "overall",
+        "leaders": [],
+        "evidence_id": "b4f9b56233034520afa8d49f772c81f0",
+        "reference": "b7df2a27a7942ab66aff83722fc4bf6a079f25e1bb339a14036e0e8983f1cfb0"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_due_at",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.settlements WHERE (due_at IS NULL OR due_at='' OR NOT pg_input_is_valid(due_at, 'timestamp with time zone') OR NOT due_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_due_at",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_settled_at",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.settlements WHERE (settled_at<>'' AND (settled_at IS NULL OR settled_at='' OR NOT pg_input_is_valid(settled_at, 'timestamp with time zone') OR NOT settled_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$'))) AS invalid_settled_at",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_raw_quality",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.settlements WHERE settlement_id IS NULL OR settlement_id='' OR gross_amount_paise IS NULL OR NOT gross_amount_paise ~ '^[1-9][0-9]*$' OR NOT pg_input_is_valid(gross_amount_paise,'bigint') OR settlement_status IS NULL OR settlement_status NOT IN ('PENDING','SETTLED') OR settled_at IS NULL OR (settlement_status='PENDING' AND settled_at<>'') OR (settlement_status='SETTLED' AND settled_at='')) AS invalid_settlement_fields, (SELECT COUNT(*)-COUNT(DISTINCT attempt_id) FROM lifecycle_v1.settlements) AS duplicate_settlements, (SELECT COUNT(*)-COUNT(DISTINCT settlement_id) FROM lifecycle_v1.settlements) AS duplicate_settlement_ids, (SELECT COUNT(*) FROM lifecycle_v1.settlements s LEFT JOIN lifecycle_v1.payments p ON s.attempt_id=p.attempt_id WHERE p.attempt_id IS NULL OR p.status<>'SUCCESS' OR s.gross_amount_paise<>p.amount_paise) AS invalid_settlement_reference, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.settlements s ON p.attempt_id=s.attempt_id WHERE p.status='SUCCESS' AND s.attempt_id IS NULL) AS missing_obligations",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order, (SELECT COUNT(*) FROM lifecycle_v1.settlements s JOIN lifecycle_v1.payments p ON s.attempt_id=p.attempt_id\n            WHERE s.due_at::timestamptz<>p.completed_at::timestamptz+INTERVAL '24 hours'\n            OR CAST(NULLIF(s.settled_at,'') AS TIMESTAMPTZ)<p.completed_at::timestamptz) AS invalid_due_or_settled_time",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.completed),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT p.payer_bank_id, p.payment_method, p.merchant_id,\n            p.attempted_at::timestamptz AS event_time,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz AND s.settlement_status='SETTLED'\n                 AND CAST(NULLIF(s.settled_at, '') AS TIMESTAMPTZ) <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS completed,\n            s.gross_amount_paise::bigint AS amount\n            FROM lifecycle_v1.payments p JOIN lifecycle_v1.settlements s ON p.attempt_id=s.attempt_id\n            WHERE p.status='SUCCESS' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.completed),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT p.payer_bank_id, p.payment_method, p.merchant_id,\n            p.attempted_at::timestamptz AS event_time,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz AND s.settlement_status='SETTLED'\n                 AND CAST(NULLIF(s.settled_at, '') AS TIMESTAMPTZ) <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS completed,\n            s.gross_amount_paise::bigint AS amount\n            FROM lifecycle_v1.payments p JOIN lifecycle_v1.settlements s ON p.attempt_id=s.attempt_id\n            WHERE p.status='SUCCESS' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 1.0,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 97462,
+          "denominator": 97462
+        },
+        {
+          "rate": 1.0,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 96485,
+          "denominator": 96485
+        }
+      ],
+      "budget": {
+        "sql_statements": 12,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Monitor Due settlement count completion for the next eligible cohort. Investigate if a gap appears at the same observation horizon.",
+        "evidence_id": "0849bb63fbcc4519a32414b387a5cffe",
+        "reused_from": "b4f9b56233034520afa8d49f772c81f0",
+        "analytical_statements": 0
+      }
+    },
+    "settlement_amount": {
+      "question": "Compare settlement amount by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "12221b349cd941cd9e2582e9881f00c3",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "settlement_amount",
+        "dataset": "lifecycle_v1",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "payments",
+          "settlements"
+        ],
+        "numerator": "due gross paise settled by cutoff",
+        "denominator": "gross paise due by cutoff",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "Due settlement amount completion: +0.0000 percentage points.",
+      "guidance": {
+        "finding": "In the comparison, all 14,237,303,846 gross paise due by cutoff met the measure by 2026-11-01T00:00:00+05:30.",
+        "recommendations": [
+          "Monitor Due settlement amount completion for the next eligible cohort. Investigate if a gap appears at the same observation horizon."
+        ],
+        "source": "overall",
+        "leaders": [],
+        "evidence_id": "12221b349cd941cd9e2582e9881f00c3",
+        "reference": "da2b85fdc5cf83422ee0b842877cf4dd2182cf7af2851c8912a98ac859cc5471"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_due_at",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.settlements WHERE (due_at IS NULL OR due_at='' OR NOT pg_input_is_valid(due_at, 'timestamp with time zone') OR NOT due_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_due_at",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_settled_at",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.settlements WHERE (settled_at<>'' AND (settled_at IS NULL OR settled_at='' OR NOT pg_input_is_valid(settled_at, 'timestamp with time zone') OR NOT settled_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$'))) AS invalid_settled_at",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_raw_quality",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.settlements WHERE settlement_id IS NULL OR settlement_id='' OR gross_amount_paise IS NULL OR NOT gross_amount_paise ~ '^[1-9][0-9]*$' OR NOT pg_input_is_valid(gross_amount_paise,'bigint') OR settlement_status IS NULL OR settlement_status NOT IN ('PENDING','SETTLED') OR settled_at IS NULL OR (settlement_status='PENDING' AND settled_at<>'') OR (settlement_status='SETTLED' AND settled_at='')) AS invalid_settlement_fields, (SELECT COUNT(*)-COUNT(DISTINCT attempt_id) FROM lifecycle_v1.settlements) AS duplicate_settlements, (SELECT COUNT(*)-COUNT(DISTINCT settlement_id) FROM lifecycle_v1.settlements) AS duplicate_settlement_ids, (SELECT COUNT(*) FROM lifecycle_v1.settlements s LEFT JOIN lifecycle_v1.payments p ON s.attempt_id=p.attempt_id WHERE p.attempt_id IS NULL OR p.status<>'SUCCESS' OR s.gross_amount_paise<>p.amount_paise) AS invalid_settlement_reference, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.settlements s ON p.attempt_id=s.attempt_id WHERE p.status='SUCCESS' AND s.attempt_id IS NULL) AS missing_obligations",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order, (SELECT COUNT(*) FROM lifecycle_v1.settlements s JOIN lifecycle_v1.payments p ON s.attempt_id=p.attempt_id\n            WHERE s.due_at::timestamptz<>p.completed_at::timestamptz+INTERVAL '24 hours'\n            OR CAST(NULLIF(s.settled_at,'') AS TIMESTAMPTZ)<p.completed_at::timestamptz) AS invalid_due_or_settled_time",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.completed*r.amount),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible*r.amount),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT p.payer_bank_id, p.payment_method, p.merchant_id,\n            p.attempted_at::timestamptz AS event_time,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz AND s.settlement_status='SETTLED'\n                 AND CAST(NULLIF(s.settled_at, '') AS TIMESTAMPTZ) <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS completed,\n            s.gross_amount_paise::bigint AS amount\n            FROM lifecycle_v1.payments p JOIN lifecycle_v1.settlements s ON p.attempt_id=s.attempt_id\n            WHERE p.status='SUCCESS' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.completed*r.amount),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible*r.amount),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded \n            FROM (SELECT p.payer_bank_id, p.payment_method, p.merchant_id,\n            p.attempted_at::timestamptz AS event_time,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS eligible,\n            CASE WHEN s.due_at::timestamptz <= %(cutoff)s::timestamptz AND s.settlement_status='SETTLED'\n                 AND CAST(NULLIF(s.settled_at, '') AS TIMESTAMPTZ) <= %(cutoff)s::timestamptz THEN 1 ELSE 0 END AS completed,\n            s.gross_amount_paise::bigint AS amount\n            FROM lifecycle_v1.payments p JOIN lifecycle_v1.settlements s ON p.attempt_id=s.attempt_id\n            WHERE p.status='SUCCESS' AND p.completed_at::timestamptz <= %(cutoff)s::timestamptz\n              AND p.ingested_at::timestamptz <= %(cutoff)s::timestamptz OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 1.0,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 14297466999,
+          "denominator": 14297466999
+        },
+        {
+          "rate": 1.0,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 14237303846,
+          "denominator": 14237303846
+        }
+      ],
+      "budget": {
+        "sql_statements": 12,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Monitor Due settlement amount completion for the next eligible cohort. Investigate if a gap appears at the same observation horizon.",
+        "evidence_id": "e1a78c5e97594e218490da62767ebab6",
+        "reused_from": "12221b349cd941cd9e2582e9881f00c3",
+        "analytical_statements": 0
+      }
+    },
+    "bank_health": {
+      "question": "Compare bank health by bank and payment method. Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "46df611fe41048008ea70048b399ba22",
+      "plan": {
+        "objective": {
+          "kind": "summary",
+          "dimension": "segment",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "bank_health",
+        "dataset": "lifecycle_v1",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "bank_health",
+          "banks",
+          "merchants",
+          "payments"
+        ],
+        "numerator": "successful observed attempts",
+        "denominator": "observed completed attempts",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": "2026-11-01T00:00:00+05:30"
+      },
+      "answer": "Attempt success with aligned bank health: +0.0631 percentage points.",
+      "guidance": {
+        "finding": "Attempt-weighted five-minute observations by period. baseline 100,402/100,402 attempts aligned, 1,126.6 ms mean bucket p95, 99.500% mean availability. comparison 99,331/99,331 attempts aligned, 1,124.4 ms mean bucket p95, 99.499% mean availability.",
+        "recommendations": [
+          "Ask payment operations to match failed and successful attempt traces to the same bank, method and five-minute health intervals. Concentration in impaired intervals warrants a bank-side trace review. A similar pattern in healthy intervals calls for checking the payment path."
+        ],
+        "source": "overall",
+        "leaders": [],
+        "evidence_id": "46df611fe41048008ea70048b399ba22",
+        "reference": "05e8a61614bdf97586306359045a3e7f210f4ecce4e54eae1acf6cb51ac046c6"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM lifecycle_v1.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM lifecycle_v1.payments p LEFT JOIN lifecycle_v1.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM lifecycle_v1.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM lifecycle_v1.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_completion_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (completed_at IS NULL OR completed_at='' OR NOT pg_input_is_valid(completed_at, 'timestamp with time zone') OR NOT completed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_completion_time",
+          "parameters": {}
+        },
+        {
+          "name": "invalid_observation_time",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE (ingested_at IS NULL OR ingested_at='' OR NOT pg_input_is_valid(ingested_at, 'timestamp with time zone') OR NOT ingested_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS invalid_observation_time",
+          "parameters": {}
+        },
+        {
+          "name": "lifecycle_invariants",
+          "sql": "SELECT (SELECT COUNT(*) FROM lifecycle_v1.payments WHERE completed_at::timestamptz < attempted_at::timestamptz OR ingested_at::timestamptz < completed_at::timestamptz) AS completion_order",
+          "parameters": {}
+        },
+        {
+          "name": "health_quality",
+          "sql": "SELECT (SELECT (SELECT COUNT(*) FROM lifecycle_v1.bank_health)-(SELECT COUNT(*) FROM (SELECT bank_id, payment_method, bucket, MAX(availability) AS availability, MAX(latency) AS latency\n        FROM (SELECT bank_id, payment_method,\n        CASE WHEN NOT (observed_at IS NULL OR observed_at='' OR NOT pg_input_is_valid(observed_at, 'timestamp with time zone') OR NOT observed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$') THEN observed_at::timestamptz END AS bucket,\n        CASE WHEN pg_input_is_valid(availability_pct,'double precision') THEN availability_pct::double precision END AS availability,\n        CASE WHEN pg_input_is_valid(p95_latency_ms,'bigint') THEN p95_latency_ms::bigint END AS latency\n        FROM lifecycle_v1.bank_health OFFSET 0) typed GROUP BY bank_id,payment_method,bucket HAVING COUNT(*)=1\n        AND MAX(availability)>=0 AND MAX(availability)<=100 AND MAX(latency)>0\n        AND bucket=date_bin(INTERVAL '5 minutes',bucket,TIMESTAMPTZ '2000-01-01T00:00:00+05:30')) usable)) AS unusable_health_rows, (SELECT COALESCE(SUM(n-1),0)::bigint FROM (SELECT COUNT(*) AS n FROM lifecycle_v1.bank_health GROUP BY bank_id,payment_method,observed_at) d) AS duplicate_health_rows",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COALESCE(SUM(r.completed),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded , SUM(r.unmatched)::bigint AS unmatched,\n        SUM(r.availability)/NULLIF(COUNT(r.availability),0) AS attempt_weighted_availability_pct,\n        SUM(r.latency)::double precision/NULLIF(COUNT(r.latency),0) AS attempt_weighted_bucket_p95_ms\n            FROM (SELECT p.payer_bank_id,p.payment_method,p.merchant_id,p.event_time,\n        1 AS eligible, CASE WHEN p.status='SUCCESS' THEN 1 ELSE 0 END AS completed,\n        CASE WHEN h.bucket IS NULL THEN 1 ELSE 0 END AS unmatched, h.availability, h.latency\n        FROM (SELECT payer_bank_id,payment_method,merchant_id,status,attempted_at::timestamptz AS event_time\n              FROM lifecycle_v1.payments WHERE completed_at::timestamptz<=%(cutoff)s::timestamptz\n              AND ingested_at::timestamptz<=%(cutoff)s::timestamptz OFFSET 0) p\n        LEFT JOIN (SELECT bank_id, payment_method, bucket, MAX(availability) AS availability, MAX(latency) AS latency\n        FROM (SELECT bank_id, payment_method,\n        CASE WHEN NOT (observed_at IS NULL OR observed_at='' OR NOT pg_input_is_valid(observed_at, 'timestamp with time zone') OR NOT observed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$') THEN observed_at::timestamptz END AS bucket,\n        CASE WHEN pg_input_is_valid(availability_pct,'double precision') THEN availability_pct::double precision END AS availability,\n        CASE WHEN pg_input_is_valid(p95_latency_ms,'bigint') THEN p95_latency_ms::bigint END AS latency\n        FROM lifecycle_v1.bank_health OFFSET 0) typed GROUP BY bank_id,payment_method,bucket HAVING COUNT(*)=1\n        AND MAX(availability)>=0 AND MAX(availability)<=100 AND MAX(latency)>0\n        AND bucket=date_bin(INTERVAL '5 minutes',bucket,TIMESTAMPTZ '2000-01-01T00:00:00+05:30')) h ON p.payer_bank_id=h.bank_id\n        AND p.payment_method=h.payment_method\n        AND date_bin(INTERVAL '5 minutes',p.event_time,TIMESTAMPTZ '2000-01-01T00:00:00+05:30')=h.bucket OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, r.payer_bank_id, r.payment_method, COALESCE(SUM(r.completed),0)::bigint AS numerator,\n            COALESCE(SUM(r.eligible),0)::bigint AS denominator,\n            SUM(1-r.eligible)::bigint AS excluded , SUM(r.unmatched)::bigint AS unmatched,\n        SUM(r.availability)/NULLIF(COUNT(r.availability),0) AS attempt_weighted_availability_pct,\n        SUM(r.latency)::double precision/NULLIF(COUNT(r.latency),0) AS attempt_weighted_bucket_p95_ms\n            FROM (SELECT p.payer_bank_id,p.payment_method,p.merchant_id,p.event_time,\n        1 AS eligible, CASE WHEN p.status='SUCCESS' THEN 1 ELSE 0 END AS completed,\n        CASE WHEN h.bucket IS NULL THEN 1 ELSE 0 END AS unmatched, h.availability, h.latency\n        FROM (SELECT payer_bank_id,payment_method,merchant_id,status,attempted_at::timestamptz AS event_time\n              FROM lifecycle_v1.payments WHERE completed_at::timestamptz<=%(cutoff)s::timestamptz\n              AND ingested_at::timestamptz<=%(cutoff)s::timestamptz OFFSET 0) p\n        LEFT JOIN (SELECT bank_id, payment_method, bucket, MAX(availability) AS availability, MAX(latency) AS latency\n        FROM (SELECT bank_id, payment_method,\n        CASE WHEN NOT (observed_at IS NULL OR observed_at='' OR NOT pg_input_is_valid(observed_at, 'timestamp with time zone') OR NOT observed_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$') THEN observed_at::timestamptz END AS bucket,\n        CASE WHEN pg_input_is_valid(availability_pct,'double precision') THEN availability_pct::double precision END AS availability,\n        CASE WHEN pg_input_is_valid(p95_latency_ms,'bigint') THEN p95_latency_ms::bigint END AS latency\n        FROM lifecycle_v1.bank_health OFFSET 0) typed GROUP BY bank_id,payment_method,bucket HAVING COUNT(*)=1\n        AND MAX(availability)>=0 AND MAX(availability)<=100 AND MAX(latency)>0\n        AND bucket=date_bin(INTERVAL '5 minutes',bucket,TIMESTAMPTZ '2000-01-01T00:00:00+05:30')) h ON p.payer_bank_id=h.bank_id\n        AND p.payment_method=h.payment_method\n        AND date_bin(INTERVAL '5 minutes',p.event_time,TIMESTAMPTZ '2000-01-01T00:00:00+05:30')=h.bucket OFFSET 0) r WHERE ((r.event_time >= %(b_start)s::timestamptz AND r.event_time < %(b_end)s::timestamptz) OR (r.event_time >= %(c_start)s::timestamptz AND r.event_time < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "cutoff": "2026-11-01T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.970717714786558,
+          "period": 0,
+          "excluded": 0,
+          "numerator": 97462,
+          "unmatched": 0,
+          "denominator": 100402,
+          "attempt_weighted_bucket_p95_ms": 1126.560188044063,
+          "attempt_weighted_availability_pct": 99.5001103663246
+        },
+        {
+          "rate": 0.9713483202625565,
+          "period": 1,
+          "excluded": 0,
+          "numerator": 96485,
+          "unmatched": 0,
+          "denominator": 99331,
+          "attempt_weighted_bucket_p95_ms": 1124.382750601524,
+          "attempt_weighted_availability_pct": 99.49885382206902
+        }
+      ],
+      "budget": {
+        "sql_statements": 10,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Ask payment operations to match failed and successful attempt traces to the same bank, method and five-minute health intervals. Concentration in impaired intervals warrants a bank-side trace review. A similar pattern in healthy intervals calls for checking the payment path.",
+        "evidence_id": "678933a047a940f8bfb119fc65ffb075",
+        "reused_from": "46df611fe41048008ea70048b399ba22",
+        "analytical_statements": 0
+      }
+    }
+  },
+  "errors": {},
+  "status": "controlled_passed_hosted_unverified",
+  "controlled_status": "passed",
+  "hosted_model": {
+    "status": "failed",
+    "report": "journey_final_api_evaluation_hosted.json"
+  },
+  "protected_after": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  }
+}

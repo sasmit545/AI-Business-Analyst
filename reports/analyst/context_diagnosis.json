@@ -1,0 +1,145 @@
+{
+  "recorded_at": "2026-11-21T17:31:17.976443+00:00",
+  "observed_live_run": {
+    "run_id": "20261121T172444Z",
+    "status": "failed",
+    "mode": "live_model_api_sql",
+    "scenarios": [
+      {
+        "schema": "scenario_a",
+        "status": "passed",
+        "evidence_id": "5376dcf4bb1c4bddb154a0b56d3b6bd4",
+        "checksum": "e74d33b70c48b5152c4d82d791b8984aa8969eeb56c71e21bbc0679a67c68211",
+        "statement_count": 8,
+        "denial_probes": 13,
+        "elapsed_seconds": 27.747294599997986,
+        "question": "Compare attempt success for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Explain bank/method contributions and observed failure labels.",
+        "narrative": {
+          "answer": "Attempt success fell: -1.8000 percentage points.",
+          "facts": [
+            "Baseline: 9,800 successful attempts / 10,000 completed attempts = 98.0000%.",
+            "Comparison: 9,620 successful attempts / 10,000 completed attempts = 96.2000%.",
+            "Method partition: mix contribution +0.0000 pp; within-segment contribution -1.8000 pp.",
+            "Joint partition: mix contribution +0.0000 pp; within-segment contribution -1.8000 pp.",
+            "Largest negative within-segment contribution: BANK_B / UPI, -1.8000 pp.",
+            "Largest recorded failure-label count increase: BANK_B / UPI / BANK_TIMEOUT, 5 to 185 (+180). Counts also depend on traffic volume."
+          ],
+          "hypotheses": [
+            "Failure labels identify observations to investigate; they do not establish an infrastructure root cause."
+          ],
+          "recommendations": [
+            "Inspect corresponding operational logs before making a causal or routing decision."
+          ],
+          "caveats": [
+            "Denominator: all completed attempts in each explicit window and selected filters.",
+            "Attempt success does not measure order conversion or settlement completion.",
+            "Mix and within effects use symmetric midpoint weights; do not sum overlapping partitions."
+          ]
+        }
+      },
+      {
+        "schema": "scenario_b",
+        "status": "passed",
+        "evidence_id": "f2d0fc78f5c64637b4303173189a5def",
+        "checksum": "667e7f642aacb809d94ba186ab8e7c0b0336e9dc4d401fcb28eb561ce7bff16a",
+        "statement_count": 8,
+        "denial_probes": 13,
+        "elapsed_seconds": 27.706351199998608,
+        "question": "Compare attempt success for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Explain bank/method contributions and observed failure labels.",
+        "narrative": {
+          "answer": "Attempt success fell: -4.8000 percentage points.",
+          "facts": [
+            "Baseline: 9,640 successful attempts / 10,000 completed attempts = 96.4000%.",
+            "Comparison: 9,160 successful attempts / 10,000 completed attempts = 91.6000%.",
+            "Method partition: mix contribution -4.8000 pp; within-segment contribution +0.0000 pp.",
+            "Joint partition: mix contribution -4.8000 pp; within-segment contribution +0.0000 pp.",
+            "Largest recorded failure-label count increase: BANK_A / UPI / AUTHENTICATION_FAILED, 10 to 40 (+30). Counts also depend on traffic volume."
+          ],
+          "hypotheses": [
+            "Failure labels identify observations to investigate; they do not establish an infrastructure root cause."
+          ],
+          "recommendations": [
+            "Inspect corresponding operational logs before making a causal or routing decision."
+          ],
+          "caveats": [
+            "Denominator: all completed attempts in each explicit window and selected filters.",
+            "Attempt success does not measure order conversion or settlement completion.",
+            "Mix and within effects use symmetric midpoint weights; do not sum overlapping partitions."
+          ]
+        }
+      }
+    ],
+    "provider": "nvidia",
+    "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+    "gates": {
+      "foundation": "passed",
+      "complete_demo": "pending",
+      "first_analyst_breadth": "pending",
+      "target_v1": "pending"
+    },
+    "missing_evidence": [
+      "real model/API/UI journey",
+      "live model adversarial and safe-failure benchmarks",
+      "browser rendering proof"
+    ],
+    "protected_sources_before": {
+      "files": 43,
+      "csv_files": 23,
+      "changed": []
+    },
+    "last_investigation": {
+      "schema": "scenario_a_dirty",
+      "investigation_id": "54505bfc898441ffadd584dc3baf622d",
+      "status": "failed",
+      "error": "Structured output could not be validated",
+      "budget": {
+        "sql_statements": 0,
+        "tool_calls": 3,
+        "repairs": 2,
+        "tokens_reserved": 4415
+      }
+    },
+    "failure_type": "AssertionError",
+    "restored_selection": {
+      "schema": "lifecycle_v1",
+      "visible_tables": 8
+    },
+    "protected_sources_after": {
+      "files": 43,
+      "csv_files": 23,
+      "changed": []
+    }
+  },
+  "cause": "Three get_context calls contained extra arguments, exhausting two repairs before any SQL. The exact private argument keys were not logged. Dirty-data quality was not reached.",
+  "change": "Supply the existing curated selected-schema catalog after authorization in initial system context and omit get_context from advertised tool choices. Keep strict validation, scope controls, one analytical bundle and quality publication rules.",
+  "verification": {
+    "regression": "Failed before the change with Structured output could not be validated; now publishes dirty diagnostics with zero repairs",
+    "full_suite": {
+      "passed": 70,
+      "skipped": 2,
+      "artifact": "reports/analyst/test_results.xml"
+    },
+    "real_api_sql": "reports/analyst/dirty_context_validation.json",
+    "real_api_sql_model": "explicit deterministic double; not live acceptance",
+    "wheel": "rebuilt and byte-compared to source",
+    "protected_sources": {
+      "files": 43,
+      "csv_files": 23,
+      "changed": []
+    }
+  },
+  "review": {
+    "scope": [
+      "app/agent/graph.py",
+      "app/agent/tools.py",
+      "app/agent/prompts.py"
+    ],
+    "manual": "Confirmed authorization precedes catalog construction, selected-schema context contains no secrets/evaluator data, no budget or SQL/quality gate changed, prior metadata handler remains strictly validated if called directly",
+    "simplify": "No additional changes; focused context-delivery change",
+    "formal": "Code review: skipped (ce-code-review unavailable); no Git diff base"
+  },
+  "live_rerun": "pending on updated code",
+  "gates": {
+    "complete_demo": "pending"
+  }
+}

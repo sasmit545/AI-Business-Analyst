@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="29" time="162.063" timestamp="2026-11-22T14:09:20.147123+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_dimension_scope" name="test_dimension_membership_uses_registered_names_independent_of_activity" time="0.429"><failure message="app.context.dimensions.DimensionLookupError: No merchant matches that filter in the selected dataset. Which merchant name or ID should I use?">hand_connection = &lt;psycopg.Connection [INTRANS] (host=127.0.0.1 user=postgres database=payments_analytics) at 0x298c1c47b60&gt;
+
+    def test_dimension_membership_uses_registered_names_independent_of_activity(hand_connection):
+        from threading import RLock
+    
+        hand_connection.execute("INSERT INTO pg_temp.merchants VALUES ('shop-a','Novel Merchant','retail','west'), "
+                                "('shop-b','Novel Merchant','retail','west')")
+        hand_connection.execute("INSERT INTO pg_temp.payment_methods VALUES ('dir-test','Novel Method','test')")
+        auth = object.__new__(Authorization)
+        auth.lock, auth.scenario, auth.connection = RLock(), 'pg_temp', hand_connection
+        auth.methods = read_directory(hand_connection, 'pg_temp', 'payment_methods', 'payment_method', 'label')
+&gt;       assert bind_filters({'merchant_id':'shop-a','payment_method':'novel method'}, auth) == {
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            'merchant_id':'shop-a', 'payment_method':'dir-test'}
+
+tests\analyst\test_dimension_scope.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\context\dimensions.py:40: in bind_filters
+    bound[field] = authorization.resolve_merchant(value)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\query\executor.py:138: in resolve_merchant
+    return resolve_member(value, {r['merchant_id']:r['merchant_name'] for r in rows}, 'merchant')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 'shop-a', directory = {}, dimension = 'merchant'
+
+    def resolve_member(value, directory, dimension):
+        if value in directory:
+            return value
+        key = value.strip().casefold()
+        matches = sorted(code for code, name in directory.items()
+                         if key and key in (code.casefold(), name.casefold()))
+        if len(matches) == 1:
+            return matches[0]
+        if matches:
+            raise DimensionLookupError(f'More than one {dimension} matches. Enter an exact ID. '
+                                       f'Matching IDs include {", ".join(matches[:6])}.')
+&gt;       raise DimensionLookupError(f'No {dimension} matches that filter in the selected dataset. '
+                                   f'Which {dimension} name or ID should I use?')
+E       app.context.dimensions.DimensionLookupError: No merchant matches that filter in the selected dataset. Which merchant name or ID should I use?
+
+app\context\dimensions.py:24: DimensionLookupError</failure></testcase><testcase classname="tests.analyst.test_dimension_scope" name="test_unknown_merchant_clarifies_and_known_empty_merchant_publishes" time="13.955" /><testcase classname="tests.analyst.test_executor_integration" name="test_live_selected_scope_comparison" time="26.546" /><testcase classname="tests.analyst.test_executor_integration" name="test_original_connection_cannot_reconnect" time="0.637" /><testcase classname="tests.analyst.test_executor_integration" name="test_bank_lookup_uses_database_names_and_clarifies_before_analysis" time="2.538" /><testcase classname="tests.analyst.test_followups" name="test_measured_segment_proposal_and_independent_result" time="0.083" /><testcase classname="tests.analyst.test_followups" name="test_followup_text_resolves_only_supported_narrowing" time="0.020" /><testcase classname="tests.analyst.test_followups" name="test_bank_names_with_unrelated_ids_use_the_runtime_directory" time="0.044" /><testcase classname="tests.analyst.test_followups" name="test_unknown_bank_clarification_accepts_a_runtime_name_via_api" time="9.547" /><testcase classname="tests.analyst.test_followups" name="test_bank_name_followup_recalculates_legacy_empty_result" time="21.866" /><testcase classname="tests.analyst.test_followups" name="test_saved_bank_label_offers_a_versioned_recalculation" time="4.284" /><testcase classname="tests.analyst.test_followups" name="test_failed_session_switch_keeps_owned_handle_until_detached" time="4.379" /><testcase classname="tests.analyst.test_followups" name="test_chart_click_is_consumed_once_across_poll_and_navigation" time="0.616" /><testcase classname="tests.analyst.test_followups" name="test_open_saved_history_reads_selected_investigation" time="2.620" /><testcase classname="tests.analyst.test_catalog" name="test_catalog_contains_only_selected_scope" time="0.171" /><testcase classname="tests.analyst.test_catalog" name="test_scope_override_and_unknown_metric_rejected" time="0.004" /><testcase classname="tests.analyst.test_catalog" name="test_window_requires_offsets_and_positive_duration" time="0.006" /><testcase classname="tests.analyst.test_agent_flow" name="test_relative_period_clarifies_without_metric_queries" time="0.150" /><testcase classname="tests.analyst.test_agent_flow" name="test_host_tools_are_unreachable" time="0.153" /><testcase classname="tests.analyst.test_agent_flow" name="test_no_raw_model_factual_prose_route" time="0.182" /><testcase classname="tests.analyst.test_agent_flow" name="test_model_double_runs_real_bundle_then_trusted_publication" time="15.364" /><testcase classname="tests.analyst.test_agent_flow" name="test_cancelled_and_repair_budget_cannot_publish" time="0.169" /><testcase classname="tests.analyst.test_agent_flow" name="test_invalid_tool_fields_are_reported_without_values_or_unknown_keys" time="0.218" /><testcase classname="tests.analyst.test_agent_flow" name="test_token_budget_failure_identifies_limit_in_result_and_log" time="0.130" /><testcase classname="tests.analyst.test_agent_flow" name="test_after_two_context_repairs_only_publication_tools_are_offered" time="21.470" /><testcase classname="tests.analyst.test_agent_flow" name="test_repeated_analysis_is_still_denied_at_dispatch" time="0.045" /><testcase classname="tests.analyst.test_agent_flow" name="test_context_repair_supplies_exact_empty_arguments" time="0.334" /><testcase classname="tests.analyst.test_agent_flow" name="test_context_is_supplied_before_model_and_dirty_diagnostics_publish" time="0.352" /><testcase classname="tests.analyst.test_agent_flow" name="test_explicit_end_date_drift_is_repaired_before_sql" time="0.541" /></testsuite></testsuites>

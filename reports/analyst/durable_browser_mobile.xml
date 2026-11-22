@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="59.378" timestamp="2026-11-22T03:56:58.273427+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="57.327"><failure message="AttributeError: 'Connection' object has no attribute '_transport'">tmp_path = WindowsPath('E:/pinelabs/.local/analyst/test-temp/e1a7035894c34c16856299df83a619e7/test_chart_selection_and_resta0')
+
+    @pytest.mark.live
+    @pytest.mark.skipif(os.environ.get('ANALYST_DURABLE_BROWSER') != '1', reason='Opt-in real model and browser')
+    def test_chart_selection_and_restart(tmp_path):
+        root = Path.cwd()
+        ctx = multiprocessing.get_context('spawn')
+        api_port = _port()
+        token = tmp_path/'.local/analyst/api_token'
+        base = f'http://127.0.0.1:{api_port}'
+        api = ctx.Process(target=_serve_api, args=(root, tmp_path, api_port))
+        api.start()
+        ui = None
+        try:
+            _wait_ready(api, base+'/health', token)
+            saved = _saved_attempt_comparison(base, token)
+            counts = _attempt_counts(root)
+            bank = min(bank for _, bank in counts if bank is not None)
+            ui_port = _port()
+            ui = ctx.Process(target=_serve_ui, args=(root, tmp_path, api_port, ui_port))
+            ui.start()
+            url = f'http://127.0.0.1:{ui_port}'
+            _wait_ready(ui,url+'/_stcore/health')
+            prior_child = os.environ.get('ANALYST_DURABLE_BROWSER_CHILD')
+            if prior_child:
+                child_id = prior_child
+            else:
+                with _browser() as browser:
+                    child_id = _select_bank(browser,url,saved,bank,counts)
+                print('Chart click produced fresh bank evidence.',flush=True)
+            # Confirm the parent, exact inherited request and actual SQL row counts
+            # before testing an independent replacement API and fresh mobile browser.
+            checksum = _validate_saved_child(base,token,saved,child_id,bank,counts)
+            print('Confirmed saved parent, selected bank, and unrounded CSV counts.',flush=True)
+            old_pid = api.pid
+            _stop(api)
+            api = ctx.Process(target=_serve_api,args=(root,tmp_path,api_port))
+            api.start()
+            _wait_ready(api,base+'/health',token)
+            assert old_pid != api.pid
+&gt;           with _browser() as browser:
+                 ^^^^^^^^^^
+
+tests\analyst\test_durable_browser.py:300: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\dell\miniconda3-env\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    @contextmanager
+    def _browser():
+        """If Chromium hangs on shutdown, release only the processes this launch owns."""
+        import _winapi
+        from threading import Timer
+        from playwright.sync_api import sync_playwright
+    
+        driver=sync_playwright().start()
+        browser=driver.chromium.launch(
+            executable_path='C:/Program Files/Google/Chrome/Application/chrome.exe', headless=True,
+            args=['--disable-gpu','--disable-extensions','--renderer-process-limit=1','--disable-background-networking'])
+        cdp=browser.new_browser_cdp_session()
+        processes=cdp.send('SystemInfo.getProcessInfo')['processInfo']
+        cdp.detach()
+        # The pinned Python Playwright version does not expose the driver PID publicly.
+&gt;       ids=[p['id'] for p in processes]+[driver._impl_obj._connection._transport._proc.pid]
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Connection' object has no attribute '_transport'
+
+tests\analyst\test_durable_browser.py:230: AttributeError</failure></testcase></testsuite></testsuites>

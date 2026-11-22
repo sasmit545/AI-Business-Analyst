@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "recorded_at": "2026-11-22T04:51:56.533947+00:00",
+  "application_suite": {
+    "artifact": "chat_history_suite.xml",
+    "passed": 132,
+    "skipped": 9,
+    "failed": 0
+  },
+  "session_history_checks": [
+    "Real PostgreSQL and FastAPI with a deterministic model double persisted a clarification reply, verified answer and filtered child across an API restart. Reading and reopening preserved investigation charges.",
+    "Unauthorized, detached, revoked, stale and separate session access; failed reply save rollback; unpublished and cancelled output; public-turn filtering; legacy saved state.",
+    "Streamlit AppTest opened an earlier investigation by its card and verified the parent question and role-labelled turns."
+  ],
+  "browser": {
+    "status": "passed",
+    "mode": "Chromium, private loopback services and native PostgreSQL; deterministic date clarification",
+    "checks": [
+      "Empty history",
+      "Question and clarification displayed",
+      "Reopened clarification form at 390px width"
+    ]
+  },
+  "legacy_limit": "Previously completed clarification exchanges were not separately recorded. Older saved questions, answer headlines and outstanding clarifications remain available.",
+  "protected_sources": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "initial_focused_run": "chat_history_tests.xml (Windows epoch timestamp conversion corrected and the full suite rerun)"
+}

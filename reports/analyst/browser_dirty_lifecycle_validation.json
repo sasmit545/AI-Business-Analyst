@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "live_model": true,
+  "recorded_at": "2026-11-21T21:22:07.499668+00:00",
+  "scenario": "scenario_a_dirty",
+  "evidence_id": "9bfa2d21d6344cb2afc677f6c83bb9fb",
+  "visible_status": "blocked",
+  "defects": {
+    "duplicate_occurrences": 20,
+    "missing_timestamps": 10,
+    "orphan_merchants": 10
+  },
+  "certified_metrics_visible": false,
+  "screenshot": "browser-live-lifecycle-dirty.png",
+  "complete_demo": "passed",
+  "first_analyst_breadth": "passed",
+  "final_acceptance": "reports/analyst/lifecycle_acceptance.json"
+}

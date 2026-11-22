@@ -1,0 +1,30 @@
+{
+  "live_database_verified": true,
+  "phase3_unit_tests": {
+    "cases": [
+      "benchmark_answers_resolve",
+      "conversion_24h_boundary_and_attempt_window_are_distinct",
+      "hand_calculated_recovery_and_pending_settlement",
+      "lifecycle_validator_rejects_corruption",
+      "maturity_cutoff_is_inclusive",
+      "retry_cap_and_named_stream_independence",
+      "temporal_join_does_not_match_neighbor_buckets"
+    ],
+    "command": "python -B -m unittest discover -s scripts -p test_phase3.py -v",
+    "elapsed_seconds": 16.517,
+    "status": "passed",
+    "tests_run": 7
+  },
+  "postgresql_tests": {
+    "command": "python -B scripts/postgres_analytics.py test",
+    "elapsed_seconds": 1139.812,
+    "exit_code": 0,
+    "output": "test_existing_sources_and_ground_truths (test_postgres_phase1.OfflineTests.test_existing_sources_and_ground_truths) ... ok\ntest_ingestion_preserves_empty_fields_and_is_atomic (test_postgres_phase1.OfflineTests.test_ingestion_preserves_empty_fields_and_is_atomic) ... ok\ntest_install_archive_cannot_escape_destination (test_postgres_phase1.OfflineTests.test_install_archive_cannot_escape_destination) ... ok\ntest_native_import_reads_only_the_twenty_three_csvs (test_postgres_phase1.OfflineTests.test_native_import_reads_only_the_twenty_three_csvs) ... ok\ntest_only_known_scenarios_can_enter_sql (test_postgres_phase1.OfflineTests.test_only_known_scenarios_can_enter_sql) ... ok\ntest_postgres_queries_cover_saved_answer_sections (test_postgres_phase1.OfflineTests.test_postgres_queries_cover_saved_answer_sections) ... ok\ntest_role_selection_revokes_every_other_scenario (test_postgres_phase1.OfflineTests.test_role_selection_revokes_every_other_scenario) ... ok\ntest_start_reuses_connected_server_without_process_probe (test_postgres_phase1.OfflineTests.test_start_reuses_connected_server_without_process_probe) ... ok\ntest_clean_constraints_reject_corruption (test_postgres_phase1.PostgreSQLTests.test_clean_constraints_reject_corruption) ... ok\ntest_failed_import_rolls_back (test_postgres_phase1.PostgreSQLTests.test_failed_import_rolls_back) ... ok\ntest_imported_data_and_sql_ground_truths (test_postgres_phase1.PostgreSQLTests.test_imported_data_and_sql_ground_truths) ... Checking database records and SQL answers: scenario_a\nChecking database records and SQL answers: scenario_b\nChecking database records and SQL answers: scenario_a_dirty\nChecking database records and SQL answers: phase2_baseline\nChecking database records and SQL answers: phase2_incident\nChecking database records and SQL answers: lifecycle_v1\nok\ntest_lifecycle_hand_fixture_sql (test_postgres_phase1.PostgreSQLTests.test_lifecycle_hand_fixture_sql) ... ok\ntest_permissions_for_each_selected_scenario (test_postgres_phase1.PostgreSQLTests.test_permissions_for_each_selected_scenario) ... ok\ntest_repeat_ingestion_preserves_all_rows (test_postgres_phase1.PostgreSQLTests.test_repeat_ingestion_preserves_all_rows) ... Source verification passed; copying 23 managed tables...\nok\n\n----------------------------------------------------------------------\nRan 14 tests in 842.711s\n\nOK\nChecking database records and SQL answers: scenario_a\nChecking database records and SQL answers: scenario_b\nChecking database records and SQL answers: scenario_a_dirty\nChecking database records and SQL answers: phase2_baseline\nChecking database records and SQL answers: phase2_incident\nChecking database records and SQL answers: lifecycle_v1\ntest: passed\n",
+    "status": "passed",
+    "tests_run": 14
+  },
+  "prior_phase_files_unchanged": true,
+  "review_report": "reports/phase3_review.json",
+  "status": "passed",
+  "total_tests_passed": 21
+}

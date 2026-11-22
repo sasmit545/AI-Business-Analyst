@@ -1,0 +1,161 @@
+{
+  "amounts": {
+    "max_inr": 100000,
+    "median_inr": {
+      "dining": 350,
+      "grocery": 600,
+      "retail": 1500,
+      "services": 2500
+    },
+    "min_inr": 10,
+    "paise_rounding": "nearest integer; Python round ties to even",
+    "sigma": 0.6
+  },
+  "bank_health": {
+    "availability_max_pct": 100.0,
+    "availability_min_pct": 99.0,
+    "p95_latency_range_ms": {
+      "CARD": [
+        1000,
+        1800
+      ],
+      "UPI": [
+        700,
+        1200
+      ]
+    }
+  },
+  "bank_weights": {
+    "BANK_A": 35,
+    "BANK_B": 25,
+    "BANK_C": 20,
+    "BANK_D": 15,
+    "BANK_E": 5
+  },
+  "currency": "INR",
+  "end_date": "2026-10-28",
+  "failure_weights": {
+    "CARD": {
+      "AUTHENTICATION_FAILED": 40,
+      "BANK_TIMEOUT": 15,
+      "INSUFFICIENT_FUNDS": 35,
+      "LIMIT_EXCEEDED": 10
+    },
+    "UPI": {
+      "AUTHENTICATION_FAILED": 20,
+      "BANK_TIMEOUT": 40,
+      "INSUFFICIENT_FUNDS": 30,
+      "LIMIT_EXCEEDED": 10
+    }
+  },
+  "ingestion_max_delay_ms": 2000,
+  "initial_delay_seconds": 1,
+  "latency": {
+    "max_ms": 5000,
+    "median_ms": {
+      "CARD": 700,
+      "UPI": 450
+    },
+    "min_ms": 50,
+    "sigma": 0.35
+  },
+  "max_attempts": 3,
+  "merchant_weights": {
+    "M01": 20,
+    "M02": 20,
+    "M03": 20,
+    "M04": 20,
+    "M05": 5,
+    "M06": 5,
+    "M07": 5,
+    "M08": 5,
+    "M09": 5,
+    "M10": 5,
+    "M11": 1,
+    "M12": 1,
+    "M13": 1,
+    "M14": 1,
+    "M15": 1,
+    "M16": 1,
+    "M17": 1,
+    "M18": 1,
+    "M19": 1,
+    "M20": 1
+  },
+  "observation_cutoff": "2026-11-01T00:00:00.000+05:30",
+  "orders": 198000,
+  "profile_id": "lifecycle_v1",
+  "retry_delay_seconds": 300,
+  "retry_probability": 0.3,
+  "schema_version": "1.0.0",
+  "seed": 42,
+  "start_date": "2026-10-01",
+  "streams": {
+    "algorithm": "random.Random seeded by SHA-256 phase3:streams:v1:<seed>:<name>",
+    "names": [
+      "traffic.banks",
+      "traffic.time",
+      "traffic.methods.<merchant_id>",
+      "amounts.<category>",
+      "outcomes.status",
+      "outcomes.reasons",
+      "retries",
+      "latency",
+      "ingestion",
+      "bank_health"
+    ]
+  },
+  "success_probability": {
+    "CARD": {
+      "BANK_A": 0.99,
+      "BANK_B": 0.98,
+      "BANK_C": 0.97,
+      "BANK_D": 0.96,
+      "BANK_E": 0.95
+    },
+    "UPI": {
+      "BANK_A": 0.98,
+      "BANK_B": 0.97,
+      "BANK_C": 0.96,
+      "BANK_D": 0.95,
+      "BANK_E": 0.94
+    }
+  },
+  "timezone": "+05:30",
+  "traffic": {
+    "allocation": "largest remainder using exact rational weights; ascending IDs break ties",
+    "assignment": "independent seeded bank and method shuffles; seeded minute/second within each allocated hour",
+    "default_hour_weight": 1,
+    "dining_peak_hours": [
+      12,
+      13,
+      14,
+      19,
+      20,
+      21
+    ],
+    "dining_peak_weight": 3,
+    "hierarchy": "global merchants; global bank pool; per-merchant method pool; per-merchant joint date/hour cells",
+    "night_hour_weight": 0.25,
+    "night_hours": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "weekend_weights": {
+      "dining": 1.3,
+      "grocery": 1,
+      "retail": 1.3,
+      "services": 1
+    }
+  },
+  "upi_share_by_category": {
+    "dining": 0.8,
+    "grocery": 0.75,
+    "retail": 0.5,
+    "services": 0.4
+  }
+}

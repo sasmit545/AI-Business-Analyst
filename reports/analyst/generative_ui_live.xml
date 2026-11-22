@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="6" time="155.712" timestamp="2026-11-22T05:02:16.973919+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[trend]" time="25.520"><failure message="AssertionError: Investigation token limit reached&#10;assert 'limited' == 'verified'&#10;  &#10;  - verified&#10;  + limited">tests\analyst\test_generative_ui.py:111: in test_real_provider_layout
+    job = run_case(tmp_path, case, live=True)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\analyst\test_generative_ui.py:73: in run_case
+    assert job.status == 'verified', job.error
+E   AssertionError: Investigation token limit reached
+E   assert 'limited' == 'verified'
+E     
+E     - verified
+E     + limited</failure></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[banks]" time="31.072"><failure message="AssertionError: Investigation token limit reached&#10;assert 'limited' == 'verified'&#10;  &#10;  - verified&#10;  + limited">tests\analyst\test_generative_ui.py:111: in test_real_provider_layout
+    job = run_case(tmp_path, case, live=True)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\analyst\test_generative_ui.py:73: in run_case
+    assert job.status == 'verified', job.error
+E   AssertionError: Investigation token limit reached
+E   assert 'limited' == 'verified'
+E     
+E     - verified
+E     + limited</failure></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[category]" time="21.060"><failure message="AssertionError: Investigation token limit reached&#10;assert 'limited' == 'verified'&#10;  &#10;  - verified&#10;  + limited">tests\analyst\test_generative_ui.py:111: in test_real_provider_layout
+    job = run_case(tmp_path, case, live=True)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\analyst\test_generative_ui.py:73: in run_case
+    assert job.status == 'verified', job.error
+E   AssertionError: Investigation token limit reached
+E   assert 'limited' == 'verified'
+E     
+E     - verified
+E     + limited</failure></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[cause]" time="40.143"><properties><property name="blocks" value="[]" /><property name="evidence" value="0acb7e66e2064119898bb39e1589846d" /><property name="sql_statements" value="8" /></properties><failure message="AssertionError: []&#10;assert False&#10; +  where False = any(&lt;generator object test_real_provider_layout.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001DF2A6BF840&gt;)">tests\analyst\test_generative_ui.py:124: in test_real_provider_layout
+    assert any(b.source in expected for b in blocks), blocks
+E   AssertionError: []
+E   assert False
+E    +  where False = any(&lt;generator object test_real_provider_layout.&lt;locals&gt;.&lt;genexpr&gt; at 0x000001DF2A6BF840&gt;)</failure></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[detail]" time="16.404"><properties><property name="blocks" value="[{&quot;kind&quot;: &quot;table&quot;, &quot;source&quot;: &quot;transactions&quot;, &quot;section&quot;: &quot;Summary&quot;, &quot;drilldown&quot;: false}, {&quot;kind&quot;: &quot;comparison&quot;, &quot;source&quot;: &quot;overall&quot;, &quot;measure&quot;: &quot;rate&quot;, &quot;section&quot;: &quot;Summary&quot;, &quot;drilldown&quot;: false}]" /><property name="evidence" value="eb92166247454e63a1f90d460428bce7" /><property name="sql_statements" value="9" /></properties></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[fact]" time="13.660"><properties><property name="blocks" value="[]" /><property name="evidence" value="5309eba32904441fa60cb4d2b48bb872" /><property name="sql_statements" value="8" /></properties></testcase></testsuite></testsuites>

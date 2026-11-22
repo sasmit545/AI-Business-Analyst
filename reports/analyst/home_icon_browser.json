@@ -1,0 +1,38 @@
+[
+  {
+    "viewport": 1440,
+    "width": 54,
+    "height": 54,
+    "font": "\"Material Symbols Rounded\"",
+    "fontLoaded": true,
+    "color": "rgb(212, 239, 185)",
+    "background": "rgb(23, 77, 61)",
+    "headingHeight": 72,
+    "singleLine": true,
+    "overflow": false
+  },
+  {
+    "viewport": 390,
+    "width": 28,
+    "height": 28,
+    "font": "\"Material Symbols Rounded\"",
+    "fontLoaded": true,
+    "color": "rgb(212, 239, 185)",
+    "background": "rgb(23, 77, 61)",
+    "headingHeight": 37,
+    "singleLine": true,
+    "overflow": false
+  },
+  {
+    "viewport": 320,
+    "width": 24,
+    "height": 24,
+    "font": "\"Material Symbols Rounded\"",
+    "fontLoaded": true,
+    "color": "rgb(212, 239, 185)",
+    "background": "rgb(23, 77, 61)",
+    "headingHeight": 32,
+    "singleLine": true,
+    "overflow": false
+  }
+]

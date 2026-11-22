@@ -1,0 +1,2 @@
+# Store every file byte-for-byte: CSV and evaluation fingerprints depend on exact bytes.
+* -text

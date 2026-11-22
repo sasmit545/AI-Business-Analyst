@@ -1,0 +1,205 @@
+{
+  "database": "payments_analytics",
+  "permissions": {
+    "auxiliary_databases_denied": 2,
+    "denied_statements": 40,
+    "selected_schema": "lifecycle_v1",
+    "visible_tables": 8
+  },
+  "phase2_paired_summary": [
+    {
+      "changed_non_outcome_rows": 0,
+      "changed_outcome_rows": 370,
+      "converted_successes": 370,
+      "matched_attempts": 100000,
+      "overall_success_change_pp": -0.37
+    }
+  ],
+  "postgres_version": "PostgreSQL 18.7 on x86_64-windows, compiled by msvc-19.44.35229, 64-bit",
+  "scenarios": {
+    "lifecycle_v1": {
+      "analysis_status": "allowed",
+      "ground_truth_sections_matched": 10,
+      "periods": [
+        {
+          "attempts": 100402,
+          "failures": 2940,
+          "period": "baseline",
+          "success_rate_pct": 97.071771,
+          "successes": 97462
+        },
+        {
+          "attempts": 99331,
+          "failures": 2846,
+          "period": "comparison",
+          "success_rate_pct": 97.134832,
+          "successes": 96485
+        }
+      ],
+      "quality": {
+        "duplicate_occurrences": 0,
+        "missing_timestamps": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0,
+        "rows": 199734
+      },
+      "record_hashes": {
+        "bank_health": "dcc4237075b8583b564654c294fecb706637cd718e258fb7def4495b4ab8860d",
+        "banks": "8597f45ac7893d830f08357c9a75fd10439ccaf99bd7119df50a70d0fe5e94cc",
+        "failure_reasons": "ef2db184a2630dadf93351b2f3b65f4256e03ed00b132068ee5a47da0aa7878c",
+        "merchants": "4a80db18cc934d236b02a8e491644c6726b3cdfa0c003b9f5f4911a65095d62a",
+        "orders": "464eae65f64c02e62697c45f286f1cca083306d07fc282261d1aa9c45c658c6d",
+        "payment_methods": "27b849da7000258ae74f05f6b19ca7c47d42e40abed13c94c4b1368a27171a8f",
+        "payments": "5450da1d1c0322b6ee439a1c32acf1951f2a8a9080857269e01c0662a35c3dba",
+        "settlements": "cf4dc7c70db7ca073ea47fefd20f8d219bfa4609679e9dfd5b4bd51b501354ca"
+      }
+    },
+    "phase2_baseline": {
+      "analysis_status": "allowed",
+      "ground_truth_sections_matched": 16,
+      "periods": [
+        {
+          "attempts": 51184,
+          "failures": 1458,
+          "period": "baseline",
+          "success_rate_pct": 97.151454,
+          "successes": 49726
+        },
+        {
+          "attempts": 48816,
+          "failures": 1477,
+          "period": "comparison",
+          "success_rate_pct": 96.974353,
+          "successes": 47339
+        }
+      ],
+      "quality": {
+        "duplicate_occurrences": 0,
+        "missing_timestamps": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0,
+        "rows": 100000
+      },
+      "record_hashes": {
+        "banks": "8597f45ac7893d830f08357c9a75fd10439ccaf99bd7119df50a70d0fe5e94cc",
+        "merchants": "4a80db18cc934d236b02a8e491644c6726b3cdfa0c003b9f5f4911a65095d62a",
+        "payments": "4c4971673830a48b257a81d3e11d10c1c1087055069ff33ddea0fe7351f7dbdb"
+      }
+    },
+    "phase2_incident": {
+      "analysis_status": "allowed",
+      "ground_truth_sections_matched": 16,
+      "periods": [
+        {
+          "attempts": 51184,
+          "failures": 1458,
+          "period": "baseline",
+          "success_rate_pct": 97.151454,
+          "successes": 49726
+        },
+        {
+          "attempts": 48816,
+          "failures": 1847,
+          "period": "comparison",
+          "success_rate_pct": 96.216404,
+          "successes": 46969
+        }
+      ],
+      "quality": {
+        "duplicate_occurrences": 0,
+        "missing_timestamps": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0,
+        "rows": 100000
+      },
+      "record_hashes": {
+        "banks": "8597f45ac7893d830f08357c9a75fd10439ccaf99bd7119df50a70d0fe5e94cc",
+        "merchants": "4a80db18cc934d236b02a8e491644c6726b3cdfa0c003b9f5f4911a65095d62a",
+        "payments": "c0eb78c41899b1a2011b768c6318cd474ea4457326e0c159184ac95ac44413f6"
+      }
+    },
+    "scenario_a": {
+      "analysis_status": "allowed",
+      "ground_truth_sections_matched": 10,
+      "periods": [
+        {
+          "attempts": 10000,
+          "failures": 200,
+          "period": "baseline",
+          "success_rate_pct": 98.0,
+          "successes": 9800
+        },
+        {
+          "attempts": 10000,
+          "failures": 380,
+          "period": "comparison",
+          "success_rate_pct": 96.2,
+          "successes": 9620
+        }
+      ],
+      "quality": {
+        "duplicate_occurrences": 0,
+        "missing_timestamps": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0,
+        "rows": 20000
+      },
+      "record_hashes": {
+        "banks": "8597f45ac7893d830f08357c9a75fd10439ccaf99bd7119df50a70d0fe5e94cc",
+        "merchants": "4a80db18cc934d236b02a8e491644c6726b3cdfa0c003b9f5f4911a65095d62a",
+        "payments": "80f8950d871bd192428db9cdd57ccb73bdaa1a4b0569e741edc9c83ee52c3d93"
+      }
+    },
+    "scenario_a_dirty": {
+      "analysis_status": "blocked",
+      "ground_truth_sections_matched": 0,
+      "periods": null,
+      "quality": {
+        "duplicate_occurrences": 20,
+        "missing_timestamps": 10,
+        "orphan_banks": 0,
+        "orphan_merchants": 10,
+        "rows": 20020
+      },
+      "record_hashes": {
+        "banks": "8597f45ac7893d830f08357c9a75fd10439ccaf99bd7119df50a70d0fe5e94cc",
+        "merchants": "4a80db18cc934d236b02a8e491644c6726b3cdfa0c003b9f5f4911a65095d62a",
+        "payments": "88d5ea7477aacfa62cf37f344a73d3fb5137f98eaf2898076e6978e5f42d0740"
+      }
+    },
+    "scenario_b": {
+      "analysis_status": "allowed",
+      "ground_truth_sections_matched": 10,
+      "periods": [
+        {
+          "attempts": 10000,
+          "failures": 360,
+          "period": "baseline",
+          "success_rate_pct": 96.4,
+          "successes": 9640
+        },
+        {
+          "attempts": 10000,
+          "failures": 840,
+          "period": "comparison",
+          "success_rate_pct": 91.6,
+          "successes": 9160
+        }
+      ],
+      "quality": {
+        "duplicate_occurrences": 0,
+        "missing_timestamps": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0,
+        "rows": 20000
+      },
+      "record_hashes": {
+        "banks": "8597f45ac7893d830f08357c9a75fd10439ccaf99bd7119df50a70d0fe5e94cc",
+        "merchants": "4a80db18cc934d236b02a8e491644c6726b3cdfa0c003b9f5f4911a65095d62a",
+        "payments": "02c3191982ac60938cc0a8d433b0d2faae2b36f5cddebcc449e4fa7afb61a4e3"
+      }
+    }
+  },
+  "source_files_unchanged": true,
+  "status": "passed"
+}

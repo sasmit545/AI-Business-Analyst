@@ -1,0 +1,24 @@
+scenarios:
+  scenario_a: attempts
+  scenario_b: attempts
+  scenario_a_dirty: attempts
+  phase2_baseline: attempts
+  phase2_incident: attempts
+  lifecycle_v1: lifecycle
+filter_values:
+  attempts:
+    payment_method: [CARD, UPI]
+adapters:
+  attempts:
+    payments: [attempt_id, attempted_at, merchant_id, payer_bank_id, payment_method, amount_paise, currency, status, failure_reason]
+    banks: [bank_id, bank_name]
+    merchants: [merchant_id, merchant_name, category, region]
+  lifecycle:
+    payments: [attempt_id, attempted_at, merchant_id, payer_bank_id, payment_method, amount_paise, currency, status, failure_reason, order_id, attempt_number, completed_at, processing_duration_ms, ingested_at]
+    banks: [bank_id, bank_name]
+    merchants: [merchant_id, merchant_name, category, region]
+    orders: [order_id, merchant_id, created_at, amount_paise, currency]
+    settlements: [settlement_id, attempt_id, due_at, settled_at, settlement_status, gross_amount_paise]
+    payment_methods: [payment_method, label, role]
+    failure_reasons: [failure_reason, label, category]
+    bank_health: [bank_id, payment_method, observed_at, availability_pct, p95_latency_ms]

@@ -1,0 +1,325 @@
+{
+  "analyst_gate": "pending",
+  "dataset_gate": "passed",
+  "diagnostic_flags": 0,
+  "diagnostic_policy": "Baseline only. Four standard errors; flags are reported, not resampled. Incident deviations are intentional.",
+  "diagnostics": [
+    {
+      "denominator": 13571,
+      "flagged": false,
+      "numerator": 13414,
+      "observed_probability": 0.988431214,
+      "population": "BANK_A/CARD",
+      "standard_error": 0.000854106,
+      "standard_errors_from_target": -1.836759,
+      "target_probability": 0.99
+    },
+    {
+      "denominator": 21429,
+      "flagged": false,
+      "numerator": 20991,
+      "observed_probability": 0.979560409,
+      "population": "BANK_A/UPI",
+      "standard_error": 0.000956373,
+      "standard_errors_from_target": -0.459644,
+      "target_probability": 0.98
+    },
+    {
+      "denominator": 9601,
+      "flagged": false,
+      "numerator": 9395,
+      "observed_probability": 0.978543902,
+      "population": "BANK_B/CARD",
+      "standard_error": 0.001428795,
+      "standard_errors_from_target": -1.01911,
+      "target_probability": 0.98
+    },
+    {
+      "denominator": 15399,
+      "flagged": false,
+      "numerator": 14922,
+      "observed_probability": 0.969023963,
+      "population": "BANK_B/UPI",
+      "standard_error": 0.001374676,
+      "standard_errors_from_target": -0.710013,
+      "target_probability": 0.97
+    },
+    {
+      "denominator": 7714,
+      "flagged": false,
+      "numerator": 7508,
+      "observed_probability": 0.973295307,
+      "population": "BANK_C/CARD",
+      "standard_error": 0.001942257,
+      "standard_errors_from_target": 1.696638,
+      "target_probability": 0.97
+    },
+    {
+      "denominator": 12286,
+      "flagged": false,
+      "numerator": 11814,
+      "observed_probability": 0.961582289,
+      "population": "BANK_C/UPI",
+      "standard_error": 0.001767911,
+      "standard_errors_from_target": 0.895005,
+      "target_probability": 0.96
+    },
+    {
+      "denominator": 5838,
+      "flagged": false,
+      "numerator": 5585,
+      "observed_probability": 0.956663241,
+      "population": "BANK_D/CARD",
+      "standard_error": 0.002564682,
+      "standard_errors_from_target": -1.301042,
+      "target_probability": 0.96
+    },
+    {
+      "denominator": 9162,
+      "flagged": false,
+      "numerator": 8702,
+      "observed_probability": 0.949792622,
+      "population": "BANK_D/UPI",
+      "standard_error": 0.00227694,
+      "standard_errors_from_target": -0.091078,
+      "target_probability": 0.95
+    },
+    {
+      "denominator": 1946,
+      "flagged": false,
+      "numerator": 1857,
+      "observed_probability": 0.954265159,
+      "population": "BANK_E/CARD",
+      "standard_error": 0.004940551,
+      "standard_errors_from_target": 0.863296,
+      "target_probability": 0.95
+    },
+    {
+      "denominator": 3054,
+      "flagged": false,
+      "numerator": 2877,
+      "observed_probability": 0.942043222,
+      "population": "BANK_E/UPI",
+      "standard_error": 0.004297393,
+      "standard_errors_from_target": 0.475456,
+      "target_probability": 0.94
+    },
+    {
+      "denominator": 911,
+      "flagged": false,
+      "numerator": 135,
+      "observed_probability": 0.148188804,
+      "population": "CARD/failures/BANK_TIMEOUT",
+      "standard_error": 0.011830304,
+      "standard_errors_from_target": -0.153098,
+      "target_probability": 0.15
+    },
+    {
+      "denominator": 911,
+      "flagged": false,
+      "numerator": 330,
+      "observed_probability": 0.362239297,
+      "population": "CARD/failures/INSUFFICIENT_FUNDS",
+      "standard_error": 0.015802708,
+      "standard_errors_from_target": 0.774506,
+      "target_probability": 0.35
+    },
+    {
+      "denominator": 911,
+      "flagged": false,
+      "numerator": 361,
+      "observed_probability": 0.396267838,
+      "population": "CARD/failures/AUTHENTICATION_FAILED",
+      "standard_error": 0.016231043,
+      "standard_errors_from_target": -0.22994,
+      "target_probability": 0.4
+    },
+    {
+      "denominator": 911,
+      "flagged": false,
+      "numerator": 85,
+      "observed_probability": 0.093304061,
+      "population": "CARD/failures/LIMIT_EXCEEDED",
+      "standard_error": 0.009939443,
+      "standard_errors_from_target": -0.673673,
+      "target_probability": 0.1
+    },
+    {
+      "denominator": 2024,
+      "flagged": false,
+      "numerator": 835,
+      "observed_probability": 0.412549407,
+      "population": "UPI/failures/BANK_TIMEOUT",
+      "standard_error": 0.01088931,
+      "standard_errors_from_target": 1.152452,
+      "target_probability": 0.4
+    },
+    {
+      "denominator": 2024,
+      "flagged": false,
+      "numerator": 603,
+      "observed_probability": 0.297924901,
+      "population": "UPI/failures/INSUFFICIENT_FUNDS",
+      "standard_error": 0.010186017,
+      "standard_errors_from_target": -0.20372,
+      "target_probability": 0.3
+    },
+    {
+      "denominator": 2024,
+      "flagged": false,
+      "numerator": 398,
+      "observed_probability": 0.196640316,
+      "population": "UPI/failures/AUTHENTICATION_FAILED",
+      "standard_error": 0.008891084,
+      "standard_errors_from_target": -0.377871,
+      "target_probability": 0.2
+    },
+    {
+      "denominator": 2024,
+      "flagged": false,
+      "numerator": 188,
+      "observed_probability": 0.092885375,
+      "population": "UPI/failures/LIMIT_EXCEEDED",
+      "standard_error": 0.006668313,
+      "standard_errors_from_target": -1.06693,
+      "target_probability": 0.1
+    }
+  ],
+  "errors": [],
+  "paired_summary": [
+    {
+      "changed_non_outcome_rows": 0,
+      "changed_outcome_rows": 370,
+      "converted_successes": 370,
+      "matched_attempts": 100000,
+      "overall_success_change_pp": -0.37
+    }
+  ],
+  "phase1_files_unchanged": true,
+  "reproducibility": {
+    "files": {
+      "data/synthetic/phase2/realistic_v1/baseline/banks.csv": {
+        "delivered": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run1": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run2": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+      },
+      "data/synthetic/phase2/realistic_v1/baseline/merchants.csv": {
+        "delivered": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run1": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run2": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+      },
+      "data/synthetic/phase2/realistic_v1/baseline/payments.csv": {
+        "delivered": "cda756c217c78f41a7d4d043fe5e2b98019d26a2e47afc2b63adebaed618ac3c",
+        "run1": "cda756c217c78f41a7d4d043fe5e2b98019d26a2e47afc2b63adebaed618ac3c",
+        "run2": "cda756c217c78f41a7d4d043fe5e2b98019d26a2e47afc2b63adebaed618ac3c"
+      },
+      "data/synthetic/phase2/realistic_v1/incident/banks.csv": {
+        "delivered": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run1": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run2": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+      },
+      "data/synthetic/phase2/realistic_v1/incident/merchants.csv": {
+        "delivered": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run1": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run2": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+      },
+      "data/synthetic/phase2/realistic_v1/incident/payments.csv": {
+        "delivered": "17bf113b2dd5c91eb79cc22781c8782ba24a0fdf491827d2daf67454a8f3abf9",
+        "run1": "17bf113b2dd5c91eb79cc22781c8782ba24a0fdf491827d2daf67454a8f3abf9",
+        "run2": "17bf113b2dd5c91eb79cc22781c8782ba24a0fdf491827d2daf67454a8f3abf9"
+      },
+      "evaluation/phase2/generation_manifest.json": {
+        "delivered": "933397bda6f7a8c4a53882018aa96696d11a2644bad5112ae3660c94acfee2e0",
+        "run1": "933397bda6f7a8c4a53882018aa96696d11a2644bad5112ae3660c94acfee2e0",
+        "run2": "933397bda6f7a8c4a53882018aa96696d11a2644bad5112ae3660c94acfee2e0"
+      },
+      "evaluation/phase2/incident_manifest.json": {
+        "delivered": "672382136453645a10e728ae8c8229d885ba961d3e3ac4ba8b02d9a201641e63",
+        "run1": "672382136453645a10e728ae8c8229d885ba961d3e3ac4ba8b02d9a201641e63",
+        "run2": "672382136453645a10e728ae8c8229d885ba961d3e3ac4ba8b02d9a201641e63"
+      }
+    },
+    "identical": true,
+    "status": "checked"
+  },
+  "variants": {
+    "baseline": {
+      "periods": [
+        {
+          "attempts": 51184,
+          "failures": 1458,
+          "period": "baseline",
+          "success_rate_pct": 97.151454,
+          "successes": 49726
+        },
+        {
+          "attempts": 48816,
+          "failures": 1477,
+          "period": "comparison",
+          "success_rate_pct": 96.974353,
+          "successes": 47339
+        }
+      ],
+      "quality": {
+        "changed_dimensions": 0,
+        "dimension_cardinality": 0,
+        "duplicate_ids": 0,
+        "invalid_amounts": 0,
+        "invalid_currency": 0,
+        "invalid_identifiers": 0,
+        "invalid_methods": 0,
+        "invalid_outcomes": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0,
+        "wrong_row_count": 0
+      },
+      "totals": [
+        {
+          "attempts": 100000,
+          "failures": 2935,
+          "success_rate_pct": 97.065,
+          "successes": 97065
+        }
+      ]
+    },
+    "incident": {
+      "periods": [
+        {
+          "attempts": 51184,
+          "failures": 1458,
+          "period": "baseline",
+          "success_rate_pct": 97.151454,
+          "successes": 49726
+        },
+        {
+          "attempts": 48816,
+          "failures": 1847,
+          "period": "comparison",
+          "success_rate_pct": 96.216404,
+          "successes": 46969
+        }
+      ],
+      "quality": {
+        "changed_dimensions": 0,
+        "dimension_cardinality": 0,
+        "duplicate_ids": 0,
+        "invalid_amounts": 0,
+        "invalid_currency": 0,
+        "invalid_identifiers": 0,
+        "invalid_methods": 0,
+        "invalid_outcomes": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0,
+        "wrong_row_count": 0
+      },
+      "totals": [
+        {
+          "attempts": 100000,
+          "failures": 3305,
+          "success_rate_pct": 96.695,
+          "successes": 96695
+        }
+      ]
+    }
+  }
+}

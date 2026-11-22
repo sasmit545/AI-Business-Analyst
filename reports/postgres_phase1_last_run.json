@@ -1,0 +1,9 @@
+{
+  "status": "blocked",
+  "command": "native_install_preflight",
+  "error": "Official Windows binaries download blocked: WinError 10013 (network socket access denied).",
+  "live_database_verified": false,
+  "offline_tests_passed": 7,
+  "live_tests_not_run": 5,
+  "protected_files_unchanged": 14
+}

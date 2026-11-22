@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="6" tests="53" time="277.841" timestamp="2026-11-22T14:06:53.945088+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_frontend" name="test_chart_points_match_evidence_and_labels_escape_markup" time="0.127" /><testcase classname="tests.analyst.test_frontend" name="test_initial_app_has_usable_session_control" time="4.079" /><testcase classname="tests.analyst.test_frontend" name="test_quality_block_renders_no_kpi" time="1.001"><failure message="assert not ElementList(_list=[Exception(message=&quot;No module named 'app.evidence.attempt_guidance'&quot;, stack_trace=['File &quot;C:\\Users\...vidence\\render_claims.py&quot;, line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])])&#10;[+1 more line; full report in element text]">def test_quality_block_renders_no_kpi():
+        from streamlit.testing.v1 import AppTest
+        from app.contracts import QualityRecord
+        from app.evidence.store import checksum
+        from test_evidence import example
+        evidence=example().model_copy(update={'quality':[QualityRecord(rule='missing_timestamps',count=1,status='BLOCK')]})
+        evidence=evidence.model_copy(update={'checksum':checksum(evidence)})
+        script=f"import json\nfrom app.frontend.renderers import render_evidence\nrender_evidence(json.loads({evidence.model_dump_json()!r}))"
+        app=AppTest.from_string(script).run(timeout=15)
+&gt;       assert not app.exception
+E       assert not ElementList(_list=[Exception(message="No module named 'app.evidence.attempt_guidance'", stack_trace=['File "C:\\Users\...vidence\\render_claims.py", line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])])
+E        +  where ElementList(_list=[Exception(message="No module named 'app.evidence.attempt_guidance'", stack_trace=['File "C:\\Users\...vidence\\render_claims.py", line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])]) = AppTest(\n    _script_path='C:\\Users\\dell\\AppData\\Local\\Temp\\tmp_sotn151\\a92dda1af0712e8de160aa8c489c4a61',\n    ...SpecialBlock(\n            type='sidebar'\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tests\analyst\test_frontend.py:28: AssertionError</failure></testcase><testcase classname="tests.analyst.test_frontend" name="test_health_warning_visible_with_provenance_closed" time="0.923"><failure message="assert (not ElementList(_list=[Exception(message=&quot;No module named 'app.evidence.attempt_guidance'&quot;, stack_trace=['File &quot;C:\\Users\...vidence\\render_claims.py&quot;, line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])]))&#10;[+1 more line; full report in element text]">def test_health_warning_visible_with_provenance_closed():
+        from app.contracts import QualityRecord
+        from app.evidence.store import checksum
+        from app.ui_specs.models import Layout
+        from test_generative_ui import show
+        from test_source_conflicts import measurement
+    
+        evidence = measurement('bank_health')
+        warning = QualityRecord(rule='unusable_health_rows', status='WARN', count=3, metric='bank_health')
+        evidence = evidence.model_copy(update={'quality': [warning]})
+        evidence = evidence.model_copy(update={'checksum': checksum(evidence)})
+        app = show(evidence, Layout(version='1', evidence_id=evidence.id, blocks=[]))
+&gt;       assert not app.exception and not app.error and not app.code
+E       assert (not ElementList(_list=[Exception(message="No module named 'app.evidence.attempt_guidance'", stack_trace=['File "C:\\Users\...vidence\\render_claims.py", line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])]))
+E        +  where ElementList(_list=[Exception(message="No module named 'app.evidence.attempt_guidance'", stack_trace=['File "C:\\Users\...vidence\\render_claims.py", line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])]) = AppTest(\n    _script_path='C:\\Users\\dell\\AppData\\Local\\Temp\\tmp_sotn151\\2d7cb9b24cb3966eff3e042b00422e5d',\n    ...SpecialBlock(\n            type='sidebar'\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tests\analyst\test_frontend.py:46: AssertionError</failure></testcase><testcase classname="tests.analyst.test_frontend" name="test_verified_answer_and_followup_stay_with_the_selected_question" time="1.444"><failure message="assert (not ElementList(_list=[Exception(message=&quot;No module named 'app.evidence.attempt_guidance'&quot;, stack_trace=['File &quot;E:\\pinela...vidence\\render_claims.py&quot;, line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])]))&#10;[+1 more line; full report in element text]">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000206D9B862C0&gt;
+
+    def test_verified_answer_and_followup_stay_with_the_selected_question(monkeypatch):
+        from pathlib import Path
+        from streamlit.testing.v1 import AppTest
+        from app.frontend.api_client import ApiClient
+        from app.ui_specs.planning import expand_views
+        from test_source_conflicts import measurement
+    
+        evidence = measurement()
+        layout = expand_views(evidence, ['bar.banks.rate'])
+        question = 'How did order conversion compare across banks?'
+        child_question = 'Which orders were eligible?'
+        posts = []
+        def request(self, method, path, **kwargs):
+            if method == 'POST':
+                posts.append((path, kwargs['json']))
+                return {'investigation_id': 'child'}
+            if path.endswith('/child'):
+                return {'question': child_question, 'parent_id': 'parent', 'status': 'running'}
+            return {'question': question, 'status': 'verified', 'version': 4, 'budget': {'sql_statements': 8},
+                    'evidence': evidence.model_dump(mode='json'), 'dashboard': layout.model_dump(mode='json')}
+        monkeypatch.setattr(ApiClient, 'request', request)
+        app = AppTest.from_file(str(Path('app/frontend/main.py').resolve()))
+        app.session_state['session'] = {'session_id': 'test', 'scenario': 'lifecycle_v1'}
+        app.session_state['history'] = ['parent']
+        app.session_state['investigation'] = 'parent'
+        app.run(timeout=30)
+&gt;       assert not app.exception and not app.error
+E       assert (not ElementList(_list=[Exception(message="No module named 'app.evidence.attempt_guidance'", stack_trace=['File "E:\\pinela...vidence\\render_claims.py", line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])]))
+E        +  where ElementList(_list=[Exception(message="No module named 'app.evidence.attempt_guidance'", stack_trace=['File "E:\\pinela...vidence\\render_claims.py", line 114, in narrative\n    from app.evidence.attempt_guidance import attempt_guidance'])]) = AppTest(\n    _script_path='E:\\pinelabs\\app\\frontend\\main.py',\n    default_timeout=3,\n    _session_state={session: ...pecialBlock(\n            type='event',\n            children={\n                0: Html()\n            }\n        )\n    }\n).exception
+
+tests\analyst\test_frontend.py:79: AssertionError</failure></testcase><testcase classname="tests.analyst.test_frontend" name="test_period_label_preserves_intraday_bounds_and_midnight_end_exclusion" time="0.009" /><testcase classname="tests.analyst.test_generative_ui" name="test_six_questions_sql_to_streamlit[trend]" time="11.816"><failure message="AssertionError: ('Analysis failed safely; no unverified result was published', None, 0)&#10;assert 'failed' == 'verified'&#10;  &#10;  - verified&#10;  + failed">tmp_path = WindowsPath('C:/Users/dell/AppData/Local/Temp/pytest-of-dell/pytest-31/test_six_questions_sql_to_stre0')
+case = 'trend'
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize('case', CASES)
+    def test_six_questions_sql_to_streamlit(tmp_path, case):
+&gt;       job = run_case(tmp_path, case)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\analyst\test_generative_ui.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+tmp_path = WindowsPath('C:/Users/dell/AppData/Local/Temp/pytest-of-dell/pytest-31/test_six_questions_sql_to_stre0')
+case = 'trend', live = False, model = None
+
+    def run_case(tmp_path, case, live=False, model=None):
+        settings = Settings.from_root()
+        auth = Authorization(settings)
+        runner = Investigator(settings, auth, EvidenceStore(tmp_path),
+                              model=None if live else (model or PresentationDouble(case)))
+        job = Investigation(CASES[case][0] + WINDOWS, Scope(scenario=auth.scenario, session_id='ui-test'))
+        try:
+            runner.run(job)
+        finally:
+            runner.close()
+            auth.close()
+&gt;       assert job.status == 'verified', (job.error, job.clarification, job.budget.repairs)
+E       AssertionError: ('Analysis failed safely; no unverified result was published', None, 0)
+E       assert 'failed' == 'verified'
+E         
+E         - verified
+E         + failed
+
+tests\analyst\test_generative_ui.py:78: AssertionError</failure></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_six_questions_sql_to_streamlit[banks]" time="15.086" /><testcase classname="tests.analyst.test_generative_ui" name="test_six_questions_sql_to_streamlit[category]" time="19.858" /><testcase classname="tests.analyst.test_generative_ui" name="test_six_questions_sql_to_streamlit[cause]" time="19.601" /><testcase classname="tests.analyst.test_generative_ui" name="test_six_questions_sql_to_streamlit[detail]" time="16.242" /><testcase classname="tests.analyst.test_generative_ui" name="test_six_questions_sql_to_streamlit[fact]" time="14.762" /><testcase classname="tests.analyst.test_generative_ui" name="test_conversion_answer_is_visible_before_the_audit_details[views0]" time="1.150" /><testcase classname="tests.analyst.test_generative_ui" name="test_conversion_answer_is_visible_before_the_audit_details[views1]" time="0.970" /><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[trend]" time="0.004"><skipped type="pytest.skip" message="Opt-in NVIDIA visualization planning">E:\pinelabs\tests\analyst\test_generative_ui.py:147: Opt-in NVIDIA visualization planning</skipped></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[banks]" time="0.010"><skipped type="pytest.skip" message="Opt-in NVIDIA visualization planning">E:\pinelabs\tests\analyst\test_generative_ui.py:147: Opt-in NVIDIA visualization planning</skipped></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[category]" time="0.002"><skipped type="pytest.skip" message="Opt-in NVIDIA visualization planning">E:\pinelabs\tests\analyst\test_generative_ui.py:147: Opt-in NVIDIA visualization planning</skipped></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[cause]" time="0.002"><skipped type="pytest.skip" message="Opt-in NVIDIA visualization planning">E:\pinelabs\tests\analyst\test_generative_ui.py:147: Opt-in NVIDIA visualization planning</skipped></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[detail]" time="0.002"><skipped type="pytest.skip" message="Opt-in NVIDIA visualization planning">E:\pinelabs\tests\analyst\test_generative_ui.py:147: Opt-in NVIDIA visualization planning</skipped></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_real_provider_layout[fact]" time="0.003"><skipped type="pytest.skip" message="Opt-in NVIDIA visualization planning">E:\pinelabs\tests\analyst\test_generative_ui.py:147: Opt-in NVIDIA visualization planning</skipped></testcase><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad0]" time="0.019" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad1]" time="0.014" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad2]" time="0.007" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad3]" time="0.008" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad4]" time="0.010" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad5]" time="0.015" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad6]" time="0.009" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad7]" time="0.010" /><testcase classname="tests.analyst.test_generative_ui" name="test_invalid_layout_preserves_verified_text[bad8]" time="0.010" /><testcase classname="tests.analyst.test_generative_ui" name="test_old_saved_chart_and_bad_checksum" time="0.006" /><testcase classname="tests.analyst.test_generative_ui" name="test_planning_menu_is_bound_to_the_verified_source" time="0.041" /><testcase classname="tests.analyst.test_generative_ui" name="test_chart_preserves_gaps_and_escapes_dimension_labels" time="0.122" /><testcase classname="tests.analyst.test_generative_ui" name="test_daily_trend_fits_both_periods_and_formats_small_changes" time="0.083" /><testcase classname="tests.analyst.test_generative_ui" name="test_focused_rate_range_respects_endpoints_and_flat_series[rates0-expected0]" time="0.081" /><testcase classname="tests.analyst.test_generative_ui" name="test_focused_rate_range_respects_endpoints_and_flat_series[rates1-expected1]" time="0.074" /><testcase classname="tests.analyst.test_generative_ui" name="test_focused_rate_range_respects_endpoints_and_flat_series[rates2-expected2]" time="0.075" /><testcase classname="tests.analyst.test_generative_ui" name="test_focused_rate_range_respects_endpoints_and_flat_series[rates3-expected3]" time="0.061" /><testcase classname="tests.analyst.test_generative_ui" name="test_focused_rate_range_respects_endpoints_and_flat_series[rates4-expected4]" time="0.096" /><testcase classname="tests.analyst.test_generative_ui" name="test_focused_rate_range_respects_endpoints_and_flat_series[rates5-expected5]" time="0.068" /><testcase classname="tests.analyst.test_generative_ui" name="test_daily_counts_fit_lines_and_preserve_a_zero_baseline_for_area" time="0.137" /><testcase classname="tests.analyst.test_generative_ui" name="test_empty_periods_keep_missing_rates_and_empty_sources" time="0.871" /><testcase classname="tests.analyst.test_generative_ui" name="test_bad_model_view_discards_complete_layout_but_preserves_ownership" time="0.469" /><testcase classname="tests.analyst.test_generative_ui" name="test_all_component_renderers_and_generation_fallback" time="29.225" /><testcase classname="tests.analyst.test_generative_ui" name="test_api_point_dates_breakdown_and_context_reuse" time="82.206" /><testcase classname="tests.analyst.test_followups" name="test_measured_segment_proposal_and_independent_result" time="0.016" /><testcase classname="tests.analyst.test_followups" name="test_followup_text_resolves_only_supported_narrowing" time="0.020" /><testcase classname="tests.analyst.test_followups" name="test_bank_names_with_unrelated_ids_use_the_runtime_directory" time="0.009" /><testcase classname="tests.analyst.test_followups" name="test_unknown_bank_clarification_accepts_a_runtime_name_via_api" time="7.945" /><testcase classname="tests.analyst.test_followups" name="test_bank_name_followup_recalculates_legacy_empty_result" time="23.311" /><testcase classname="tests.analyst.test_followups" name="test_saved_bank_label_offers_a_versioned_recalculation" time="2.544" /><testcase classname="tests.analyst.test_followups" name="test_failed_session_switch_keeps_owned_handle_until_detached" time="3.717" /><testcase classname="tests.analyst.test_followups" name="test_chart_click_is_consumed_once_across_poll_and_navigation" time="0.288" /><testcase classname="tests.analyst.test_followups" name="test_open_saved_history_reads_selected_investigation" time="4.189" /></testsuite></testsuites>

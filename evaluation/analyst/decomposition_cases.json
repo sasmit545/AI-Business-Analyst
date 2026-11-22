@@ -1,0 +1,8 @@
+{
+  "definition": "Independent hand calculation using symmetric midpoint weights; fraction units",
+  "case": {
+    "baseline": {"a": {"attempts": 80, "successes": 72}, "b": {"attempts": 20, "successes": 10}},
+    "comparison": {"a": {"attempts": 40, "successes": 32}, "b": {"attempts": 60, "successes": 36}},
+    "expected": {"mix": -0.12, "within": -0.02, "change": -0.14}
+  }
+}

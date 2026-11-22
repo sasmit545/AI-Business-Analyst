@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="17" failures="0" skipped="0" tests="61" time="9.161" timestamp="2026-11-21T23:22:42.023197+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_agent_flow" name="test_relative_period_clarifies_without_metric_queries" time="0.003"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_host_tools_are_unreachable" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_no_raw_model_factual_prose_route" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_cancelled_and_repair_budget_cannot_publish" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_invalid_tool_fields_are_reported_without_values_or_unknown_keys" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_token_budget_failure_identifies_limit_in_result_and_log" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_repeated_analysis_is_still_denied_at_dispatch" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_context_repair_supplies_exact_empty_arguments" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_agent_flow" name="test_context_is_supplied_before_model_and_dirty_diagnostics_publish" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_api" name="test_local_capability_required_and_unknown_request_fields_rejected" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_api" name="test_stale_session_clears_prior_results" time="0.003"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_api" name="test_untrusted_host_and_origin_denied" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_api" name="test_valid_clarification_reply_preserves_budgets_and_advances_version" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_catalog" name="test_catalog_contains_only_selected_scope" time="0.027" /><testcase classname="tests.analyst.test_catalog" name="test_scope_override_and_unknown_metric_rejected" time="0.002" /><testcase classname="tests.analyst.test_catalog" name="test_window_requires_offsets_and_positive_duration" time="0.001" /><testcase classname="tests.analyst.test_compiler" name="test_filter_attack_stays_in_bound_values" time="0.095" /><testcase classname="tests.analyst.test_compiler" name="test_queries_join_real_banks_and_apply_half_open_windows" time="0.013" /><testcase classname="tests.analyst.test_contributions" name="test_symmetric_both_weights_and_rates_change" time="0.002" /><testcase classname="tests.analyst.test_contributions" name="test_missing_segment_or_empty_population_unavailable" time="0.001" /><testcase classname="tests.analyst.test_evaluation" name="test_independent_hand_decomposition" time="0.002" /><testcase classname="tests.analyst.test_evaluation" name="test_saved_deterministic_report_does_not_certify_live_demo" time="0.002" /><testcase classname="tests.analyst.test_evaluator" name="test_policy_block_is_reported_before_parsing_missing_evidence[scenario_a]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_evaluator" name="test_policy_block_is_reported_before_parsing_missing_evidence[scenario_a_dirty]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_evaluator" name="test_verified_without_publication_is_not_accepted" time="0.002" /><testcase classname="tests.analyst.test_evaluator" name="test_published_answer_reaches_independent_oracle_checks[scenario_a-verified]" time="0.002" /><testcase classname="tests.analyst.test_evaluator" name="test_published_answer_reaches_independent_oracle_checks[scenario_a_dirty-blocked]" time="0.002" /><testcase classname="tests.analyst.test_evidence" name="test_idempotent_and_owned_evidence" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase><testcase classname="tests.analyst.test_frontend" name="test_chart_points_match_evidence_and_labels_escape_markup" time="0.378" /><testcase classname="tests.analyst.test_frontend" name="test_initial_app_has_usable_session_control" time="1.359" /><testcase classname="tests.analyst.test_frontend" name="test_quality_block_renders_no_kpi" time="1.395" /><testcase classname="tests.analyst.test_model" name="test_buffers_complete_tool_call_and_discards_prose_and_reasoning" time="0.001" /><testcase classname="tests.analyst.test_model" name="test_missing_key_and_truncated_or_malformed_output_fail_safely" time="0.001" /><testcase classname="tests.analyst.test_model" name="test_failed_call_consumes_token_reservation" time="0.002" /><testcase classname="tests.analyst.test_model" name="test_provider_failure_does_not_echo_private_exception" time="0.002" /><testcase classname="tests.analyst.test_model" name="test_completed_usage_leaves_budget_for_publication_after_repairs" time="0.002" /><testcase classname="tests.analyst.test_model" name="test_missing_or_invalid_usage_keeps_full_reservation[None]" time="0.001" /><testcase classname="tests.analyst.test_model" name="test_missing_or_invalid_usage_keeps_full_reservation[usage1]" time="0.001" /><testcase classname="tests.analyst.test_model" name="test_missing_or_invalid_usage_keeps_full_reservation[usage2]" time="0.001" /><testcase classname="tests.analyst.test_model" name="test_missing_or_invalid_usage_keeps_full_reservation[usage3]" time="0.001" /><testcase classname="tests.analyst.test_model" name="test_missing_or_invalid_usage_keeps_full_reservation[usage4]" time="0.001" /><testcase classname="tests.analyst.test_model" name="test_interrupted_stream_keeps_reservation_even_after_usage" time="0.002" /><testcase classname="tests.analyst.test_model" name="test_reported_usage_above_ceiling_stops_investigation" time="0.002" /><testcase classname="tests.analyst.test_model" name="test_usage_before_more_output_is_not_a_final_receipt" time="0.001" /><testcase classname="tests.analyst.test_quality" name="test_preflight_has_no_window_or_filter_predicate" time="0.028" /><testcase classname="tests.analyst.test_quality" name="test_budget_counts_failures_and_cancel" time="0.001" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[DELETE FROM lifecycle_v1.payments]" time="0.002" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT 1; SELECT 2]" time="0.002" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[WITH x AS (DELETE FROM lifecycle_v1.payments RETURNING *) SELECT * FROM x]" time="0.011" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT * INTO x FROM lifecycle_v1.payments]" time="0.011" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT * FROM lifecycle_v1.payments FOR UPDATE]" time="0.014" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT * FROM scenario_a.payments]" time="0.014" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT * FROM pg_catalog.pg_authid]" time="0.018" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT pg_read_file('/etc/passwd')]" time="0.057" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT pg_sleep(3)]" time="0.024" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SET ROLE postgres]" time="0.009" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[COPY lifecycle_v1.payments TO PROGRAM 'x']" time="0.004" /><testcase classname="tests.analyst.test_query_policy" name="test_rejects_forbidden_queries[SELECT public.evil(attempt_id) FROM lifecycle_v1.payments]" time="0.025" /><testcase classname="tests.analyst.test_query_policy" name="test_allows_selected_registered_shape" time="0.023" /><testcase classname="tests.analyst.test_runtime_boundary" name="test_runtime_has_no_admin_or_evaluator_imports" time="0.101" /><testcase classname="tests.analyst.test_runtime_boundary" name="test_env_does_not_override_existing_or_load_arbitrary_names" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'&quot;">self = WindowsPath('E:/pinelabs/.local/analyst/test-temp/d20c5a11d5334a068c0fd3637fdcb898')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'E:\\pinelabs\\.local\\analyst\\test-temp\\d20c5a11d5334a068c0fd3637fdcb898'
+
+C:\Users\dell\miniconda3-env\Lib\pathlib\__init__.py:1011: FileNotFoundError</error></testcase></testsuite></testsuites>

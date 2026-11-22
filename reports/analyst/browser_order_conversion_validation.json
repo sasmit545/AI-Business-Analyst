@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "mode": "real_model_browser_api_database",
+  "live_model": true,
+  "recorded_at": "2026-11-21T20:59:18.176783+00:00",
+  "evidence_id": "f93f2df6cc094c73bcef4ba541b00d34",
+  "chart_data": [
+    {
+      "x": [
+        "Baseline",
+        "Comparison"
+      ],
+      "y": [
+        0.9793111070918993,
+        0.979761977294421
+      ]
+    }
+  ],
+  "safe_failure": {
+    "status": "clarification_required",
+    "previous_metrics_cleared": true
+  },
+  "screenshots": [
+    "browser-live-order_conversion-desktop.png",
+    "browser-live-order_conversion-mobile.png",
+    "browser-live-order_conversion-safe-failure.png"
+  ],
+  "complete_demo": "passed",
+  "first_analyst_breadth": "passed",
+  "final_acceptance": "reports/analyst/lifecycle_acceptance.json"
+}

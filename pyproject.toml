@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "payments-ai-analyst"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = ["fastapi", "pydantic>=2", "langgraph", "langgraph-checkpoint-postgres==3.2.1", "sqlglot", "streamlit", "plotly", "psycopg[binary]", "httpx", "uvicorn", "PyYAML", "openai"]
+
+[tool.setuptools.packages.find]
+include = ["app", "app.*"]
+
+[tool.setuptools.package-data]
+app = ["semantic/*.yaml"]
+"app.frontend" = ["style.css", "static/*.webp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/analyst"]
+pythonpath = ["."]
+addopts = "-p no:langsmith_plugin"
+markers = ["integration: real native PostgreSQL", "live: real provider or browser"]

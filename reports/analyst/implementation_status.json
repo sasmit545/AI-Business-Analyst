@@ -1,0 +1,187 @@
+{
+  "workspace_style": "reports/analyst/workspace_style.json",
+  "requirements_checks": "reports/analyst/requirements_checks.xml",
+  "local_session_tests": "reports/analyst/local_sessions_tests.xml",
+  "local_session_browser_and_recovery_checks": "reports/analyst/local_session_browser.xml",
+  "ui_readability_acceptance": "reports/analyst/ui_readability_acceptance.json",
+  "chat_history_acceptance": "reports/analyst/chat_history_acceptance.json",
+  "generative_ui_acceptance": "reports/analyst/generative_ui_acceptance.json",
+  "recorded_at": "2026-11-21T22:37:38.214214+00:00",
+  "plan": "plans/2026-11-21-2019-feat-enterprise-ai-analyst-plan.md",
+  "status": "target_v1_passed",
+  "execution": "native Windows; local file delivery; no Git repository",
+  "python": "3.14.9",
+  "application_code_written": true,
+  "gates": {
+    "foundation": "passed",
+    "complete_demo": "passed",
+    "first_analyst_breadth": "passed",
+    "target_v1": "passed"
+  },
+  "completed": [
+    "Isolated dependency installation, exact lock and import/API/graph/Plotly/DB smoke",
+    "Read-only lifecycle_v1 schema audit with eight real tables and text representations",
+    "Typed selected-scope contracts and curated answer-free semantic assets",
+    "Restricted PostgreSQL bundle, raw quality gate, SQL AST allowlist and bound filters",
+    "Attempt comparison, bank/method segmentation, daily trend and symmetric decomposition",
+    "Checksummed local evidence, scoped retrieval and deterministic factual/chart verification",
+    "NVIDIA streaming tool adapter, bounded LangGraph investigation and local-capability FastAPI",
+    "Streamlit UI with clarification, cancellation, quality-block states, charts/tables and executed SQL",
+    "Independent six-scenario deterministic benchmarks, denial probes, original-connection continuity and preservation checks",
+    "Operational documentation and opt-in live model/API/browser evaluation entry points",
+    "Same-version real NVIDIA six-scenario evaluation and four safe policy cases",
+    "Real browser/model/API/database success, clarification and dirty quality-block journeys",
+    "Explicit ISO window binding rejects model drift before SQL",
+    "U8 lifecycle order conversion, first-attempt success, distinct retry denominators, settlement count/amount and aligned health",
+    "Same-version eight-metric live acceptance, six-scenario/four-policy regression and five browser journeys",
+    "Metric-scoped quality and observation cutoff/maturity contracts with independent hand-fixture proof",
+    "Durable checkpoints, evidence recovery, reauthorized drill-down, bounded hypothesis tests and source comparison"
+  ],
+  "verification": {
+    "application_suite": {
+      "passed": 105,
+      "skipped": 3,
+      "failed": 0,
+      "artifact": "reports/analyst/durable_application_tests.xml"
+    },
+    "deterministic_acceptance": {
+      "status": "passed",
+      "schemas": 6,
+      "denial_probes_per_schema": 13,
+      "A_B_A_continuity": "passed",
+      "artifact": "reports/analyst/deterministic_acceptance.json"
+    },
+    "browser": {
+      "passed": 5,
+      "mode": "real NVIDIA/model/API/PostgreSQL",
+      "artifacts": [
+        "reports/analyst/browser_order_conversion_validation.json",
+        "reports/analyst/browser_retry_recovery_retried_validation.json",
+        "reports/analyst/browser_settlement_amount_validation.json",
+        "reports/analyst/browser_bank_health_validation.json",
+        "reports/analyst/browser_dirty_lifecycle_validation.json"
+      ],
+      "checks": [
+        "Conversion, retry recovery, settlement amount and health: exact chart values, numerator/denominator, cutoff, bank/method table, SQL provenance, desktop/mobile and clarification clearing prior results",
+        "Dirty: blocked certification, exactly 20 duplicate occurrences, 10 missing timestamps and 10 orphan merchants; no metrics/chart"
+      ]
+    },
+    "live_model": {
+      "status": "passed",
+      "scenarios": 6,
+      "policy_cases": 4,
+      "lifecycle_metrics": 8,
+      "artifacts": [
+        "reports/analyst/lifecycle_live_acceptance.json",
+        "reports/analyst/lifecycle_attempt_regression.json"
+      ]
+    },
+    "existing_database_offline_suite": {
+      "passed": 8,
+      "skipped": 6,
+      "failed": 0,
+      "reason_for_skips": "No database administration or ingestion implementation changed; repeat-import/rollback suite was not requested or run"
+    },
+    "wheel_build": {
+      "status": "passed",
+      "wheel": ".local\\analyst\\dist\\durable-8a131469\\payments_ai_analyst-0.1.0-py3-none-any.whl",
+      "source_contents_match": true,
+      "runtime_inclusion_boundary": "passed",
+      "sha256": "76ba3f02305eabb9b869a6395879f8408d7be9bed7a762d122ec6f02b1601137"
+    },
+    "pip_check": "passed",
+    "lint_typecheck": "not configured; Python AST parse checks passed",
+    "durable_acceptance": "reports/analyst/durable_acceptance.json",
+    "durable_browser": "reports/analyst/durable_browser_validation.json",
+    "durable_live_model": "reports/analyst/durable_live_passed.json",
+    "administrative_fences": "reports/analyst/administrative_fences.json"
+  },
+  "blockers": [],
+  "model_option": {
+    "provider": "nvidia",
+    "base_url": "https://integrate.api.nvidia.com/v1",
+    "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+    "api_key_env": "NVIDIA_API_KEY",
+    "env_file": ".env",
+    "adapter_implemented": true,
+    "max_investigation_tokens": 32768,
+    "max_output_tokens_per_call": 4096,
+    "free_credits_confirmed": true,
+    "paid_usage_enabled": false,
+    "live_success": true,
+    "openai_sdk_version": "3.57.0"
+  },
+  "protected_sources": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": [],
+    "snapshot": "reports/analyst/protected_sources_before.json"
+  },
+  "database_changes": "Private metadata schema and writer role installed in payments_analytics. Live operator fixture selection preserved.",
+  "restored_selection": {
+    "schema": "lifecycle_v1",
+    "visible_tables": 8
+  },
+  "review": {
+    "formal": "Code review: skipped (ce-code-review unavailable)",
+    "reason": "No Git repository or diff base.",
+    "inspection": "Independent source inspection and manual review; addressed raw receipt replay, session-switch ownership, clarification concurrency/rollback, and adaptive preflight."
+  },
+  "limits_and_deferred": [
+    "The local workspace can reopen saved PostgreSQL sessions for the current dataset version. Standalone API key-based recovery remains available for its existing callers. The earlier in-memory demo has no saved session records.",
+    "Adaptive segment tests apply to attempt success within the remaining shared budget. Operator-requested drill-down starts a new bounded investigation.",
+    "A 10-second statement timeout stopped one lifecycle browser setup under memory pressure. Host load can prevent a query from publishing.",
+    "Local operator access, registered metrics and the fixed chart registry define the delivery scope."
+  ],
+  "startup": {
+    "api": ".\\.local\\analyst\\venv\\Scripts\\python.exe -m app.api.main",
+    "ui": ".\\.local\\analyst\\venv\\Scripts\\python.exe -m streamlit run app/frontend/main.py",
+    "url": "http://127.0.0.1:8501"
+  },
+  "next_action": "Start the launcher and use Saved sessions on the home screen to reopen a conversation.",
+  "observed_runtime_success": {
+    "time": "2026-11-21T16:18:37.406289+00:00",
+    "evidence_id": "08fc575739324a298bfb5c58802426b3",
+    "scenario": "lifecycle_v1",
+    "oracle_match": true,
+    "artifact": "reports/analyst/log_diagnosis.json",
+    "source": "Existing operator-run application log and saved evidence; not a new provider request from this agent session"
+  },
+  "diagnostic_update": {
+    "tests_passed": 14,
+    "original_failure_reproduced": false,
+    "logging_gap_reproduced_and_fixed": true,
+    "restart_api_required": false
+  },
+  "acceptance_followup": {
+    "artifact": "reports/analyst/acceptance_followup.json",
+    "offline_checks_passed": 43,
+    "browser_safe_failure": "Passed with real NVIDIA model; see final_acceptance.json"
+  },
+  "token_budget_fix": {
+    "artifact": "reports/analyst/token_budget_diagnosis.json",
+    "local_checks": "passed",
+    "live_rerun": "passed",
+    "live_run_id": "20261121T175621Z"
+  },
+  "publication_fix": {
+    "artifact": "reports/analyst/publication_diagnosis.json",
+    "local_checks": "passed",
+    "live_rerun": "passed",
+    "live_run_id": "20261121T175621Z"
+  },
+  "context_delivery_fix": {
+    "artifact": "reports/analyst/context_diagnosis.json",
+    "local_checks": "passed",
+    "live_rerun": "passed",
+    "prior_version_live_scenarios_passed": [
+      "scenario_a",
+      "scenario_b"
+    ],
+    "live_run_id": "20261121T175621Z"
+  },
+  "final_acceptance": "reports/analyst/durable_acceptance.json",
+  "runtime_snapshot": "reports/analyst/durable_runtime_snapshot.json",
+  "previous_complete_demo_acceptance": "reports/analyst/final_acceptance.json",
+  "previous_lifecycle_acceptance": "reports/analyst/lifecycle_acceptance.json"
+}

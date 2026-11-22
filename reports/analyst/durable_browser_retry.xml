@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="114.682" timestamp="2026-11-22T03:30:51.693957+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="113.879"><failure message="AssertionError: Locator expected to be visible&#10;Actual value: None&#10;Error: element(s) not found &#10;Call log:&#10;  - Expect &quot;to_be_visible&quot; locator(&quot;summary&quot;).filter(has_text=&quot;SQL, quality and provenance&quot;) with timeout 5000ms&#10;  - waiting for locator(&quot;summary&quot;).filter(has_text=&quot;SQL, quality and provenance&quot;)&#10;&#10;Aria snapshot:&#10;- link &quot;Skip to main content&quot;:&#10;  - /url: &quot;#stMain&quot;&#10;- region &quot;Sidebar&quot;:&#10;  - heading &quot;Investigation&quot; [level=2]&#10;  - paragraph: Dataset selection is managed by the local operator.&#10;[+55 more lines; full report in element text]">tmp_path = WindowsPath('E:/pinelabs/.local/analyst/test-temp/3dfe0e882e0a449a88b326745e388dcb/test_chart_selection_and_resta0')
+
+    @pytest.mark.live
+    @pytest.mark.skipif(os.environ.get('ANALYST_DURABLE_BROWSER') != '1', reason='Opt-in real model and browser')
+    def test_chart_selection_and_restart(tmp_path):
+        from playwright.sync_api import expect, sync_playwright
+    
+        root = Path.cwd()
+        ctx = multiprocessing.get_context('spawn')
+        api_port = _port()
+        token = tmp_path/'.local/analyst/api_token'
+        base = f'http://127.0.0.1:{api_port}'
+        api = ctx.Process(target=_serve_api, args=(root, tmp_path, api_port))
+        api.start()
+        ui = None
+        try:
+            _wait_ready(api, base+'/health', token)
+            ui_port = _port()
+            ui = ctx.Process(target=_serve_ui, args=(root, tmp_path, api_port, ui_port))
+            ui.start()
+            url = f'http://127.0.0.1:{ui_port}'
+            _wait_ready(ui, url+'/_stcore/health')
+            counts = _conversion_counts(root)
+            with sync_playwright() as browser_api:
+                browser = browser_api.chromium.launch(
+                    executable_path='C:/Program Files/Google/Chrome/Application/chrome.exe', headless=True)
+                page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                page.goto(url)
+    
+                def button(name):
+                    control = page.get_by_role('button', name=name, exact=True)
+                    expect(control).to_be_enabled(timeout=15000)
+                    control.press('Enter')
+    
+                def expander(name):
+                    control = page.locator('summary').filter(has_text=name)
+                    expect(control).to_be_visible()
+                    control.press('Enter')
+    
+                def read_id():
+                    provenance = page.get_by_text('Evidence ID:', exact=False)
+                    if not provenance.is_visible():
+                        expander('SQL, quality and provenance')
+                    expect(provenance).to_be_visible()
+                    return provenance.inner_text().removeprefix('Evidence ID: ')
+    
+                button('Start new session')
+                expander('Save session credentials')
+                resume_id = page.get_by_label('Session ID to save', exact=True).input_value()
+                resume_key = page.get_by_label('Session key to save', exact=True).input_value()
+                print('Saved session created.', flush=True)
+                question = ('Compare 24-hour order conversion for 2026-10-01 inclusive to 2026-10-15 exclusive '
+                            'versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.')
+                page.get_by_role('textbox', name='Business question').fill(question)
+                button('Analyze')
+                expect(page.get_by_text('Status: verified', exact=True)).to_be_visible(timeout=135000)
+&gt;               original_id = read_id()
+                              ^^^^^^^^^
+
+tests\analyst\test_durable_browser.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\analyst\test_durable_browser.py:133: in read_id
+    expander('SQL, quality and provenance')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'SQL, quality and provenance'
+
+    def expander(name):
+        control = page.locator('summary').filter(has_text=name)
+&gt;       expect(control).to_be_visible()
+E       AssertionError: Locator expected to be visible
+E       Actual value: None
+E       Error: element(s) not found 
+E       Call log:
+E         - Expect "to_be_visible" locator("summary").filter(has_text="SQL, quality and provenance") with timeout 5000ms
+E         - waiting for locator("summary").filter(has_text="SQL, quality and provenance")
+E       
+E       Aria snapshot:
+E       - link "Skip to main content":
+E         - /url: "#stMain"
+E       - region "Sidebar":
+E         - heading "Investigation" [level=2]
+E         - paragraph: Dataset selection is managed by the local operator.
+E         - button "Start new session":
+E           - paragraph: Start new session
+E         - group:
+E           - paragraph: Resume saved work
+E         - paragraph: "Dataset: lifecycle_v1"
+E         - group:
+E           - paragraph: Save session credentials
+E           - textbox "Session ID to save" [disabled]:
+E             - /placeholder: ""
+E             - text: a21d0bc5dc3445c3a7ec62c953457f1b
+E           - textbox "Session key to save" [disabled]:
+E             - /placeholder: ""
+E             - text: [redacted]
+E           - button "Show password" [disabled]
+E         - group:
+E           - combobox "Presentation": Bar chart
+E           - button "Open"
+E         - paragraph: Changing presentation reuses evidence. A new question starts a new analysis.
+E       - banner:
+E         - img "Running..."
+E         - button "Stop"
+E         - button "Deploy"
+E         - button "Main menu"
+E       - main:
+E         - paragraph: PAYMENTS INTELLIGENCE / LOCAL ANALYST
+E         - heading "Ask a question. Inspect the evidence." [level=1]:
+E           - text: Ask a question. Inspect the evidence.
+E           - link "Link to heading":
+E             - /url: "#ask-a-question-inspect-the-evidence"
+E         - paragraph: Compare payment metrics across explicit periods, then inspect the counts, denominators and queries behind the answer.
+E         - textbox "Business question":
+E           - /placeholder: Compare attempt success for October 1–14 and October 15–28, 2026, in Asia/Kolkata. Which bank/method segments contributed?
+E           - text: Compare 24-hour order conversion for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.
+E         - button "Analyze":
+E           - paragraph: Analyze
+E         - paragraph: "Status: verified"
+E         - paragraph: "Selected dataset: lifecycle_v1 · Metric: 24-hour order conversion"
+E         - paragraph: "Baseline: 2026-10-01T00:00:00+05:30 to 2026-10-15T00:00:00+05:30 (exclusive)"
+E         - paragraph: "Comparison: 2026-10-15T00:00:00+05:30 to 2026-10-29T00:00:00+05:30 (exclusive)"
+E         - paragraph: "Timezone: Asia/Kolkata · Denominator: orders observed for at least 24 hours"
+E         - paragraph: "Observation cutoff: 2026-11-01T00:00:00+05:30"
+E         - img
+E         - text: "{ ... }"
+E         - 'heading "24-hour order conversion: +0.0451 percentage points." [level=3]':
+E           - text: "24-hour order conversion: +0.0451 percentage points."
+E           - link "Link to heading":
+E             - /url: "#24-hour-order-conversion-0-0451-percentage-points"
+E         - paragraph: Baseline
+E         - paragraph: 97.9311%
+E         - paragraph: 97,463 / 99,522
+E         - paragraph: Comparison
+E         - paragraph: 97.9762%
+E         - paragraph: 96,485 / 98,478
+E         - group:
+E           - paragraph: Bank and method detail
+
+tests\analyst\test_durable_browser.py:127: AssertionError</failure></testcase></testsuite></testsuites>

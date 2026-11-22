@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "mode": "live NVIDIA/API/PostgreSQL/Chromium",
+  "selected_bank": "BANK_A",
+  "source_evidence_id": "404153b420004b6aadb3d1de1a6d3103",
+  "child_evidence_id": "9cc6d36c96594edfbfed0206b1b76250",
+  "checksum": "704b0fb387f95606d7dfb7b841b63fee7e2056c122c6429b4b9994b86b2373f0",
+  "independent_csv_counts": [
+    [
+      34455,
+      35025
+    ],
+    [
+      34026,
+      34610
+    ]
+  ],
+  "independent_csv_rates": [
+    0.9837259100642398,
+    0.9831262640855244
+  ],
+  "desktop_click": "performed this run",
+  "checks": [
+    "Child inherits the exact parent request plus the selected bank",
+    "Both filtered period counts match independent source CSV calculations",
+    "Replacement API process and fresh mobile browser recovered the same evidence and chart values"
+  ]
+}

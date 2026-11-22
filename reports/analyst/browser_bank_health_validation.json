@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "mode": "real_model_browser_api_database",
+  "live_model": true,
+  "recorded_at": "2026-11-21T21:18:35.950752+00:00",
+  "evidence_id": "bb8cda2d7de1426caf67fa72b4b6d75b",
+  "chart_data": [
+    {
+      "x": [
+        "Baseline",
+        "Comparison"
+      ],
+      "y": [
+        0.970717714786558,
+        0.9713483202625565
+      ]
+    }
+  ],
+  "safe_failure": {
+    "status": "clarification_required",
+    "previous_metrics_cleared": true
+  },
+  "screenshots": [
+    "browser-live-bank_health-desktop.png",
+    "browser-live-bank_health-mobile.png",
+    "browser-live-bank_health-safe-failure.png"
+  ],
+  "complete_demo": "passed",
+  "first_analyst_breadth": "passed",
+  "final_acceptance": "reports/analyst/lifecycle_acceptance.json"
+}

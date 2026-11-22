@@ -1,0 +1,30 @@
+{
+  "mode": "real_api_sql_with_explicit_model_double",
+  "status": "passed",
+  "protected_sources_before": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "verification_note": "Initial harness incorrectly required no factual sentences. Corrected to require quality diagnostics only; application code unchanged.",
+  "observed_status": "blocked",
+  "defects": {
+    "duplicate_occurrences": 20,
+    "missing_timestamps": 10,
+    "orphan_merchants": 10
+  },
+  "evidence_id": "e92e2c4cb730403bb105b61bd9274485",
+  "budget": {
+    "sql_statements": 4,
+    "tool_calls": 2,
+    "repairs": 0,
+    "tokens_reserved": 0
+  },
+  "certified_metrics_published": false,
+  "restored_selection": "lifecycle_v1",
+  "protected_sources_after": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  }
+}

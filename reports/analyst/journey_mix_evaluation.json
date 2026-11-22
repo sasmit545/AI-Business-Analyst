@@ -1,0 +1,283 @@
+{
+  "mode": "fresh native PostgreSQL, real restricted API, deterministic query planner",
+  "cases": {
+    "scenario_b": {
+      "question": "Why did overall success change by payment method? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "76ae03eb7791462ba619fa1cba63b2f5",
+      "plan": {
+        "objective": {
+          "kind": "contribution",
+          "dimension": "method",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "attempt_success",
+        "dataset": "scenario_b",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "payments"
+        ],
+        "numerator": "Completed attempts with status SUCCESS",
+        "denominator": "All completed attempts in the requested window and filters",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": null
+      },
+      "answer": "The method partition accounts for -4.8000 percentage points of success-rate change. Traffic mix contributed -4.8000 pp and within-group rates +0.0000 pp. A traffic shift in the direction of the overall change was UPI (20.00% to 80.00% of attempts, group success 90.00% to 90.00%).",
+      "guidance": {
+        "source": "decomposition",
+        "finding": "The method partition accounts for -4.8000 percentage points of success-rate change. Traffic mix contributed -4.8000 pp and within-group rates +0.0000 pp. A traffic shift in the direction of the overall change was UPI (20.00% to 80.00% of attempts, group success 90.00% to 90.00%).",
+        "recommendations": [
+          "Check the traffic allocation for UPI. Compare the verified group rates to see how the changed shares moved overall success. Use operational allocation records to establish why the traffic shifted."
+        ],
+        "leaders": [
+          {
+            "payment_method": "UPI"
+          }
+        ],
+        "evidence_id": "76ae03eb7791462ba619fa1cba63b2f5",
+        "reference": "586e93a318ba1487b0822a335dc03ece710a7c758bb66214b253b26361e35c33"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_b.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_b.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_b.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_b.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_b.payments p LEFT JOIN scenario_b.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_b.payments p LEFT JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_b.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_b.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "daily",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "failures",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.964,
+          "period": 0,
+          "attempts": 10000,
+          "successes": 9640
+        },
+        {
+          "rate": 0.916,
+          "period": 1,
+          "attempts": 10000,
+          "successes": 9160
+        }
+      ],
+      "budget": {
+        "sql_statements": 8,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Check the traffic allocation for UPI. Compare the verified group rates to see how the changed shares moved overall success. Use operational allocation records to establish why the traffic shifted.",
+        "evidence_id": "a727ee56872043c78abc31fef6cf602e",
+        "reused_from": "76ae03eb7791462ba619fa1cba63b2f5",
+        "analytical_statements": 0
+      }
+    },
+    "three_bank_offsets": {
+      "question": "Which bank contributed most to the change in attempt success? Compare 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata.",
+      "status": "verified",
+      "evidence_id": "075c7955c5a54c51927810822ae52060",
+      "plan": {
+        "objective": {
+          "kind": "contribution",
+          "dimension": "bank",
+          "period": "comparison",
+          "measure": "rate"
+        },
+        "metric": "attempt_success",
+        "dataset": "scenario_b",
+        "grain": "attempt",
+        "time_field": "attempted_at",
+        "tables": [
+          "banks",
+          "merchants",
+          "payments"
+        ],
+        "numerator": "Completed attempts with status SUCCESS",
+        "denominator": "All completed attempts in the requested window and filters",
+        "baseline": {
+          "start": "2026-10-01T00:00:00+05:30",
+          "end": "2026-10-15T00:00:00+05:30"
+        },
+        "comparison": {
+          "start": "2026-10-15T00:00:00+05:30",
+          "end": "2026-10-29T00:00:00+05:30"
+        },
+        "filters": {},
+        "cutoff": null
+      },
+      "answer": "The bank partition accounts for -4.5000 percentage points of success-rate change. Traffic mix contributed -4.5000 pp and within-group rates +0.0000 pp. A traffic shift in the direction of the overall change was BANK_B (10.00% to 15.00% of attempts, group success 0.00% to 0.00%).",
+      "guidance": {
+        "source": "decomposition",
+        "finding": "The bank partition accounts for -4.5000 percentage points of success-rate change. Traffic mix contributed -4.5000 pp and within-group rates +0.0000 pp. A traffic shift in the direction of the overall change was BANK_B (10.00% to 15.00% of attempts, group success 0.00% to 0.00%).",
+        "recommendations": [
+          "Check the traffic allocation for BANK_B. Compare the verified group rates to see how the changed shares moved overall success. Use operational allocation records to establish why the traffic shifted."
+        ],
+        "leaders": [
+          {
+            "payer_bank_id": "BANK_B"
+          }
+        ],
+        "evidence_id": "075c7955c5a54c51927810822ae52060",
+        "reference": "19dc3d56768ced37e7448f2088c3e15c8eaaac963d195b7f56175300b8c5bcc5"
+      },
+      "sql": [
+        {
+          "name": "quality",
+          "sql": "SELECT (SELECT COUNT(*) - COUNT(DISTINCT attempt_id) FROM scenario_b.payments) AS duplicate_occurrences, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempt_id IS NULL OR attempt_id = '') AS missing_attempt_id, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempted_at IS NULL OR attempted_at = '') AS missing_timestamps, (SELECT COUNT(*) FROM scenario_b.payments WHERE attempted_at <> '' AND (NOT pg_input_is_valid(attempted_at, 'timestamp with time zone') OR NOT attempted_at ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?[+]05:30$')) AS malformed_timestamps, (SELECT COUNT(*) FROM scenario_b.payments WHERE status IS NULL OR failure_reason IS NULL OR NOT ((status = 'SUCCESS' AND failure_reason = '') OR (status = 'FAILED' AND failure_reason IN ('BANK_TIMEOUT','INSUFFICIENT_FUNDS','AUTHENTICATION_FAILED','LIMIT_EXCEEDED')))) AS invalid_status_reason, (SELECT COUNT(*) FROM scenario_b.payments WHERE amount_paise IS NULL OR NOT amount_paise ~ '^[1-9][0-9]*$' OR currency IS NULL OR currency <> 'INR') AS invalid_amount_currency, (SELECT COUNT(*) FROM scenario_b.payments WHERE payment_method IS NULL OR payment_method NOT IN ('CARD','UPI')) AS invalid_method, (SELECT COUNT(*) FROM scenario_b.payments p LEFT JOIN scenario_b.merchants m ON p.merchant_id = m.merchant_id WHERE m.merchant_id IS NULL) AS orphan_merchants, (SELECT COUNT(*) FROM scenario_b.payments p LEFT JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE b.bank_id IS NULL) AS orphan_banks, (SELECT COUNT(*) - COUNT(DISTINCT bank_id) FROM scenario_b.banks) AS duplicate_banks, (SELECT COUNT(*) - COUNT(DISTINCT merchant_id) FROM scenario_b.merchants) AS duplicate_merchants",
+          "parameters": {}
+        },
+        {
+          "name": "overall",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1 ORDER BY 1",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "segments",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "daily",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, CAST(CAST(p.attempted_at AS TIMESTAMPTZ) AT TIME ZONE 'Asia/Kolkata' AS DATE) AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE p.status = 'SUCCESS') AS successes FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) GROUP BY 1, 2 ORDER BY 1, 2",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        },
+        {
+          "name": "failures",
+          "sql": "SELECT CASE WHEN CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz THEN 0 ELSE 1 END AS period, p.payer_bank_id, b.bank_name, p.payment_method, p.failure_reason, COUNT(*) AS count FROM scenario_b.payments p JOIN scenario_b.banks b ON p.payer_bank_id = b.bank_id WHERE ((CAST(p.attempted_at AS TIMESTAMPTZ) >= %(b_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(b_end)s::timestamptz) OR (CAST(p.attempted_at AS TIMESTAMPTZ) >= %(c_start)s::timestamptz AND CAST(p.attempted_at AS TIMESTAMPTZ) < %(c_end)s::timestamptz)) AND p.status = 'FAILED' GROUP BY 1, 2, 3, 4, 5 ORDER BY 1, 2, 3, 4, 5",
+          "parameters": {
+            "b_end": "2026-10-15T00:00:00+05:30",
+            "c_end": "2026-10-29T00:00:00+05:30",
+            "b_start": "2026-10-01T00:00:00+05:30",
+            "c_start": "2026-10-15T00:00:00+05:30"
+          }
+        }
+      ],
+      "chart_bindings": [
+        {
+          "kind": "comparison",
+          "source": "overall",
+          "measure": "rate",
+          "period": null,
+          "section": null,
+          "drilldown": false
+        }
+      ],
+      "chart_overall": [
+        {
+          "rate": 0.81,
+          "period": 0,
+          "attempts": 1000,
+          "successes": 810
+        },
+        {
+          "rate": 0.765,
+          "period": 1,
+          "attempts": 1000,
+          "successes": 765
+        }
+      ],
+      "budget": {
+        "sql_statements": 8,
+        "tool_calls": 2,
+        "repairs": 0,
+        "tokens_reserved": 0
+      },
+      "followup": {
+        "question": "What steps should I take to address this?",
+        "answer": "Check the traffic allocation for BANK_B. Compare the verified group rates to see how the changed shares moved overall success. Use operational allocation records to establish why the traffic shifted.",
+        "evidence_id": "f70770f2c0974a0da441714ab52aa015",
+        "reused_from": "075c7955c5a54c51927810822ae52060",
+        "analytical_statements": 0
+      }
+    }
+  },
+  "protected_before": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "status": "passed",
+  "cleanup": true,
+  "protected_after": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  }
+}

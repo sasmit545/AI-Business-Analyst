@@ -1,0 +1,60 @@
+{
+  "expected_answers_file": "expected_answers.json",
+  "questions": [
+    {
+      "answer_pointer": "/metrics/totals/0",
+      "evaluator_only": false,
+      "id": "counts",
+      "question": "How many orders, completed attempts and settlements are stored?"
+    },
+    {
+      "answer_pointer": "/metrics/attempts/0",
+      "evaluator_only": false,
+      "id": "attempts",
+      "question": "What is the attempt success rate during October 1-28?"
+    },
+    {
+      "answer_pointer": "/metrics/orders/0",
+      "evaluator_only": false,
+      "id": "orders",
+      "question": "What is 24-hour order conversion for October-created mature orders?"
+    },
+    {
+      "answer_pointer": "/metrics/retries/0",
+      "evaluator_only": false,
+      "id": "retries",
+      "question": "How many initially failed orders recover, and what are the two recovery rates?"
+    },
+    {
+      "answer_pointer": "/metrics/settlements/0",
+      "evaluator_only": false,
+      "id": "settlements",
+      "question": "What fraction of due obligations is settled and how much is overdue?"
+    },
+    {
+      "answer_pointer": "/metrics/temporal_join/0",
+      "evaluator_only": false,
+      "id": "health",
+      "question": "Does matching the containing five-minute health observation preserve attempt counts?"
+    },
+    {
+      "answer_pointer": "/metrics/totals/0",
+      "evaluator_only": false,
+      "id": "boundaries",
+      "question": "Why do stored successes differ from the windowed success count?"
+    },
+    {
+      "answer_pointer": "/hand_fixture",
+      "evaluator_only": true,
+      "id": "hand_fixture",
+      "question": "Does a failure-then-success chain count as one paid order, and is a not-yet-due obligation a failed payment?"
+    }
+  ],
+  "scenario": "lifecycle_v1",
+  "schema_version": "1.0.0",
+  "scoring": {
+    "counts_and_amounts": "exact",
+    "percentage_absolute_tolerance": 1e-06,
+    "require_correct_denominator": true
+  }
+}

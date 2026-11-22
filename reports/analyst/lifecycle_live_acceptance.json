@@ -1,0 +1,326 @@
+{
+  "recorded_at": "2026-11-21T20:50:23.516602+00:00",
+  "mode": "live_model_api_sql",
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "status": "passed",
+  "metrics": [
+    {
+      "metric": "order_conversion",
+      "status": "passed",
+      "evidence_id": "c24297a262774dc291aae270e3bdfc2f",
+      "checksum": "861d721c2d62c1bc68371b0341ff4c00306a8fd982d7010c8b49d8a5fae81a73",
+      "question": "Compare 24-hour order conversion (order_conversion) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 97463,
+          "denominator": 99522,
+          "excluded": 0,
+          "rate": 0.9793111070918993
+        },
+        {
+          "period": 1,
+          "numerator": 96485,
+          "denominator": 98478,
+          "excluded": 0,
+          "rate": 0.979761977294421
+        }
+      ],
+      "statement_count": 11,
+      "query_timings_ms": {
+        "quality": 1561.7379000032088,
+        "invalid_completion_time": 857.3813999973936,
+        "invalid_observation_time": 776.8087000004016,
+        "invalid_order_time": 1228.188200002478,
+        "lifecycle_raw_quality": 771.3373000005959,
+        "lifecycle_invariants": 2732.059100002516,
+        "overall": 3360.838300002797,
+        "segments": 6409.650499997952
+      },
+      "elapsed_seconds": 26.918961800001853
+    },
+    {
+      "metric": "first_attempt_success",
+      "status": "passed",
+      "evidence_id": "dcbffc5dab28421ea4adbdc0d04d337c",
+      "checksum": "13ceda88a939ae75f0307e54f4482861d8cce9bbddf04a452b7b2cd02414288f",
+      "question": "Compare First-attempt success (first_attempt_success) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 96609,
+          "denominator": 99522,
+          "excluded": 0,
+          "rate": 0.9707300898293845
+        },
+        {
+          "period": 1,
+          "numerator": 95659,
+          "denominator": 98478,
+          "excluded": 0,
+          "rate": 0.9713743171063588
+        }
+      ],
+      "statement_count": 11,
+      "query_timings_ms": {
+        "quality": 1429.7564000007696,
+        "invalid_completion_time": 1010.3078999964055,
+        "invalid_observation_time": 1028.2021000020904,
+        "invalid_order_time": 1306.0890000051586,
+        "lifecycle_raw_quality": 768.7998999972478,
+        "lifecycle_invariants": 3086.025399999926,
+        "overall": 2442.5128000002587,
+        "segments": 2353.023100004066
+      },
+      "elapsed_seconds": 19.838514400005806
+    },
+    {
+      "metric": "retry_uptake",
+      "status": "passed",
+      "evidence_id": "ead7804a5fab474785e134512298674e",
+      "checksum": "84c91edb9225cce3f4ba8f3c1bb575824f9b74c85c62e7bcc34122e684092a9c",
+      "question": "Compare Retry uptake (retry_uptake) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 870,
+          "denominator": 2913,
+          "excluded": 0,
+          "rate": 0.29866117404737386
+        },
+        {
+          "period": 1,
+          "numerator": 849,
+          "denominator": 2819,
+          "excluded": 0,
+          "rate": 0.30117062788222776
+        }
+      ],
+      "statement_count": 11,
+      "query_timings_ms": {
+        "quality": 1180.454599998484,
+        "invalid_completion_time": 789.0610999966157,
+        "invalid_observation_time": 888.6553999982425,
+        "invalid_order_time": 1109.9366999987978,
+        "lifecycle_raw_quality": 1015.2379999999539,
+        "lifecycle_invariants": 3654.547199999797,
+        "overall": 690.536100002646,
+        "segments": 1021.3603999945917
+      },
+      "elapsed_seconds": 17.320850300005986
+    },
+    {
+      "metric": "retry_recovery_all",
+      "status": "passed",
+      "evidence_id": "c5bb08ee96224b4bbab59be8db73821d",
+      "checksum": "cda949d4179fc27ef71f64f4bf1b98a5dee29424d18b75cdcb273f7c0333ea8d",
+      "question": "Compare Recovery among initial failures (retry_recovery_all) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 854,
+          "denominator": 2913,
+          "excluded": 0,
+          "rate": 0.29316855475454856
+        },
+        {
+          "period": 1,
+          "numerator": 826,
+          "denominator": 2819,
+          "excluded": 0,
+          "rate": 0.2930117062788223
+        }
+      ],
+      "statement_count": 11,
+      "query_timings_ms": {
+        "quality": 1266.394999998738,
+        "invalid_completion_time": 1045.1178000002983,
+        "invalid_observation_time": 829.7823000029894,
+        "invalid_order_time": 1149.5079000014812,
+        "lifecycle_raw_quality": 647.4862999966717,
+        "lifecycle_invariants": 2665.252499995404,
+        "overall": 902.6015999988886,
+        "segments": 783.7579999977606
+      },
+      "elapsed_seconds": 15.929921499999182
+    },
+    {
+      "metric": "retry_recovery_retried",
+      "status": "passed",
+      "evidence_id": "3c2e11cd5c904fce97f618951651e0cc",
+      "checksum": "4f7585bde0969b76d569817b547dbad9f5ddc57b00a62135eca153af08c6f82b",
+      "question": "Compare Recovery among retried orders (retry_recovery_retried) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 854,
+          "denominator": 870,
+          "excluded": 0,
+          "rate": 0.9816091954022989
+        },
+        {
+          "period": 1,
+          "numerator": 826,
+          "denominator": 849,
+          "excluded": 0,
+          "rate": 0.9729093050647821
+        }
+      ],
+      "statement_count": 11,
+      "query_timings_ms": {
+        "quality": 1436.6330000048038,
+        "invalid_completion_time": 906.3575000036508,
+        "invalid_observation_time": 851.1159999980009,
+        "invalid_order_time": 1066.167900004075,
+        "lifecycle_raw_quality": 784.5410000008997,
+        "lifecycle_invariants": 2684.817600005772,
+        "overall": 960.7021999981953,
+        "segments": 729.3054000037955
+      },
+      "elapsed_seconds": 16.741354099998716
+    },
+    {
+      "metric": "settlement_count",
+      "status": "passed",
+      "evidence_id": "7a7abcf15c08447cb7d4731d96e9d3e6",
+      "checksum": "51d7756e7c15328a222eae1816ade51678f51c1653388d73a2fd7432a999d91c",
+      "question": "Compare Due settlement count completion (settlement_count) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 97462,
+          "denominator": 97462,
+          "excluded": 0,
+          "rate": 1.0
+        },
+        {
+          "period": 1,
+          "numerator": 96485,
+          "denominator": 96485,
+          "excluded": 0,
+          "rate": 1.0
+        }
+      ],
+      "statement_count": 12,
+      "query_timings_ms": {
+        "quality": 1394.9935999989975,
+        "invalid_completion_time": 887.4945999996271,
+        "invalid_observation_time": 1039.1270000036457,
+        "invalid_due_at": 1039.3928999983473,
+        "invalid_settled_at": 1026.3746999989962,
+        "lifecycle_raw_quality": 660.1553000000422,
+        "lifecycle_invariants": 2108.0299000022933,
+        "overall": 1807.4099000004935,
+        "segments": 1821.124800000689
+      },
+      "elapsed_seconds": 19.31005500000174
+    },
+    {
+      "metric": "settlement_amount",
+      "status": "passed",
+      "evidence_id": "f3ae115201ca4e49ac031771b93086a2",
+      "checksum": "7a15140e0f4504444fa08628cb1c3cec6ebfe3400510e4be8aa2c24391711aba",
+      "question": "Compare Due settlement amount completion (settlement_amount) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 14297466999,
+          "denominator": 14297466999,
+          "excluded": 0,
+          "rate": 1.0
+        },
+        {
+          "period": 1,
+          "numerator": 14237303846,
+          "denominator": 14237303846,
+          "excluded": 0,
+          "rate": 1.0
+        }
+      ],
+      "statement_count": 12,
+      "query_timings_ms": {
+        "quality": 1099.484799997299,
+        "invalid_completion_time": 653.0017999975826,
+        "invalid_observation_time": 719.8762999978499,
+        "invalid_due_at": 704.7218000006978,
+        "invalid_settled_at": 702.4740999986534,
+        "lifecycle_raw_quality": 488.91070000536274,
+        "lifecycle_invariants": 2220.484100005706,
+        "overall": 1833.3636999959708,
+        "segments": 1990.4907999953139
+      },
+      "elapsed_seconds": 17.84806060000119
+    },
+    {
+      "metric": "bank_health",
+      "status": "passed",
+      "evidence_id": "54324ee970904125bfddb3525a3b4386",
+      "checksum": "702e9c37c35110cc45abc65269495333767cb77173e8a7a8a9c57c23f6f9c492",
+      "question": "Compare Attempt success with aligned bank health (bank_health) for 2026-10-01 inclusive to 2026-10-15 exclusive versus 2026-10-15 inclusive to 2026-10-29 exclusive in Asia/Kolkata. Use observation cutoff 2026-11-01T00:00:00+05:30. Show the registered numerator and denominator with bank/method segments.",
+      "overall": [
+        {
+          "period": 0,
+          "numerator": 97462,
+          "denominator": 100402,
+          "excluded": 0,
+          "unmatched": 0,
+          "attempt_weighted_availability_pct": 99.5001103663251,
+          "attempt_weighted_bucket_p95_ms": 1126.560188044063,
+          "rate": 0.970717714786558
+        },
+        {
+          "period": 1,
+          "numerator": 96485,
+          "denominator": 99331,
+          "excluded": 0,
+          "unmatched": 0,
+          "attempt_weighted_availability_pct": 99.49885382206895,
+          "attempt_weighted_bucket_p95_ms": 1124.382750601524,
+          "rate": 0.9713483202625565
+        }
+      ],
+      "statement_count": 10,
+      "query_timings_ms": {
+        "quality": 1208.465999996406,
+        "invalid_completion_time": 855.4944999996223,
+        "invalid_observation_time": 712.0978999955696,
+        "lifecycle_invariants": 929.6509999985574,
+        "health_quality": 1969.656400004169,
+        "overall": 3061.7027999978745,
+        "segments": 3351.95539999404
+      },
+      "elapsed_seconds": 19.650940999999875
+    }
+  ],
+  "protected_sources_before": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "current_metric": "bank_health",
+  "last_investigation": {
+    "status": "verified",
+    "error": null,
+    "budget": {
+      "sql_statements": 10,
+      "tool_calls": 2,
+      "repairs": 0,
+      "tokens_reserved": 11105
+    }
+  },
+  "denial_probes": 13,
+  "restored_selection": "lifecycle_v1",
+  "protected_sources_after": {
+    "files": 43,
+    "csv_files": 23,
+    "changed": []
+  },
+  "gates": {
+    "foundation": "passed",
+    "complete_demo": "passed",
+    "first_analyst_breadth": "passed",
+    "target_v1": "pending"
+  },
+  "final_acceptance": "reports/analyst/lifecycle_acceptance.json"
+}

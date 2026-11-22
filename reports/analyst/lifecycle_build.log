@@ -1,0 +1,12 @@
+Processing .\.
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: payments-ai-analyst
+  Building wheel for payments-ai-analyst (pyproject.toml): started
+  Building wheel for payments-ai-analyst (pyproject.toml): finished with status 'done'
+  Created wheel for payments-ai-analyst: filename=payments_ai_analyst-0.1.0-py3-none-any.whl size=44916 sha256=c55de697b0f51d6232ea054c73e947868c88ca7561561aa98405923ed5480c87
+  Stored in directory: C:\Users\dell\AppData\Local\Temp\pip-ephem-wheel-cache-jqyhx4xu\wheels\d2\31\e2\92197cc1fd3afc24b09ab625127f0e4e613b83d20a92a277c4
+Successfully built payments-ai-analyst
+
+[notice] A new release of pip is available: 26.2.2 -> 26.3
+[notice] To update, run: E:\pinelabs\.local\analyst\venv\Scripts\python.exe -m pip install --upgrade pip

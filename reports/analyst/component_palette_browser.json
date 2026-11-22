@@ -1,0 +1,130 @@
+{
+  "browser": "Chromium",
+  "viewports_px": [
+    1440,
+    390
+  ],
+  "data": "Read-only local session list and saved verified evidence, served by an isolated API fixture.",
+  "checks": [
+    "Home and result surfaces fit both viewport widths",
+    "Saved-session hover and keyboard focus, Enter to reopen",
+    "Baseline and comparison card accents match plotted series",
+    "User and assistant history messages use distinct surfaces"
+  ],
+  "text_contrast": {
+    "desktop": {
+      "saved question": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(242, 246, 242)",
+        "ratio": 8.89
+      },
+      "guide": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(231, 239, 217)",
+        "ratio": 8.2
+      },
+      "hero action": {
+        "fg": "rgb(23, 57, 43)",
+        "bg": "rgb(212, 239, 185)",
+        "ratio": 10.17
+      },
+      "saved question hover": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(225, 239, 230)",
+        "ratio": 8.17
+      },
+      "navigation": {
+        "fg": "rgb(237, 245, 235)",
+        "bg": "rgb(18, 61, 49)",
+        "ratio": 10.86
+      },
+      "navigation action": {
+        "fg": "rgb(23, 57, 43)",
+        "bg": "rgb(212, 239, 185)",
+        "ratio": 10.17
+      },
+      "navigation hover": {
+        "fg": "rgb(237, 245, 235)",
+        "bg": "rgb(45, 84, 72)",
+        "ratio": 7.66
+      },
+      "baseline label": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(225, 239, 230)",
+        "ratio": 8.17
+      },
+      "baseline value": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(225, 239, 230)",
+        "ratio": 8.17
+      },
+      "comparison label": {
+        "fg": "rgb(86, 67, 118)",
+        "bg": "rgb(239, 234, 245)",
+        "ratio": 7.22
+      },
+      "comparison value": {
+        "fg": "rgb(86, 67, 118)",
+        "bg": "rgb(239, 234, 245)",
+        "ratio": 7.22
+      },
+      "status": {
+        "fg": "rgb(20, 88, 62)",
+        "bg": "rgb(213, 236, 220)",
+        "ratio": 6.76
+      },
+      "history assistant": {
+        "fg": "rgb(25, 46, 39)",
+        "bg": "rgb(255, 255, 255)",
+        "ratio": 14.37
+      }
+    },
+    "mobile": {
+      "saved question": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(242, 246, 242)",
+        "ratio": 8.89
+      },
+      "guide": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(231, 239, 217)",
+        "ratio": 8.2
+      },
+      "hero action": {
+        "fg": "rgb(23, 57, 43)",
+        "bg": "rgb(212, 239, 185)",
+        "ratio": 10.17
+      },
+      "saved question hover": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(225, 239, 230)",
+        "ratio": 8.17
+      },
+      "baseline label": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(225, 239, 230)",
+        "ratio": 8.17
+      },
+      "baseline value": {
+        "fg": "rgb(23, 77, 61)",
+        "bg": "rgb(225, 239, 230)",
+        "ratio": 8.17
+      },
+      "comparison label": {
+        "fg": "rgb(86, 67, 118)",
+        "bg": "rgb(239, 234, 245)",
+        "ratio": 7.22
+      },
+      "comparison value": {
+        "fg": "rgb(86, 67, 118)",
+        "bg": "rgb(239, 234, 245)",
+        "ratio": 7.22
+      },
+      "status": {
+        "fg": "rgb(20, 88, 62)",
+        "bg": "rgb(213, 236, 220)",
+        "ratio": 6.76
+      }
+    }
+  }
+}

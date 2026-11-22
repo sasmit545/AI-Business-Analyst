@@ -1,0 +1,160 @@
+{
+  "analyst_gate": "pending",
+  "dataset_gate": "passed",
+  "errors": [],
+  "reproducibility": {
+    "files": {
+      "data/synthetic/phase1/scenario_a/banks.csv": {
+        "delivered": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run1": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run2": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+      },
+      "data/synthetic/phase1/scenario_a/merchants.csv": {
+        "delivered": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run1": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run2": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+      },
+      "data/synthetic/phase1/scenario_a/payments.csv": {
+        "delivered": "cbdee633b3aa4a34949be4ea13caabe4a9f9b49bbb2b7498e3160e35aa737c60",
+        "run1": "cbdee633b3aa4a34949be4ea13caabe4a9f9b49bbb2b7498e3160e35aa737c60",
+        "run2": "cbdee633b3aa4a34949be4ea13caabe4a9f9b49bbb2b7498e3160e35aa737c60"
+      },
+      "data/synthetic/phase1/scenario_a_dirty/banks.csv": {
+        "delivered": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run1": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run2": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+      },
+      "data/synthetic/phase1/scenario_a_dirty/merchants.csv": {
+        "delivered": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run1": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run2": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+      },
+      "data/synthetic/phase1/scenario_a_dirty/payments.csv": {
+        "delivered": "6887c46711e1e5b1cfb882d4e9397876fa16ba9b917927b613fd2f3c9d3b5044",
+        "run1": "6887c46711e1e5b1cfb882d4e9397876fa16ba9b917927b613fd2f3c9d3b5044",
+        "run2": "6887c46711e1e5b1cfb882d4e9397876fa16ba9b917927b613fd2f3c9d3b5044"
+      },
+      "data/synthetic/phase1/scenario_b/banks.csv": {
+        "delivered": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run1": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b",
+        "run2": "ff67992cecc7b1805fcb4db2d37505bcd526d0e6c37eda31e3177b7eb5a0b46b"
+      },
+      "data/synthetic/phase1/scenario_b/merchants.csv": {
+        "delivered": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run1": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437",
+        "run2": "723836003bb9acd58ce93b77c3175e6fd09873e87f9b8841e8f3065d2993a437"
+      },
+      "data/synthetic/phase1/scenario_b/payments.csv": {
+        "delivered": "5784903093fc4e50ecf9120cb686d085bcc16e1ad1bf5ef012a6172db9030e79",
+        "run1": "5784903093fc4e50ecf9120cb686d085bcc16e1ad1bf5ef012a6172db9030e79",
+        "run2": "5784903093fc4e50ecf9120cb686d085bcc16e1ad1bf5ef012a6172db9030e79"
+      },
+      "evaluation/phase1/defect_manifest.json": {
+        "delivered": "cf59bfdc02cf27a6474a8e4143cbad388ca71d123134bc53f2a9f303daca339c",
+        "run1": "cf59bfdc02cf27a6474a8e4143cbad388ca71d123134bc53f2a9f303daca339c",
+        "run2": "cf59bfdc02cf27a6474a8e4143cbad388ca71d123134bc53f2a9f303daca339c"
+      },
+      "evaluation/phase1/generation_manifest.json": {
+        "delivered": "350a5710db1a90da52d15fc28b427fc1bb74525dc8312fdf8869348fa89e767f",
+        "run1": "350a5710db1a90da52d15fc28b427fc1bb74525dc8312fdf8869348fa89e767f",
+        "run2": "350a5710db1a90da52d15fc28b427fc1bb74525dc8312fdf8869348fa89e767f"
+      }
+    },
+    "identical": true,
+    "status": "checked"
+  },
+  "scenarios": {
+    "scenario_a": {
+      "analysis_status": "allowed",
+      "periods": [
+        {
+          "attempts": 10000,
+          "failures": 200,
+          "period": "baseline",
+          "success_rate_pct": 98.0,
+          "successes": 9800
+        },
+        {
+          "attempts": 10000,
+          "failures": 380,
+          "period": "comparison",
+          "success_rate_pct": 96.2,
+          "successes": 9620
+        }
+      ],
+      "quality": {
+        "duplicate_bank_keys": 0,
+        "duplicate_merchant_keys": 0,
+        "duplicate_occurrences": 0,
+        "invalid_amounts": 0,
+        "invalid_currency": 0,
+        "invalid_dimension_values": 0,
+        "invalid_identifiers": 0,
+        "invalid_methods": 0,
+        "invalid_outcomes": 0,
+        "invalid_timestamps": 0,
+        "missing_timestamps": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0
+      },
+      "rows": 20000,
+      "specification_checks": "passed"
+    },
+    "scenario_a_dirty": {
+      "analysis_status": "blocked",
+      "expected_defects_verified": true,
+      "quality": {
+        "duplicate_bank_keys": 0,
+        "duplicate_merchant_keys": 0,
+        "duplicate_occurrences": 20,
+        "invalid_amounts": 0,
+        "invalid_currency": 0,
+        "invalid_dimension_values": 0,
+        "invalid_identifiers": 0,
+        "invalid_methods": 0,
+        "invalid_outcomes": 0,
+        "invalid_timestamps": 0,
+        "missing_timestamps": 10,
+        "orphan_banks": 0,
+        "orphan_merchants": 10
+      },
+      "rows": 20020
+    },
+    "scenario_b": {
+      "analysis_status": "allowed",
+      "periods": [
+        {
+          "attempts": 10000,
+          "failures": 360,
+          "period": "baseline",
+          "success_rate_pct": 96.4,
+          "successes": 9640
+        },
+        {
+          "attempts": 10000,
+          "failures": 840,
+          "period": "comparison",
+          "success_rate_pct": 91.6,
+          "successes": 9160
+        }
+      ],
+      "quality": {
+        "duplicate_bank_keys": 0,
+        "duplicate_merchant_keys": 0,
+        "duplicate_occurrences": 0,
+        "invalid_amounts": 0,
+        "invalid_currency": 0,
+        "invalid_dimension_values": 0,
+        "invalid_identifiers": 0,
+        "invalid_methods": 0,
+        "invalid_outcomes": 0,
+        "invalid_timestamps": 0,
+        "missing_timestamps": 0,
+        "orphan_banks": 0,
+        "orphan_merchants": 0
+      },
+      "rows": 20000,
+      "specification_checks": "passed"
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "same_schema": {
+    "before": {
+      "scenario": "scenario_a",
+      "generation": 1,
+      "import_epoch": 1,
+      "ready": true
+    },
+    "after": {
+      "scenario": "scenario_a",
+      "generation": 2,
+      "import_epoch": 1,
+      "ready": true
+    },
+    "stale_resume_and_evidence_rejected": true
+  },
+  "A_B_A": {
+    "before": {
+      "scenario": "scenario_a",
+      "generation": 2,
+      "import_epoch": 1,
+      "ready": true
+    },
+    "after": {
+      "scenario": "scenario_a",
+      "generation": 4,
+      "import_epoch": 1,
+      "ready": true
+    },
+    "stale_resume_and_evidence_rejected": true
+  },
+  "successful_import": {
+    "before": {
+      "scenario": "scenario_a",
+      "generation": 4,
+      "import_epoch": 1,
+      "ready": true
+    },
+    "after": {
+      "scenario": "scenario_a",
+      "generation": 4,
+      "import_epoch": 2,
+      "ready": true
+    },
+    "stale_resume_and_evidence_rejected": true
+  },
+  "failed_import": {
+    "before": {
+      "scenario": "scenario_a",
+      "generation": 4,
+      "import_epoch": 2,
+      "ready": true
+    },
+    "after": {
+      "scenario": "scenario_a",
+      "generation": 4,
+      "import_epoch": 3,
+      "ready": false
+    },
+    "fixture_rollback": true,
+    "stale_resume_and_evidence_rejected": true
+  },
+  "failed_selection": {
+    "before": {
+      "scenario": "scenario_a",
+      "generation": 5,
+      "import_epoch": 3,
+      "ready": true
+    },
+    "after": {
+      "scenario": "scenario_a",
+      "generation": 6,
+      "import_epoch": 3,
+      "ready": false
+    },
+    "login_disabled": true,
+    "stale_resume_and_evidence_rejected": true
+  },
+  "status": "passed",
+  "mode": "disposable native PostgreSQL",
+  "cleanup": true,
+  "recorded_at": "2026-11-21T21:59:10.504716+00:00"
+}

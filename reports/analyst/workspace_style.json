@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-22",
+  "scope": "Visual styling of the local Streamlit application",
+  "suite": {"report": "workspace_style_tests.xml", "passed": 141, "skipped_opt_in": 10},
+  "final_frontend_and_followup_tests": {"passed": 11},
+  "browser": {
+    "stack": "Headless Chromium, private Streamlit and FastAPI ports, native PostgreSQL, deterministic model double",
+    "home_widths_without_page_overflow_px": [320, 390, 768, 1024, 1440],
+    "result_widths_px": [390, 1440],
+    "verified": [
+      "Bundled artwork is served as WebP and the home screen exposes its start and resume controls.",
+      "Opening the test session shows its verified question, status and two comparison cards.",
+      "The plotted bank totals match the recorded failure counts in each period.",
+      "History reopens the selected result; both period cards fit side by side at 390 pixels.",
+      "The mobile chart switches to a table, provenance opens its SQL and New question opens the composer."
+    ],
+    "screenshots": ["workspace_home_desktop.png", "workspace_home_mobile.png", "workspace_result_desktop.png", "workspace_result_mobile.png"]
+  },
+  "artwork": {
+    "path": "app/frontend/static/payment-cards.webp",
+    "source": "Built-in ImageGen",
+    "prompt": "A wide cinematic editorial product photograph, aspect ratio 3:1, a hero background image for a sophisticated payment analytics workbench. Floating above a deep pine green studio floor are two oversized offset bank payment cards with realistic thin rounded edges, tilted in three-quarter isometric view. Hero front card is sea-glass mint with a tiny brushed silver EMV chip, delicate luminous guilloche engraving and a finely ribbed diagonal band, absolutely no text or numbers. Second card is translucent dark emerald glass with subtle refraction and a lit mint edge. Dramatic but restrained studio lighting, long soft shadows, tactile materials. Compose both cards and all highlights entirely within the RIGHT half of this panoramic image, with a little room around the right edge. LEFT half is empty matte uniformly very dark forest #0d2924 fading seamlessly into the scene, suitable for overlaid white text. Upscale art direction, economical geometry and plenty of negative space. No letters, words, numerals, watermarks, logos, people, charts, icons, graphs, or text."
+  },
+  "protected_hashes_matching_baseline": 43
+}

@@ -1,0 +1,75 @@
+{
+  "recorded_at": "2026-11-21T17:19:15.769043+00:00",
+  "investigation_id": "f402ea1ed7f9447a8757b852a18e4c81",
+  "observed_run": {
+    "run_id": "20261121T165550Z",
+    "status": "failed",
+    "mode": "live_model_api_sql",
+    "scenarios": [],
+    "provider": "nvidia",
+    "model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+    "gates": {
+      "foundation": "passed",
+      "complete_demo": "pending",
+      "first_analyst_breadth": "pending",
+      "target_v1": "pending"
+    },
+    "missing_evidence": [
+      "real model/API/UI journey",
+      "live model adversarial and safe-failure benchmarks",
+      "browser rendering proof"
+    ],
+    "protected_sources_before": {
+      "files": 43,
+      "csv_files": 23,
+      "changed": []
+    },
+    "failure_type": "ValidationError",
+    "restored_selection": {
+      "schema": "lifecycle_v1",
+      "visible_tables": 8
+    },
+    "protected_sources_after": {
+      "files": 43,
+      "csv_files": 23,
+      "changed": []
+    }
+  },
+  "observed_tokens": 11499,
+  "cause": [
+    "Model requested another analysis after successful SQL; the one-bundle guard blocked it",
+    "API correctly withheld unpublished evidence",
+    "Evaluator accepted any blocked status then parsed None as Evidence"
+  ],
+  "fix": [
+    "Advertise only evidence inspection/publication after the bundle",
+    "Preserve dispatcher denial of repeated analysis",
+    "Specify empty arguments for get_context in its description and repair feedback",
+    "Require the scenario-appropriate published state and evidence before parsing",
+    "Save last investigation status/error/budget in live acceptance reports"
+  ],
+  "proof": {
+    "reproduced_before_fix": [
+      "One analytical bundle is permitted per investigation after two context repairs and SQL",
+      "Pydantic Evidence model_type error on policy-blocked snapshot for clean and dirty scenarios"
+    ],
+    "full_suite": {
+      "passed": 69,
+      "skipped": 2,
+      "artifact": "reports/analyst/test_results.xml"
+    },
+    "skip_reason": "Live provider and browser require opt-in; full live acceptance still pending",
+    "wheel_build": "passed; source contents match",
+    "protected_sources": {
+      "files": 43,
+      "changed": []
+    }
+  },
+  "review": {
+    "simplification": "single-pass combined reviewer; narrow changed-code scope below 10000-line cutoff",
+    "applied": "Reuse Status enum for expected published status",
+    "manual_review": "Publication gate, API snapshot semantics, dispatcher boundaries, evaluation failure reporting and fixture preservation checked",
+    "formal_review": "Code review: skipped (ce-code-review unavailable); no Git diff base"
+  },
+  "live_rerun": "pending; no real-provider success claimed for this change"
+}

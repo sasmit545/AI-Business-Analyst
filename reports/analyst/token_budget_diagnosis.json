@@ -1,0 +1,67 @@
+{
+  "recorded_at": "2026-11-21T16:52:32.158302+00:00",
+  "investigation_id": "371b02d20a2d4df988d1cfaa86435c06",
+  "original_report": "reports/analyst/live_acceptance.json",
+  "original_report_preserved": true,
+  "observed": {
+    "scenario": "scenario_a",
+    "validation_failures": 2,
+    "invalid_tool": "get_context",
+    "invalid_fields": "redacted; exact submitted keys unavailable",
+    "sql_statements": 8,
+    "tokens_reserved": 28326,
+    "terminal_state": "limited",
+    "time_limit_reached": false
+  },
+  "cause": "Worst-case input/output reservations were retained after completed streams. After two invalid calls and analysis, the next publication request could not fit the remaining allowance. The generic limit message obscured the token cause.",
+  "fix": [
+    "Request final NVIDIA streamed usage",
+    "Settle completed calls only with valid final integer usage totals",
+    "Retain full reservations on missing, invalid, nonfinal or interrupted usage",
+    "Account for over-ceiling reported usage and stop",
+    "Preserve specific internal limit messages in results and logs"
+  ],
+  "unchanged_limits": {
+    "tokens": 32768,
+    "seconds": 120,
+    "repairs": 2,
+    "tools": 10
+  },
+  "verification": {
+    "red_before_fix": [
+      "Fourth simulated call failed with token exhaustion at 28236 reserved tokens",
+      "Over-ceiling provider usage was ignored",
+      "Token error was replaced by generic time-or-budget error",
+      "Nonfinal receipt incorrectly reduced reservation"
+    ],
+    "full_suite": {
+      "passed": 60,
+      "skipped": 2,
+      "artifact": "reports/analyst/test_results.xml",
+      "timing": "before final-receipt edge tightening"
+    },
+    "focused_after_final_change": {
+      "passed": 24,
+      "artifact": "reports/analyst/token_budget_tests.xml"
+    },
+    "wheel_source_match": true,
+    "protected_files_unchanged": 43,
+    "live_model_rerun": "pending; agent-session provider network restriction remains"
+  },
+  "review": {
+    "scope": [
+      "app/agent/model.py",
+      "app/agent/graph.py"
+    ],
+    "simplification": "single combined reviewer; accounting fix scope below 10000-line cutoff",
+    "applied": "Invalidate a receipt followed by further output",
+    "skipped_low_value": [
+      "Shared constant for two identical token-limit strings",
+      "Rename positional count variables"
+    ],
+    "manual_review": "Final usage validation, failure paths, fixed internal budget messages and callers checked",
+    "formal_review": "Code review: skipped (ce-code-review unavailable); no Git diff base"
+  },
+  "provider_reference": "https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3_5-super-vl-120b-a12b-infer",
+  "complete_demo": "pending"
+}

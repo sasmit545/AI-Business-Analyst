@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="227.673" timestamp="2026-11-22T03:38:37.397149+05:30" hostname="DESKTOP-GLHUDMO"><testcase classname="tests.analyst.test_durable_browser" name="test_chart_selection_and_restart" time="224.890"><failure message="playwright._impl._errors.TimeoutError: Locator.wait_for: Timeout 90000ms exceeded.&#10;Call log:&#10;  - waiting for locator(&quot;summary&quot;).filter(has_text=&quot;Resume saved work&quot;) to be visible">tmp_path = WindowsPath('E:/pinelabs/.local/analyst/test-temp/287db7ed30234b00a44a44145d4c173d/test_chart_selection_and_resta0')
+
+    @pytest.mark.live
+    @pytest.mark.skipif(os.environ.get('ANALYST_DURABLE_BROWSER') != '1', reason='Opt-in real model and browser')
+    def test_chart_selection_and_restart(tmp_path):
+        from playwright.sync_api import expect, sync_playwright
+    
+        root = Path.cwd()
+        ctx = multiprocessing.get_context('spawn')
+        api_port = _port()
+        token = tmp_path/'.local/analyst/api_token'
+        base = f'http://127.0.0.1:{api_port}'
+        api = ctx.Process(target=_serve_api, args=(root, tmp_path, api_port))
+        api.start()
+        ui = None
+        try:
+            _wait_ready(api, base+'/health', token)
+            saved = _saved_attempt_comparison(base, token)
+            print('Real saved attempt comparison available.', flush=True)
+            ui_port = _port()
+            ui = ctx.Process(target=_serve_ui, args=(root, tmp_path, api_port, ui_port))
+            ui.start()
+            url = f'http://127.0.0.1:{ui_port}'
+            _wait_ready(ui, url+'/_stcore/health')
+            counts = _attempt_counts(root)
+            with sync_playwright() as browser_api:
+                browser = browser_api.chromium.launch(
+                    executable_path='C:/Program Files/Google/Chrome/Application/chrome.exe', headless=True)
+                page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+                page.goto(url, wait_until='commit', timeout=90000)
+    
+                def button(name):
+                    control = page.get_by_role('button', name=name, exact=True)
+                    control.wait_for(state='visible', timeout=90000)
+                    control.press('Enter')
+    
+                def expander(name):
+                    control = page.locator('summary').filter(has_text=name)
+                    control.wait_for(state='visible', timeout=90000)
+                    control.press('Enter')
+    
+                def read_id():
+                    provenance = page.get_by_text('Evidence ID:', exact=False)
+                    provenance.wait_for(state='attached', timeout=90000)
+                    return provenance.text_content().removeprefix('Evidence ID: ')
+    
+                def resume():
+                    expander('Resume saved work')
+                    page.get_by_label('Saved session ID', exact=True).fill(saved['resume_id'])
+                    page.get_by_label('Session key', exact=True).fill(saved['resume_key'])
+                    button('Resume session')
+                    page.get_by_text('Status: verified', exact=True).wait_for(state='attached',timeout=90000)
+    
+&gt;               resume()
+
+tests\analyst\test_durable_browser.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\analyst\test_durable_browser.py:168: in resume
+    expander('Resume saved work')
+tests\analyst\test_durable_browser.py:159: in expander
+    control.wait_for(state='visible', timeout=90000)
+.local\analyst\venv\Lib\site-packages\playwright\sync_api\_generated.py:13663: in wait_for
+    self._sync(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\locator.py:943: in wait_for
+    await self._frame._channel.waitForSelector(
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:398: in _mapped
+    return mapper(await awaitable)
+                  ^^^^^^^^^^^^^^^
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:387: in finish
+    raise e from None
+.local\analyst\venv\Lib\site-packages\playwright\_impl\channel_owner.py:352: in finish
+    result = await zone.run_async(lambda: awaitable)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;playwright._impl.utils.zones.Zone object at 0x0000012C7895B9B0&gt;
+func = &lt;function ChannelOwner._wrap_api_call.&lt;locals&gt;.finish.&lt;locals&gt;.&lt;lambda&gt; at 0x0000012C79D7F3D0&gt;
+
+    async def run_async(self, func: Callable[[], Awaitable[R]]) -&gt; R:
+        # Python: run() of an async function. The coroutine runs when it is awaited,
+        # so the zone must be current while it is awaited, not while it is created.
+        token = _async_local_storage.set(self)
+        try:
+&gt;           return await func()
+                   ^^^^^^^^^^^^
+E           playwright._impl._errors.TimeoutError: Locator.wait_for: Timeout 90000ms exceeded.
+E           Call log:
+E             - waiting for locator("summary").filter(has_text="Resume saved work") to be visible
+
+.local\analyst\venv\Lib\site-packages\playwright\_impl\utils\zones.py:58: TimeoutError</failure></testcase></testsuite></testsuites>

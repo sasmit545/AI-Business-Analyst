@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "mode": "real_browser_api_database_with_model_double",
+  "live_model": false,
+  "chart_data": [
+    {
+      "x": [
+        "Baseline",
+        "Comparison"
+      ],
+      "y": [
+        0.970717714786558,
+        0.9713483202625565
+      ]
+    }
+  ],
+  "screenshots": [
+    "browser-desktop.png",
+    "browser-mobile.png"
+  ],
+  "complete_demo": "pending"
+}

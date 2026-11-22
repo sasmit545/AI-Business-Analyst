@@ -1,0 +1,42 @@
+[
+  {
+    "check": "invalid_completion_observation",
+    "seconds": 6.448640799993882,
+    "status": "passed"
+  },
+  {
+    "check": "invalid_attempt_number",
+    "seconds": 0.28958440000133123,
+    "status": "passed"
+  },
+  {
+    "check": "invalid_order_time",
+    "seconds": 3.258066200003668,
+    "status": "passed"
+  },
+  {
+    "check": "duplicate_orders",
+    "seconds": 0.8124212999973679,
+    "status": "passed"
+  },
+  {
+    "check": "invalid_order_identity",
+    "seconds": 0.3350175000014133,
+    "status": "passed"
+  },
+  {
+    "check": "orphan_order_attempts",
+    "seconds": 0.400819299997238,
+    "status": "passed"
+  },
+  {
+    "check": "orders_without_attempts",
+    "seconds": 0.3347025999973994,
+    "status": "passed"
+  },
+  {
+    "check": "order_attribute_mismatch",
+    "seconds": 0.6418075999972643,
+    "status": "passed"
+  }
+]
